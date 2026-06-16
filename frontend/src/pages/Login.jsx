@@ -6,13 +6,6 @@ import { Eye, EyeOff, AlertCircle, Mail, KeyRound } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LogoFull } from '../components/common/Logo';
 
-const DEMO_ACCOUNTS = [
-  { label: 'Admin',          email: 'admin@dsp.com',    role: 'admin' },
-  { label: 'Agent (Priya)',  email: 'agent1@dsp.com',   role: 'agent' },
-  { label: 'Acme (Basic)',   email: 'acme@client.com',  role: 'customer' },
-  { label: 'Gamma (Premium)',email: 'gamma@client.com', role: 'customer' },
-  { label: 'Delta (Free)',   email: 'delta@client.com', role: 'customer' },
-];
 
 export default function LoginPage() {
   const { login, loginWithToken, finalize2faLogin } = useAuth();
@@ -123,13 +116,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemo = (acc) => {
-    setEmail(acc.email);
-    setPassword('Password@123');
-    setError('');
-    setStep(1);
   };
 
   const switchMode = (m) => {
@@ -285,23 +271,6 @@ export default function LoginPage() {
             </form>
           )}
 
-          {/* Demo accounts */}
-          {mode === 'password' && (
-            <div className="mt-6 pt-5 border-t border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                Demo Accounts (password: Password@123)
-              </p>
-              <div className="grid grid-cols-1 gap-1.5">
-                {DEMO_ACCOUNTS.map(acc => (
-                  <button key={acc.email} data-testid={`Login-DemoAccount-${acc.role}`} onClick={() => fillDemo(acc)}
-                    className="flex items-center justify-between w-full px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-indigo-300 transition-colors text-left">
-                    <span className="font-medium text-gray-700">{acc.label}</span>
-                    <span className="text-xs text-gray-400">{acc.email}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
