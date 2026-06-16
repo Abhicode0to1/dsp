@@ -10,7 +10,6 @@ set -euo pipefail
 
 APP_DIR="/opt/dsp"
 DB_NAME="dsp"
-DB_USER="dsp"
 BACKUP_DIR="/opt/dsp-backups"
 
 cd "$APP_DIR"
@@ -18,8 +17,8 @@ cd "$APP_DIR"
 echo "==> [1/5] Backing up the database (rollback safety)"
 mkdir -p "$BACKUP_DIR"
 ts="$(date +%Y%m%d-%H%M%S)"
-# Tip: put credentials in ~/.my.cnf so this runs non-interactively (no -p prompt).
-mysqldump -u "$DB_USER" "$DB_NAME" | gzip > "$BACKUP_DIR/dsp-$ts.sql.gz"
+# Dump as root via MySQL socket auth (no password needed); run deploy.sh as root.
+sudo mysqldump "$DB_NAME" | gzip > "$BACKUP_DIR/dsp-$ts.sql.gz"
 echo "    saved $BACKUP_DIR/dsp-$ts.sql.gz"
 
 echo "==> [2/5] Pulling latest code"
