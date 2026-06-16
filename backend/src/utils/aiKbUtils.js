@@ -1,18 +1,32 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
-let client = null;
-function getClient() {
-  if (!client) client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return client;
+// Active key comes from admin_settings first (manageable in the Settings UI),
+// falling back to env. Read live so a Settings change applies without restart.
+async function getActiveKey() {
+  let k = '';
+  try {
+    const { getSetting } = require('./settings');
+    k = (await getSetting('anthropic_api_key', '')).toString().trim();
+  } catch {}
+  return k || process.env.ANTHROPIC_API_KEY || '';
 }
 
+let client = null;
+let clientKey = '';
+async function getClient() {
+  const key = await getActiveKey();
+  if (!client || clientKey !== key) { client = new Anthropic({ apiKey: key }); clientKey = key; }
+  return client;
+}
+function invalidateAiClient() { client = null; clientKey = ''; }
+
 async function searchKbWithAI(query) {
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = await getActiveKey();
   if (!key || key === 'your_anthropic_api_key_here') {
-    return { articles: [], videos: [], error: 'ANTHROPIC_API_KEY not configured. Add your key to backend/.env' };
+    return { articles: [], videos: [], error: 'ANTHROPIC_API_KEY not configured. Set it in Admin → Settings (or backend/.env).' };
   }
   try {
-    const ai = getClient();
+    const ai = await getClient();
     const message = await ai.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
@@ -63,4 +77,4 @@ Respond ONLY with valid JSON in this exact format:
   }
 }
 
-module.exports = { searchKbWithAI };
+module.exports = { searchKbWithAI, invalidateAiClient };

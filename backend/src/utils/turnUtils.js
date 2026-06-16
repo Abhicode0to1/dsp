@@ -10,10 +10,22 @@
 //   CLOUDFLARE_TURN_KEY_ID      — the Turn Key ID from the Cloudflare dashboard
 //   CLOUDFLARE_TURN_API_TOKEN   — that key's API token
 
-const KEY_ID    = process.env.CLOUDFLARE_TURN_KEY_ID;
-const API_TOKEN = process.env.CLOUDFLARE_TURN_API_TOKEN;
 const TTL_SECONDS = 86400; // 24h credential lifetime
-const isConfigured = Boolean(KEY_ID && API_TOKEN);
+
+// Read the TURN creds from admin_settings first (manageable from the Settings
+// UI), falling back to env. Read live so a Settings change takes effect on the
+// next call without a restart.
+async function getCreds() {
+  let keyId = '', token = '';
+  try {
+    const { getSetting } = require('./settings');
+    keyId = (await getSetting('cloudflare_turn_key_id', '')).toString().trim();
+    token = (await getSetting('cloudflare_turn_api_token', '')).toString().trim();
+  } catch {}
+  keyId = keyId || process.env.CLOUDFLARE_TURN_KEY_ID || '';
+  token = token || process.env.CLOUDFLARE_TURN_API_TOKEN || '';
+  return { keyId, token };
+}
 
 // Free public fallback — fine for dev / small scale, unreliable at scale.
 const FREE_ICE_SERVERS = [
@@ -35,20 +47,24 @@ const FREE_ICE_SERVERS = [
 ];
 
 // Cache the minted Cloudflare creds so we don't hit their API on every call.
-// Refreshed at half the TTL so credentials never expire mid-call.
-let cache = null; // { iceServers, expiresAt }
+// Refreshed at half the TTL; keyed by the key id so changing creds in Settings
+// invalidates the cache automatically. invalidateTurnCache() drops it on save.
+let cache = null; // { iceServers, expiresAt, sig }
+
+function invalidateTurnCache() { cache = null; }
 
 async function getIceServers() {
-  if (!isConfigured) return FREE_ICE_SERVERS;
-  if (cache && cache.expiresAt > Date.now()) return cache.iceServers;
+  const { keyId, token } = await getCreds();
+  if (!keyId || !token) return FREE_ICE_SERVERS;
+  if (cache && cache.sig === keyId && cache.expiresAt > Date.now()) return cache.iceServers;
 
   try {
     const resp = await fetch(
-      `https://rtc.live.cloudflare.com/v1/turn/keys/${KEY_ID}/credentials/generate`,
+      `https://rtc.live.cloudflare.com/v1/turn/keys/${keyId}/credentials/generate`,
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${API_TOKEN}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ttl: TTL_SECONDS }),
@@ -61,7 +77,7 @@ async function getIceServers() {
     if (!cf || !cf.urls) throw new Error('Cloudflare TURN: no iceServers in response');
 
     const iceServers = [cf];
-    cache = { iceServers, expiresAt: Date.now() + (TTL_SECONDS / 2) * 1000 };
+    cache = { iceServers, expiresAt: Date.now() + (TTL_SECONDS / 2) * 1000, sig: keyId };
     return iceServers;
   } catch (err) {
     console.error('[turn] Cloudflare credential fetch failed — using free fallback:', err.message);
@@ -69,4 +85,11 @@ async function getIceServers() {
   }
 }
 
-module.exports = { getIceServers, isConfigured };
+// Async because creds now come from the settings store. Kept for callers that
+// want to know whether real TURN (vs the free fallback) is active.
+async function isConfigured() {
+  const { keyId, token } = await getCreds();
+  return Boolean(keyId && token);
+}
+
+module.exports = { getIceServers, isConfigured, invalidateTurnCache };

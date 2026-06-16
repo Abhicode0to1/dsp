@@ -2285,6 +2285,11 @@ exports.getSettings = async (req, res) => {
       smtp_password: process.env.SMTP_PASS,
       smtp_from:     process.env.EMAIL_FROM,
       smtp_secure:   process.env.SMTP_SECURE,
+      // Same env→DB reflection for the other runtime creds the admin can manage
+      // from Settings (Cloudflare TURN for calls, Anthropic for the AI bot).
+      anthropic_api_key:         process.env.ANTHROPIC_API_KEY,
+      cloudflare_turn_key_id:    process.env.CLOUDFLARE_TURN_KEY_ID,
+      cloudflare_turn_api_token: process.env.CLOUDFLARE_TURN_API_TOKEN,
     };
     for (const [k, v] of Object.entries(envFallback)) {
       if (!settings[k] && v !== undefined && v !== '') {
@@ -2320,6 +2325,10 @@ const ALLOWED_SETTING_KEYS = new Set([
   'smtp_password',               // SMTP password / app password — stored encrypted at rest if possible
   'smtp_from',                   // From: header, "Display Name <addr@domain>" form
   'smtp_secure',                 // '1' = implicit TLS (port 465); '0' = STARTTLS (port 587)
+  // ── Runtime API credentials (admin_settings → env fallback; read live)
+  'anthropic_api_key',           // Claude API key for the AI bot / KB search
+  'cloudflare_turn_key_id',      // Cloudflare Realtime TURN key id (calls)
+  'cloudflare_turn_api_token',   // Cloudflare Realtime TURN API token (calls)
   // ── Inbound email (IMAP poller picks these up via the settings cache)
   'inbound_enabled',             // '1' = poll the inbox + ingest; default '0' (must be turned on explicitly)
   'imap_host',                   // e.g. 'imap.gmail.com'
@@ -2396,6 +2405,10 @@ exports.updateSettings = async (req, res) => {
     // Force the SMTP transport to rebuild on next send so host/port/user
     // changes from the Settings UI take effect immediately.
     try { require('../utils/emailUtils').invalidateTransport?.(); } catch {}
+    // TURN creds + Anthropic key can change here too — drop their caches so the
+    // next call / AI request picks up the new value without a restart.
+    try { require('../utils/turnUtils').invalidateTurnCache?.(); } catch {}
+    try { require('../utils/aiKbUtils').invalidateAiClient?.(); } catch {}
     res.json({ message: 'Settings updated' });
   } catch (err) {
     console.error('updateSettings error:', err);

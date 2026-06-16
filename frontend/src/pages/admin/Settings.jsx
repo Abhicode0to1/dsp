@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/common/Layout';
 import { getAdminSettings, updateAdminSettings, triggerBillingSync, sendTestEmail } from '../../services/api';
-import { Settings, Save, RefreshCw, Link, Eye, EyeOff, Copy, Check, RefreshCcw, CreditCard, Clock, Mail, Send, Shield, Palette, Wrench, Power, AlertTriangle, MessageSquare } from 'lucide-react';
+import { Settings, Save, RefreshCw, Link, Eye, EyeOff, Copy, Check, RefreshCcw, CreditCard, Clock, Mail, Send, Shield, Palette, Wrench, Power, AlertTriangle, MessageSquare, Phone, Sparkles } from 'lucide-react';
 import TwoFactorPanel from '../../components/admin/TwoFactorPanel';
 import toast from 'react-hot-toast';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
@@ -96,6 +96,10 @@ export default function AdminSettings() {
     smtp_password: '',
     smtp_from: '',
     smtp_secure: '0',
+    // ── Runtime API credentials (override env; read live, no restart)
+    cloudflare_turn_key_id: '',
+    cloudflare_turn_api_token: '',
+    anthropic_api_key: '',
     // ── Inbound email (IMAP poller for customer replies → tickets)
     inbound_enabled: '0',
     imap_host: '',
@@ -144,6 +148,8 @@ export default function AdminSettings() {
   const [testEmailTemplate, setTestEmailTemplate]   = useState('generic');
   const [sendingTest, setSendingTest] = useState(false);
   const [showSmtpPw, setShowSmtpPw] = useState(false);
+  const [showTurnTok, setShowTurnTok] = useState(false);
+  const [showAiKey, setShowAiKey] = useState(false);
   const [showImapPw, setShowImapPw] = useState(false);
   const [loading, setLoading]         = useState(true);
   const [saving, setSaving]           = useState(false);
@@ -441,6 +447,66 @@ export default function AdminSettings() {
             </label>
             <div className="mt-3 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800">
               ⚠ Passwords entered here are stored in the database. Make sure your DB is properly secured. After saving, the test email below uses the new values immediately — no restart needed.
+            </div>
+          </div>
+
+          {/* Cloudflare TURN — voice/video calls relay */}
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Phone className="w-4 h-4 text-indigo-500" />
+              <h2 className="text-sm font-bold text-gray-700">Cloudflare TURN (Calls)</h2>
+            </div>
+            <p className="text-xs text-gray-400 mb-4">
+              Relay credentials for voice/video calls. Leave blank to fall back to the values in your <code>.env</code>. Get them from Cloudflare → Realtime → TURN. Applied live — no restart.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="label">TURN Key ID</label>
+                <input type="text" className="input w-full" placeholder="e.g. 8eac…" autoComplete="off"
+                  value={settings.cloudflare_turn_key_id}
+                  onChange={e => setSettings(s => ({ ...s, cloudflare_turn_key_id: e.target.value }))} />
+              </div>
+              <div>
+                <label className="label">TURN API Token</label>
+                <div className="relative">
+                  <input type={showTurnTok ? 'text' : 'password'} className="input w-full pr-10" autoComplete="new-password"
+                    value={settings.cloudflare_turn_api_token}
+                    onChange={e => setSettings(s => ({ ...s, cloudflare_turn_api_token: e.target.value }))} />
+                  <button type="button" onClick={() => setShowTurnTok(v => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                    {showTurnTok ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800">
+              ⚠ Stored in the database. If left blank, calls use the free public STUN/TURN fallback (less reliable at scale).
+            </div>
+          </div>
+
+          {/* Anthropic — AI bot / KB assistant */}
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-4 h-4 text-indigo-500" />
+              <h2 className="text-sm font-bold text-gray-700">Anthropic (AI Assistant)</h2>
+            </div>
+            <p className="text-xs text-gray-400 mb-4">
+              Claude API key powering the AI bot + knowledge-base search. Leave blank to fall back to <code>.env</code>. Get a key at console.anthropic.com. Applied live — no restart.
+            </p>
+            <div>
+              <label className="label">Anthropic API key</label>
+              <div className="relative">
+                <input type={showAiKey ? 'text' : 'password'} className="input w-full pr-10" autoComplete="new-password" placeholder="sk-ant-…"
+                  value={settings.anthropic_api_key}
+                  onChange={e => setSettings(s => ({ ...s, anthropic_api_key: e.target.value }))} />
+                <button type="button" onClick={() => setShowAiKey(v => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                  {showAiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <div className="mt-3 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800">
+              ⚠ Stored in the database. If left blank, the AI bot / KB search is disabled until a key is set.
             </div>
           </div>
 
