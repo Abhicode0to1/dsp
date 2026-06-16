@@ -1,0 +1,18 @@
+{
+  "name": "dsp-bugfix-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing the DSP feedback queue so Claude Code can autonomously fix admin-approved bug reports.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "dsp-bugfix-mcp": "./server.js"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.11.4"
+  }
+}

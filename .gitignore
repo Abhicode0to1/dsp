@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# env / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# build output (built on the server)
+frontend/dist/
+
+# user uploads / call recordings — never commit
+backend/uploads/
+
+# logs
+*.log
+npm-debug.log*
+ngrok_dsp.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

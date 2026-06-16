@@ -1,0 +1,7 @@
+{"test":"free-blocked-from-chat","total":25,"blocked":25,"leaked":0,"sample_error":"Live chat is not available on the Free plan"}
+{"test":"free-basic-blocked-from-calls","total":50,"blocked":50,"leaked":0,"sample_error":"Call support is not available on your current plan"}
+{"test":"moderate-call-cap","userId":2007,"status":403,"err":"Monthly call limit of 5 reached","limitExceeded":true}
+{"test":"moderate-call-cap","userId":2008,"status":403,"err":"Monthly call limit of 5 reached","limitExceeded":true}
+{"test":"moderate-call-cap","userId":2009,"status":403,"err":"Monthly call limit of 5 reached","limitExceeded":true}
+{"test":"premium-call-cap","userId":2032,"status":403,"err":"Monthly call limit of 10 reached","limitExceeded":true}
+{"test":"premium-call-cap","userId":2033,"status":403,"err":"Monthly call limit of 10 reached","limitExceeded":true}

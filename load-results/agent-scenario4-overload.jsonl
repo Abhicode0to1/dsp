@@ -1,0 +1,1 @@
+{"label":"agent_1138_overload","perf":{"fcp":236,"lcp":276,"cls":0,"longTaskCount":0,"longTaskMs":0},"interactions":[{"name":"nav→dashboard-under-load","ms":421,"ok":true},{"name":"nav→chats-under-load","ms":168,"ok":true}],"sockets":{"emits":[],"events":[],"reconnects":0,"disconnects":0},"hammerN":20}

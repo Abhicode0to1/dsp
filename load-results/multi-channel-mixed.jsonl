@@ -1,0 +1,100 @@
+{"channel":"ticket","plan":"free","userId":1957,"cohortIdx":0,"ms":812,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1958,"cohortIdx":1,"ms":817,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1959,"cohortIdx":2,"ms":819,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1960,"cohortIdx":3,"ms":838,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1961,"cohortIdx":4,"ms":841,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1962,"cohortIdx":5,"ms":842,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1963,"cohortIdx":6,"ms":865,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1964,"cohortIdx":7,"ms":870,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1965,"cohortIdx":8,"ms":880,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"free","userId":1966,"cohortIdx":9,"ms":857,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1982,"cohortIdx":10,"ms":848,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1983,"cohortIdx":11,"ms":905,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1984,"cohortIdx":12,"ms":894,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1985,"cohortIdx":13,"ms":847,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1986,"cohortIdx":14,"ms":857,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1987,"cohortIdx":15,"ms":877,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1988,"cohortIdx":16,"ms":848,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1989,"cohortIdx":17,"ms":874,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1990,"cohortIdx":18,"ms":904,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"basic","userId":1991,"cohortIdx":19,"ms":893,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2007,"cohortIdx":20,"ms":933,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2008,"cohortIdx":21,"ms":895,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2009,"cohortIdx":22,"ms":907,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2010,"cohortIdx":23,"ms":903,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2011,"cohortIdx":24,"ms":908,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2012,"cohortIdx":25,"ms":890,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2013,"cohortIdx":26,"ms":926,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2014,"cohortIdx":27,"ms":908,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2015,"cohortIdx":28,"ms":931,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"moderate","userId":2016,"cohortIdx":29,"ms":936,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2032,"cohortIdx":30,"ms":939,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2033,"cohortIdx":31,"ms":957,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2034,"cohortIdx":32,"ms":941,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2035,"cohortIdx":33,"ms":958,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2036,"cohortIdx":34,"ms":962,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2037,"cohortIdx":35,"ms":928,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2038,"cohortIdx":36,"ms":928,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2039,"cohortIdx":37,"ms":923,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2040,"cohortIdx":38,"ms":959,"status":200,"errCode":null,"ok":true}
+{"channel":"ticket","plan":"premium","userId":2041,"cohortIdx":39,"ms":930,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1992,"cohortIdx":0,"ms":707,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1993,"cohortIdx":1,"ms":688,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1994,"cohortIdx":2,"ms":708,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1995,"cohortIdx":3,"ms":721,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1996,"cohortIdx":4,"ms":706,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1997,"cohortIdx":5,"ms":721,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1998,"cohortIdx":6,"ms":719,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":1999,"cohortIdx":7,"ms":719,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":2000,"cohortIdx":8,"ms":706,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"basic","userId":2001,"cohortIdx":9,"ms":706,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2017,"cohortIdx":10,"ms":718,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2018,"cohortIdx":11,"ms":722,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2019,"cohortIdx":12,"ms":703,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2020,"cohortIdx":13,"ms":724,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2021,"cohortIdx":14,"ms":724,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2022,"cohortIdx":15,"ms":728,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2023,"cohortIdx":16,"ms":727,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2024,"cohortIdx":17,"ms":724,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2025,"cohortIdx":18,"ms":715,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"moderate","userId":2026,"cohortIdx":19,"ms":715,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2042,"cohortIdx":20,"ms":550,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2043,"cohortIdx":21,"ms":549,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2044,"cohortIdx":22,"ms":554,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2045,"cohortIdx":23,"ms":548,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2046,"cohortIdx":24,"ms":552,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2047,"cohortIdx":25,"ms":545,"status":200,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2048,"cohortIdx":26,"ms":715,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2049,"cohortIdx":27,"ms":714,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2050,"cohortIdx":28,"ms":710,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"premium","userId":2051,"cohortIdx":29,"ms":710,"status":201,"errCode":null,"ok":true}
+{"channel":"chat","plan":"free","userId":1967,"cohortIdx":30,"ms":334,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1968,"cohortIdx":31,"ms":331,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1969,"cohortIdx":32,"ms":333,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1970,"cohortIdx":33,"ms":330,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1971,"cohortIdx":34,"ms":328,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1972,"cohortIdx":35,"ms":328,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1973,"cohortIdx":36,"ms":327,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1974,"cohortIdx":37,"ms":327,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1975,"cohortIdx":38,"ms":326,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"chat","plan":"free","userId":1976,"cohortIdx":39,"ms":325,"status":403,"errCode":"Live chat is not available on the Free plan","ok":false}
+{"channel":"call","plan":"moderate","userId":2027,"cohortIdx":0,"ms":580,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"moderate","userId":2028,"cohortIdx":1,"ms":582,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"moderate","userId":2029,"cohortIdx":2,"ms":589,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"moderate","userId":2030,"cohortIdx":3,"ms":588,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"moderate","userId":2031,"cohortIdx":4,"ms":587,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"premium","userId":2052,"cohortIdx":5,"ms":586,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"premium","userId":2053,"cohortIdx":6,"ms":592,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"premium","userId":2054,"cohortIdx":7,"ms":583,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"premium","userId":2055,"cohortIdx":8,"ms":590,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"premium","userId":2056,"cohortIdx":9,"ms":589,"status":201,"errCode":null,"ok":true}
+{"channel":"call","plan":"basic","userId":2002,"cohortIdx":10,"ms":327,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"basic","userId":2003,"cohortIdx":11,"ms":317,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"basic","userId":2004,"cohortIdx":12,"ms":312,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"basic","userId":2005,"cohortIdx":13,"ms":326,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"basic","userId":2006,"cohortIdx":14,"ms":326,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"free","userId":1977,"cohortIdx":15,"ms":326,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"free","userId":1978,"cohortIdx":16,"ms":327,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"free","userId":1979,"cohortIdx":17,"ms":315,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"free","userId":1980,"cohortIdx":18,"ms":326,"status":403,"errCode":"Call support is not available on your current plan","ok":false}
+{"channel":"call","plan":"free","userId":1981,"cohortIdx":19,"ms":326,"status":403,"errCode":"Call support is not available on your current plan","ok":false}

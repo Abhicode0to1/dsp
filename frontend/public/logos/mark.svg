@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 64" aria-label="Anutech Digital">
+  <title>Anutech Digital</title>
+  <!-- cloud -->
+  <path fill="#0DA1FF" d="M76 60H22A18 18 0 0 1 22 24l1 0A20 20 0 0 1 62 22a14 14 0 0 1 14 14 13 13 0 0 1 0 24Z"/>
+  <!-- vertical divider -->
+  <rect x="100" y="10" width="5" height="44" rx="1" fill="currentColor"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" aria-label="Anutech Digital">
+  <title>Anutech Digital</title>
+  <!-- cloud -->
+  <path fill="#0DA1FF" d="M86 92H22A22 22 0 0 1 22 48l1 0A24 24 0 0 1 70 46a18 18 0 0 1 18 18 16 16 0 0 1-2 28Z"/>
+  <!-- vertical divider -->
+  <rect x="120" y="22" width="6" height="64" rx="1" fill="currentColor"/>
+  <!-- text -->
+  <text x="146" y="55" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="32" letter-spacing="2" fill="currentColor">ANUTECH</text>
+  <text x="146" y="92" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="32" letter-spacing="6" fill="currentColor">DIGITAL</text>
+</svg>
