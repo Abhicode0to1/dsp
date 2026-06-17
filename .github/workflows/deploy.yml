@@ -1,0 +1,36 @@
+name: Deploy DSP to production
+
+# Runs whenever code lands on main (and can be run manually from the Actions tab).
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+# Never let two deploys run at once.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Runs on the self-hosted runner installed on the GCP VM.
+    runs-on: self-hosted
+    steps:
+      - name: Checkout the pushed code
+        uses: actions/checkout@v4
+
+      # CI gate: if the app doesn't install + build cleanly, the job fails HERE
+      # and production is never touched.
+      - name: Build gate (install + build)
+        run: |
+          (cd backend  && npm ci --omit=dev)
+          (cd frontend && npm ci && npm run build)
+
+      # Only reached if the gate passed. Pull the latest code into the live
+      # dir FIRST (so we run the current deploy.sh), then run it. deploy.sh does:
+      # backup DB -> git pull -> install -> build -> pm2 reload -> health check.
+      - name: Deploy to the live app
+        run: |
+          cd /opt/dsp
+          git pull --ff-only
+          bash deploy.sh
