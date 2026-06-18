@@ -17,7 +17,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout the pushed code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # CI gate: if the app doesn't install + build cleanly, the job fails HERE
       # and production is never touched.
