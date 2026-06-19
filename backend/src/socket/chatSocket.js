@@ -1204,25 +1204,29 @@ module.exports = (io) => {
       if (!stored) return socket.emit('call_error', { message: 'Call not found' });
       if (stored.agentId !== socket.user.id) return socket.emit('call_error', { message: 'This call is not assigned to you' });
 
-      // Guard: only increment usage on the FIRST acceptance. After a transfer
-      // the new agent also fires call_accept (or a duplicate click could too) —
-      // we must not double-count the customer's monthly quota.
-      const wasFirstAccept = stored.status !== 'active';
-
       if (stored.missTimeoutId) clearTimeout(stored.missTimeoutId);
       stored.status = 'active';
       activeCalls.set(callId, stored);
 
-      // Only set call_start_time on the FIRST accept. Re-accepts (from
-      // transfer renegotiation) must NOT reset it — otherwise the total
-      // duration computed at call_end would only include time-since-last-
-      // transfer, throwing away the time the original agent spent on the
-      // call. This is the same `wasFirstAccept` flag we use to gate usage
-      // increment for the same reason.
-      if (wasFirstAccept) {
-        // First accept on this call — initialize the participants log with
-        // this agent. accept_transfer appends to it later if the call
-        // changes hands.
+      // Distinguish a genuine FIRST accept from a RE-accept after a transfer.
+      // We must key off call_start_time, NOT status: accept_transfer flips the
+      // status back to 'ringing' (the new agent renegotiates WebRTC), but it
+      // has already (a) left call_start_time set from the original answer and
+      // (b) appended the new agent to the participants log → [A, B]. If we keyed
+      // off status we'd wrongly treat the transfer re-accept as a first accept
+      // and (1) reset call_start_time (losing A's time) and (2) overwrite
+      // participants back to just [B] — which is exactly why transferred calls
+      // showed only the final agent everywhere (bug: transfer trace vanished).
+      const [[cur]] = await pool.query(
+        'SELECT call_start_time FROM calls WHERE id = ?',
+        [callId]
+      );
+      const isFreshAccept = !cur || !cur.call_start_time;
+
+      if (isFreshAccept) {
+        // First time anyone answered this call — start the clock and seed the
+        // participants log with this agent. accept_transfer appends later
+        // agents as the call changes hands.
         const participants = JSON.stringify([{
           agent_id: socket.user.id,
           agent_name: socket.user.name,
@@ -1233,6 +1237,9 @@ module.exports = (io) => {
           [participants, callId]
         );
       } else {
+        // Re-accept after a transfer: KEEP the original call_start_time and the
+        // [A, B] participants log accept_transfer already wrote — just mark it
+        // active again.
         await pool.query("UPDATE calls SET status = 'active' WHERE id = ?", [callId]);
       }
       notifyCallMonitors(io);
