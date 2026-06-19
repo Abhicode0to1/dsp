@@ -24,7 +24,10 @@ export function SocketProvider({ children }) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
     const newSocket = io(backendUrl, {
       auth: { token },
-      transports: ['websocket', 'polling'],
+      // WebSocket-only (Cloudflare WebSockets is enabled). Dropping the
+      // poll-then-upgrade dance eliminates the reconnect storm we saw through
+      // the CDN — a clean WS path stays up instead of thrashing transports.
+      transports: ['websocket'],
     });
 
     newSocket.on('connect', () => {

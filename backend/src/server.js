@@ -18,6 +18,10 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
   .split(',').map(s => s.trim());
 
 const io = new Server(server, {
+  // Tolerate brief CDN/mobile latency so Cloudflare-proxied sockets aren't
+  // false-disconnected (was causing a connect/disconnect reconnect storm).
+  pingTimeout: 60000,
+  pingInterval: 25000,
   cors: {
     origin: (origin, cb) => {
       // Allow requests with no origin (mobile/curl), localhost, and ngrok URLs

@@ -24,7 +24,7 @@ exports._signToken = signToken;
 // is free.
 async function rotateSession(userId) {
   const jti = crypto.randomBytes(16).toString('hex');
-  await pool.query('UPDATE users SET active_session_jti = ? WHERE id = ?', [jti, userId]);
+  await pool.query('UPDATE users SET active_session_jti = ?, session_last_seen = NOW() WHERE id = ?', [jti, userId]);
   return jti;
 }
 exports._rotateSession = rotateSession;
@@ -65,16 +65,17 @@ exports.login = async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Invalid credentials' });
 
-    // Single-device enforcement (block-new-login mode). If this user has a
-    // live socket connection somewhere right now, refuse the new login —
-    // the existing session holder gets to keep it. If no live socket
-    // (browser closed, tab closed, network drop, server restart cleared
-    // the room) we proceed normally; the previous jti will be overwritten
-    // by rotateSession below.
-    const io = req.app.get('io');
-    if (await isCurrentlyLoggedIn(io, user.id, user.active_session_jti)) {
+    // Single-device enforcement (block-new). Refuse a new login while this
+    // account already has an active session used within the idle window.
+    // RELIABLE — it does NOT depend on a live socket (a backgrounded mobile
+    // PWA drops its socket but the session is still "held"). The slot frees on
+    // explicit logout (jti cleared) or after SESSION_IDLE_MS of inactivity
+    // (safety net against permanent lockout if the first device just closes).
+    const SESSION_IDLE_MS = 30 * 60 * 1000; // 30 minutes
+    const lastSeenMs = user.session_last_seen ? new Date(user.session_last_seen).getTime() : 0;
+    if (user.active_session_jti && lastSeenMs && (Date.now() - lastSeenMs) < SESSION_IDLE_MS) {
       return res.status(409).json({
-        error: 'This account is already signed in on another device. Please sign out there first.',
+        error: 'This account is already signed in on another device. Please log out there first.',
         code: 'session_conflict',
       });
     }
@@ -219,7 +220,7 @@ exports.setupPassword = async (req, res) => {
 // so another login attempt can succeed.
 exports.logout = async (req, res) => {
   try {
-    await pool.query('UPDATE users SET active_session_jti = NULL WHERE id = ?', [req.user.id]);
+    await pool.query('UPDATE users SET active_session_jti = NULL, session_last_seen = NULL WHERE id = ?', [req.user.id]);
     // Boot any other tabs the same user has open — otherwise their lingering
     // sockets would keep `isCurrentlyLoggedIn` returning true, and a fresh
     // login attempt would still get rejected even though the user "logged

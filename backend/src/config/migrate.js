@@ -5,6 +5,10 @@ async function runMigrations() {
     if (!err.message.includes('Duplicate column') && !err.message.includes('already exists')) throw err;
   });
 
+  // users — single-device session: last-seen timestamp powering reliable
+  // block-new login (replaces the flaky live-socket check).
+  await run(`ALTER TABLE users ADD COLUMN session_last_seen TIMESTAMP NULL DEFAULT NULL`);
+
   // tickets — add tags, due_date columns
   await run(`ALTER TABLE tickets ADD COLUMN tags JSON DEFAULT NULL`);
   await run(`ALTER TABLE tickets ADD COLUMN due_date DATE DEFAULT NULL`);

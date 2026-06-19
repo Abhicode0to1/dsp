@@ -20,7 +20,7 @@ const authenticate = async (req, res, next) => {
       return res.status(401).json({ error: 'Two-factor verification required', code: 'needs_2fa' });
     }
     const [rows] = await pool.query(
-      'SELECT id, name, email, role, is_active, active_session_jti FROM users WHERE id = ?',
+      'SELECT id, name, email, role, is_active, active_session_jti, session_last_seen FROM users WHERE id = ?',
       [decoded.id]
     );
     if (!rows.length || !rows[0].is_active) {
@@ -39,6 +39,13 @@ const authenticate = async (req, res, next) => {
       });
     }
     req.user = rows[0];
+    // Refresh this session's last-seen (throttled to ~once/min) so block-new
+    // single-device login knows the session is still active — without relying
+    // on a live socket. Fire-and-forget; never blocks the request.
+    const lastSeenMs = rows[0].session_last_seen ? new Date(rows[0].session_last_seen).getTime() : 0;
+    if (Date.now() - lastSeenMs > 60000) {
+      pool.query('UPDATE users SET session_last_seen = NOW() WHERE id = ?', [decoded.id]).catch(() => {});
+    }
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
