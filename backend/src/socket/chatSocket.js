@@ -16,8 +16,11 @@ if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 // showing "Admin User" in the customer's chat header makes them think their chat
 // was escalated. Substitute a neutral label so the customer just sees "Support
 // Agent" — internal agent panels still see the real name.
-const customerDisplayName = (name, role) =>
-  (role === 'admin' || /^admin\b/i.test(name || '')) ? 'Support Agent' : (name || 'Support Agent');
+// Customer-facing display name. Admins are treated exactly like agents — the
+// customer just sees the person's real name (the role is never exposed to
+// customers anywhere). Falls back to a neutral label only when there's no name.
+const customerDisplayName = (name, _role) =>
+  (name && name.trim()) ? name.trim() : 'Support Agent';
 
 // notifyCallMonitors — emits a lightweight ping to the call_monitors room so
 // the admin's /admin/calls page refetches its list. Used at every meaningful
