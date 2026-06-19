@@ -127,7 +127,9 @@ exports.getDashboard = async (req, res) => {
         expiry: customer.plan_expiry,
         allowChat: !!(customer.allow_chat && planActive),
         allowCalls: !!(customer.allow_calls && planActive),
-        allowEmailTicket: !!(customer.allow_email_ticket && planActive),
+        // Tickets are NOT gated by expiry (bug #34) — an expired customer must
+        // still be able to raise a ticket to reach support / renew.
+        allowEmailTicket: !!customer.allow_email_ticket,
         ticketsLimit: customer.tickets_limit,
         callsLimit: customer.calls_limit,
         chatLimit: customer.chat_limit,
@@ -970,10 +972,10 @@ exports.botRaiseTicket = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer) return res.status(404).json({ error: 'Customer not found' });
 
-    // Plan must be active (same check as regular ticket creation)
-    if (!isPlanActive(customer)) {
-      return res.status(403).json({ error: 'Your support plan has expired. Please renew to raise tickets.' });
-    }
+    // Tickets stay available even when the plan has expired — it's the one
+    // channel an expired customer can still use to reach support and renew
+    // (bug #34). Chat & calls remain blocked on expiry. The monthly ticket
+    // limit below still applies.
 
     // Respect monthly ticket limit
     const ticketsUsed = await getTicketUsage(customer.id);

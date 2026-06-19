@@ -346,7 +346,7 @@ export default function CustomerDashboard() {
           <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold text-red-700">Your support plan has expired</p>
-            <p className="text-sm text-red-600 mt-0.5">Chat and call support are unavailable. Contact your account manager to renew.</p>
+            <p className="text-sm text-red-600 mt-0.5">Chat and call support are unavailable. You can still raise a support ticket to reach us — contact your account manager to renew.</p>
           </div>
         </div>
       )}

@@ -11,7 +11,7 @@ import {
   deleteAdminCustomer, bulkImportCustomers, bulkCustomerAction, getAuditLogs,
   getCustomerPlanHistory, renewCustomerPlan, recordPaymentProof,
 } from '../../services/api';
-import { calculateFinalPriceFE } from '../../utils/planUtils';
+import { calculateFinalPriceFE, planView } from '../../utils/planUtils';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 import {
   Search, RefreshCw, X, Save, Globe, Calendar,
@@ -323,6 +323,11 @@ function EditModal({ customer, plans, onClose, onSave }) {
     : 0;
 
   const handleSave = async () => {
+    // Paid plans require an expiry date (free never expires) — bug #34.
+    if (selectedPlan && selectedPlan.name !== 'free' && !form.planExpiry) {
+      toast.error('Please set a plan expiry date for paid plans.');
+      return;
+    }
     setSaving(true);
     try {
       await updateAdminCustomer(customer.id, {
@@ -395,8 +400,8 @@ function EditModal({ customer, plans, onClose, onSave }) {
             </div>
           ) : (
             <div>
-              <label className="label">Plan Expiry Date</label>
-              <input type="date" className="input" value={form.planExpiry} onChange={e => setForm(f => ({ ...f, planExpiry: e.target.value }))} />
+              <label className="label">Plan Expiry Date <span className="text-red-500">*</span></label>
+              <input type="date" required className="input" value={form.planExpiry} onChange={e => setForm(f => ({ ...f, planExpiry: e.target.value }))} />
             </div>
           )}
           <div>
@@ -524,9 +529,8 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
   );
 
   const c = data.customer;
-  // Free plan = always active (NULL expiry means "never expires"); paid plans
-  // are active until their plan_expiry date.
-  const planActive = c.plan_name === 'free' || (c.plan_expiry && new Date(c.plan_expiry) >= new Date());
+  // Canonical plan status (shared with the customer panel via utils/planUtils).
+  const { active: planActive, noExpirySet } = planView(c);
   const isSynced = Boolean(c.billing_customer_id);
 
   // Avatar initials — matches the Zoho-style header card
@@ -633,6 +637,14 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
                   <div className="mt-1.5 flex items-center gap-2 flex-wrap">
                     <PlanBadge plan={c.plan_name} />
                     <StatusBadge isActive={planActive} expiry={c.plan_expiry} />
+                    {noExpirySet && (
+                      <span
+                        className="inline-flex items-center gap-0.5 text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium"
+                        title="Paid plan with no expiry date set. Edit the customer and set an expiry date."
+                      >
+                        <AlertTriangle className="w-2.5 h-2.5" /> Expiry not set
+                      </span>
+                    )}
                     {data.override && (
                       <span
                         className="inline-flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium"
@@ -1118,6 +1130,12 @@ function ManualCustomerModal({ onClose, onCreated }) {
       toast.error('Password must be at least 8 characters.');
       return;
     }
+    // Paid plans require an expiry date (free never expires) — bug #34.
+    const selIsFree = plans.find(p => p.id === parseInt(planId))?.name === 'free';
+    if (planId && !selIsFree && !planExpiry) {
+      toast.error('Please set a plan expiry date for paid plans.');
+      return;
+    }
     setCreating(true);
     try {
       const res = await createManualCustomer({
@@ -1202,11 +1220,13 @@ function ManualCustomerModal({ onClose, onCreated }) {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-700 block mb-1">Plan Expiry</label>
+                  <label className="text-xs font-semibold text-gray-700 block mb-1">
+                    Plan Expiry {!selectedPlanIsFree && <span className="text-red-500">*</span>}
+                  </label>
                   {selectedPlanIsFree ? (
                     <p className="text-[11px] text-gray-500 italic pt-2">Free plan never expires.</p>
                   ) : (
-                    <input type="date" value={planExpiry} onChange={e => setPlanExpiry(e.target.value)} disabled={creating || !planId} className="input w-full text-sm" />
+                    <input type="date" required value={planExpiry} onChange={e => setPlanExpiry(e.target.value)} disabled={creating || !planId} className="input w-full text-sm" />
                   )}
                 </div>
               </div>
@@ -1720,8 +1740,8 @@ export default function AdminCustomers() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {customers.map(c => {
-                    // Free = always active; others active until plan_expiry.
-                    const active = c.plan_name === 'free' || (c.plan_expiry && new Date(c.plan_expiry) >= new Date());
+                    // Canonical plan status (shared with the customer panel).
+                    const { active, noExpirySet } = planView(c);
                     const synced = Boolean(c.billing_customer_id);
                     const isChecked = selectedIds.has(c.id);
                     return (
@@ -1769,6 +1789,14 @@ export default function AdminCustomers() {
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <PlanBadge plan={c.plan_name} />
                                 {!active && c.plan_expiry && <StatusBadge isActive={false} expiry={c.plan_expiry} />}
+                                {noExpirySet && (
+                                  <span
+                                    className="inline-flex items-center gap-0.5 text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium"
+                                    title="Paid plan with no expiry date set — open the detail page and set an expiry date."
+                                  >
+                                    <AlertTriangle className="w-2.5 h-2.5" /> Expiry not set
+                                  </span>
+                                )}
                                 {c.missing_payment_proof && (
                                   <span
                                     className="inline-flex items-center gap-0.5 text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium"

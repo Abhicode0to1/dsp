@@ -31,6 +31,26 @@ async function coerceExpiryForPlan(planId, requestedExpiry) {
   if (plan && plan.name === 'free') return null;
   return requestedExpiry || null;
 }
+
+// Lower-cased plan name for a plan id (or null). Used to decide whether an
+// expiry date is required (paid plans) vs forbidden (free plans).
+async function planNameById(planId) {
+  if (!planId) return null;
+  const [[plan]] = await pool.query('SELECT name FROM plans WHERE id = ?', [Number(planId)]);
+  return plan ? String(plan.name).toLowerCase() : null;
+}
+
+// A paid plan MUST have a valid YYYY-MM-DD expiry date (free plans never expire).
+// Returns an error string if the (plan, expiry) pair is invalid, else null.
+// This is what prevents the "paid plan with no expiry" limbo that made the
+// admin panel show EXPIRED while the customer panel showed ACTIVE (bug #34).
+function expiryRequirementError(planName, expiry) {
+  if (!planName || planName === 'free') return null; // free: expiry not required
+  const val = expiry ? String(expiry).slice(0, 10) : '';
+  if (!val) return 'An expiry date is required for paid plans.';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return 'Expiry date must be a valid date (YYYY-MM-DD).';
+  return null;
+}
 // And the dashboard count: Free customers count as active too (their NULL
 // expiry shouldn't disqualify them).
 exports.getDashboard = async (req, res) => {
@@ -57,13 +77,21 @@ exports.getDashboard = async (req, res) => {
     // Reflects what the panel actually knows: who's on which plan now × the
     // price set in Settings → Plans. NOT pulled from the invoices table —
     // that's the Zoho billing app's job, and DSP shouldn't pretend to be one.
+    // A paid customer only counts toward ARR / "paying customers" once they have
+    // a RECORDED PAYMENT (a non-empty payment_ref in plan_change_history) — a
+    // manually-created paid customer with no proof of payment is NOT counted as
+    // revenue (bug #34). `hp.has_proof` is the per-customer payment-proof flag.
     const [[revenueStats]] = await pool.query(
       `SELECT
-         COALESCE(SUM(p.minimum_price), 0) AS arr,
-         SUM(CASE WHEN p.name != 'free' THEN 1 ELSE 0 END) AS paying_customers,
+         COALESCE(SUM(CASE WHEN p.name != 'free' AND hp.has_proof = 1 THEN p.minimum_price ELSE 0 END), 0) AS arr,
+         SUM(CASE WHEN p.name != 'free' AND hp.has_proof = 1 THEN 1 ELSE 0 END) AS paying_customers,
          SUM(CASE WHEN p.name  = 'free' THEN 1 ELSE 0 END) AS free_customers
        FROM customers c
        JOIN plans p ON p.id = c.plan_id
+       LEFT JOIN (
+         SELECT customer_id, 1 AS has_proof FROM plan_change_history
+         WHERE payment_ref IS NOT NULL AND payment_ref <> '' GROUP BY customer_id
+       ) hp ON hp.customer_id = c.id
        WHERE p.name = 'free' OR c.plan_expiry IS NULL OR c.plan_expiry >= CURDATE()`
     );
     const totalRevenue = { total: Number(revenueStats.arr) || 0 };
@@ -405,6 +433,23 @@ exports.updateCustomer = async (req, res) => {
       // leave a stale date hanging.
       const coerced = await coerceExpiryForPlan(planId, null);
       if (coerced === null) { updates.push('plan_expiry = ?'); params.push(null); }
+    }
+    // Bug #34: a paid plan must always have an expiry. Validate the EFFECTIVE
+    // post-update plan + expiry so an edit can never leave a paid customer in
+    // the "no expiry" limbo. Only runs when the plan or expiry is being touched
+    // — unrelated edits (domain, products, …) are never blocked.
+    if (planId !== undefined || planExpiry !== undefined) {
+      const [[curr]] = await pool.query(
+        `SELECT c.plan_expiry, p.name AS plan_name
+           FROM customers c LEFT JOIN plans p ON p.id = c.plan_id WHERE c.id = ?`,
+        [req.params.id]
+      );
+      const effPlanName = planId !== undefined
+        ? await planNameById(planId)
+        : (curr?.plan_name ? String(curr.plan_name).toLowerCase() : null);
+      const effExpiry = planExpiry !== undefined ? (planExpiry || null) : (curr?.plan_expiry || null);
+      const updErr = expiryRequirementError(effPlanName, effExpiry);
+      if (updErr) return res.status(400).json({ error: updErr });
     }
     if (invoiceSubtotal !== undefined) { updates.push('invoice_subtotal = ?'); params.push(invoiceSubtotal); }
     if (domain !== undefined) { updates.push('domain = ?'); params.push(domain); }
@@ -802,14 +847,20 @@ exports.getRevenueReport = async (req, res) => {
 
     // ARR + MRR — point-in-time forward-looking revenue based on current
     // active customer base × plan prices. Independent of date range filter
-    // (it's always "right now", not historical).
+    // (it's always "right now", not historical). Only paid customers with a
+    // recorded payment_ref count — unverified (no-proof) customers are excluded
+    // from revenue (bug #34), matching the dashboard ARR query above.
     const [[arrStats]] = await pool.query(
       `SELECT
-         COALESCE(SUM(p.minimum_price), 0) AS arr,
-         SUM(CASE WHEN p.name != 'free' THEN 1 ELSE 0 END) AS paying_customers,
+         COALESCE(SUM(CASE WHEN p.name != 'free' AND hp.has_proof = 1 THEN p.minimum_price ELSE 0 END), 0) AS arr,
+         SUM(CASE WHEN p.name != 'free' AND hp.has_proof = 1 THEN 1 ELSE 0 END) AS paying_customers,
          SUM(CASE WHEN p.name  = 'free' THEN 1 ELSE 0 END) AS free_customers
        FROM customers c
        JOIN plans p ON p.id = c.plan_id
+       LEFT JOIN (
+         SELECT customer_id, 1 AS has_proof FROM plan_change_history
+         WHERE payment_ref IS NOT NULL AND payment_ref <> '' GROUP BY customer_id
+       ) hp ON hp.customer_id = c.id
        WHERE p.name = 'free' OR c.plan_expiry IS NULL OR c.plan_expiry >= CURDATE()`
     );
     const arr = Number(arrStats.arr) || 0;
@@ -2676,6 +2727,12 @@ exports.createManualCustomer = async (req, res) => {
       if (!freePlan) return res.status(500).json({ error: 'Free plan missing from plans table' });
       resolvedPlanId = freePlan.id;
     }
+    // Paid plans REQUIRE a valid expiry date (free plans never expire). Reject
+    // up front so we never create a paid customer in the "no expiry" limbo.
+    const resolvedPlanName = await planNameById(resolvedPlanId);
+    const expiryErr = expiryRequirementError(resolvedPlanName, plan_expiry);
+    if (expiryErr) return res.status(400).json({ error: expiryErr });
+
     // Free plan → expiry is always NULL ("never expires"). Paid plans keep the supplied expiry.
     const resolvedExpiry = await coerceExpiryForPlan(resolvedPlanId, plan_expiry);
 

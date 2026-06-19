@@ -45,13 +45,10 @@ exports.createTicket = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer) return res.status(404).json({ error: 'Customer profile not found' });
 
-    // Plan must be active
-    if (!isPlanActive(customer)) {
-      return res.status(403).json({
-        error: 'Your support plan has expired or is not active',
-        upgrade_required: true,
-      });
-    }
+    // Tickets are the ONE channel that stays open when a plan has expired — it's
+    // the customer's lifeline to reach support and renew (bug #34). Chat & calls
+    // remain gated by isPlanActive in their own controllers; tickets are not.
+    // The monthly ticket limit below still applies.
 
     // Check monthly ticket limit (free plan => no hard limit but no chat/call)
     const ticketsUsed = await getTicketUsage(customer.id);

@@ -33,10 +33,43 @@ async function getCustomerWithPlan(userId) {
   return r;
 }
 
+// plan_expiry is a DATE column (day precision, no time-of-day). A plan is valid
+// THROUGH the whole of its expiry day and only lapses once that calendar date
+// has passed — mirroring the nightly expiryWorker's `plan_expiry < CURDATE()`.
+// Comparing full timestamps (the old behaviour) wrongly marked a plan expired
+// partway through its final day, which is part of why the admin & customer
+// panels disagreed on the expiry day (bug #34).
+function toDateStr(value) {
+  if (!value) return null;
+  if (typeof value === 'string') return value.slice(0, 10); // already 'YYYY-MM-DD...'
+  const d = value instanceof Date ? value : new Date(value);
+  if (isNaN(d.getTime())) return null;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Canonical plan state — the SINGLE source of truth used by backend gating, the
+// admin customer list, and the customer dashboard so the two panels can never
+// disagree again (bug #34).
+//   'no_plan'   – no plan assigned → blocked from everything
+//   'free'      – free / lifetime plan, never expires
+//   'active'    – paid plan, today <= expiry date
+//   'expired'   – paid plan, expiry date has passed
+//   'no_expiry' – paid plan with NO expiry set (legacy data). Treated as ACTIVE
+//                 so a paying customer is never locked out, but the admin panel
+//                 surfaces it as "expiry not set / needs attention".
+function planStatus(customer) {
+  if (!customer || !customer.plan_id) return 'no_plan';
+  if (customer.plan_name === 'free') return 'free';
+  if (!customer.plan_expiry) return 'no_expiry';
+  return toDateStr(customer.plan_expiry) >= toDateStr(new Date()) ? 'active' : 'expired';
+}
+
 function isPlanActive(customer) {
-  if (!customer.plan_id) return false;
-  if (!customer.plan_expiry) return true; // no expiry = free/lifetime plan, always active
-  return new Date(customer.plan_expiry) >= new Date();
+  const s = planStatus(customer);
+  return s === 'free' || s === 'active' || s === 'no_expiry';
 }
 
 async function getTicketUsage(customerId) {
@@ -210,6 +243,8 @@ function calculateFinalPrice(planName, invoiceSubtotal) {
 module.exports = {
   getCustomerWithPlan,
   isPlanActive,
+  planStatus,
+  toDateStr,
   getTicketUsage,
   getCallUsage,
   getChatUsage,
