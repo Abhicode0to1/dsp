@@ -17,35 +17,38 @@ const signToken = (user, jti) =>
 // very next request — surfacing as a confusing "Your session has ended" 401.
 exports._signToken = signToken;
 
-// Single-device login enforcement. Generates a fresh session id and persists
-// it against the user. We deliberately do NOT kick existing sockets here —
-// the login handler checks isCurrentlyLoggedIn() first and rejects the request
-// when an active session exists, so by the time we get here we know the slot
-// is free.
+// Single-device login enforcement ("last-login-wins"). Generates a fresh
+// session id and persists it against the user, OVERWRITING any previous one.
+// The prior device's token then fails the active_session_jti comparison in
+// middleware/auth.js on its next request (and its socket gets 'session_revoked'
+// at the handshake), so the older session is signed out automatically.
 async function rotateSession(userId) {
   const jti = crypto.randomBytes(16).toString('hex');
-  await pool.query('UPDATE users SET active_session_jti = ?, session_last_seen = NOW() WHERE id = ?', [jti, userId]);
+  await pool.query('UPDATE users SET active_session_jti = ? WHERE id = ?', [jti, userId]);
   return jti;
 }
 exports._rotateSession = rotateSession;
 
-// "Is this user actively signed in right now?" — answered by checking the
-// socket.io room they'd be in if their browser is open. Socket disconnects on
-// browser close / tab close / network drop, so this is the truest "live"
-// signal we have without polling timestamps. Conservative fallback when io
-// isn't available (e.g. tests): assume yes, since blocking a duplicate login
-// is the safer default than allowing it.
-async function isCurrentlyLoggedIn(io, userId, jtiInDb) {
-  if (!jtiInDb) return false;
-  if (!io) return true;
+// "last-login-wins": immediately sign out any OTHER device that's still holding
+// an open socket for this user. Called right after rotateSession on every login
+// path. At login time the new device hasn't opened its socket yet, so every
+// socket in this room belongs to the previous session — boot them all. The old
+// tab receives 'session_revoked' and redirects to /login (see SocketContext).
+// Best-effort: never throws, so a socket hiccup can't block a successful login.
+async function bootOtherSockets(io, userId) {
+  if (!io) return;
   try {
     const sockets = await io.in(`user_${userId}`).fetchSockets();
-    return sockets.length > 0;
+    for (const s of sockets) {
+      s.emit('session_revoked', { reason: 'logged_in_elsewhere' });
+      s.disconnect(true);
+    }
   } catch {
-    return true;
+    // ignore — the stale device will still be kicked on its next API request
+    // via the active_session_jti mismatch in middleware/auth.js.
   }
 }
-exports._isCurrentlyLoggedIn = isCurrentlyLoggedIn;
+exports._bootOtherSockets = bootOtherSockets;
 
 exports.login = async (req, res) => {
   try {
@@ -65,20 +68,12 @@ exports.login = async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Invalid credentials' });
 
-    // Single-device enforcement (block-new). Refuse a new login while this
-    // account already has an active session used within the idle window.
-    // RELIABLE — it does NOT depend on a live socket (a backgrounded mobile
-    // PWA drops its socket but the session is still "held"). The slot frees on
-    // explicit logout (jti cleared) or after SESSION_IDLE_MS of inactivity
-    // (safety net against permanent lockout if the first device just closes).
-    const SESSION_IDLE_MS = 30 * 60 * 1000; // 30 minutes
-    const lastSeenMs = user.session_last_seen ? new Date(user.session_last_seen).getTime() : 0;
-    if (user.active_session_jti && lastSeenMs && (Date.now() - lastSeenMs) < SESSION_IDLE_MS) {
-      return res.status(409).json({
-        error: 'This account is already signed in on another device. Please log out there first.',
-        code: 'session_conflict',
-      });
-    }
+    // Single-device = "last-login-wins": we do NOT block a new login. Instead
+    // rotateSession() below mints a fresh session id, and the PREVIOUS device's
+    // token + socket then fail the jti check (middleware/auth.js + the socket
+    // handshake emits 'session_revoked'), so it's signed out automatically.
+    // This guarantees one active session at a time WITHOUT ever locking the
+    // real owner out of their own account.
 
     // If customer, fetch customer_id
     let customerId = null;
@@ -131,6 +126,7 @@ exports.login = async (req, res) => {
     }
 
     const jti = await rotateSession(user.id);
+    await bootOtherSockets(req.app.get('io'), user.id);
     const token = signToken(user, jti);
     res.json({
       token,
@@ -203,6 +199,7 @@ exports.setupPassword = async (req, res) => {
         .catch(() => {});
     }
     const jti = await rotateSession(user.id);
+    await bootOtherSockets(req.app.get('io'), user.id);
     const jwtToken = signToken(user, jti);
     res.json({
       token: jwtToken,
@@ -220,7 +217,7 @@ exports.setupPassword = async (req, res) => {
 // so another login attempt can succeed.
 exports.logout = async (req, res) => {
   try {
-    await pool.query('UPDATE users SET active_session_jti = NULL, session_last_seen = NULL WHERE id = ?', [req.user.id]);
+    await pool.query('UPDATE users SET active_session_jti = NULL WHERE id = ?', [req.user.id]);
     // Boot any other tabs the same user has open — otherwise their lingering
     // sockets would keep `isCurrentlyLoggedIn` returning true, and a fresh
     // login attempt would still get rejected even though the user "logged

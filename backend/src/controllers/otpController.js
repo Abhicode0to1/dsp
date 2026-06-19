@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const {
   _signToken: signToken,
   _rotateSession: rotateSession,
-  _isCurrentlyLoggedIn: isCurrentlyLoggedIn,
+  _bootOtherSockets: bootOtherSockets,
 } = require('./authController');
 
 exports.requestOtp = async (req, res) => {
@@ -58,17 +58,10 @@ exports.verifyOtp = async (req, res) => {
 
     if (!user) return res.status(400).json({ error: 'Account not found. Please contact support.' });
 
-    // Same single-device check the password login uses — if this user has a
-    // live socket connection elsewhere right now, refuse the new login so the
-    // existing tab keeps its session. Without this, OTP would silently kick
-    // the active tab on every login (different jti = old token rejected).
-    const io = req.app.get('io');
-    if (await isCurrentlyLoggedIn(io, user.id, user.active_session_jti)) {
-      return res.status(409).json({
-        error: 'This account is already signed in on another device. Please sign out there first.',
-        code: 'session_conflict',
-      });
-    }
+    // Single-device = "last-login-wins" (mirrors the password path): we do NOT
+    // block the login. rotateSession() below overwrites active_session_jti, and
+    // the previously-signed-in device is signed out automatically on its next
+    // request / via the 'session_revoked' socket event. No false lockouts.
 
     // If customer, attach customer_id to the response so the frontend doesn't
     // need a second round-trip.
@@ -83,6 +76,7 @@ exports.verifyOtp = async (req, res) => {
     // active_session_jti comparison fails on the very next request — that was
     // the "Your session has ended" loop the admin reported.
     const jti = await rotateSession(user.id);
+    await bootOtherSockets(req.app.get('io'), user.id);
     const token = signToken(user, jti);
 
     // Fire-and-forget first_login_at marker so the customer tour wizard knows
