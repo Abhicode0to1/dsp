@@ -192,7 +192,7 @@ exports.getCallHistory = async (req, res) => {
     const [calls] = await pool.query(
       `SELECT ca.id, ca.virtual_number, ca.status, ca.call_start_time,
               ca.call_end_time, ca.duration, ca.created_at, ca.initiated_by,
-              u.name AS agent_name,
+              u.name AS agent_name, ca.participants,
               (ca.call_start_time IS NOT NULL
                 AND (ca.initiated_by IS NULL OR ca.initiated_by != 'agent')
                 AND NOT (ca.status = 'ended' AND ca.duration IS NOT NULL AND ca.duration < ?)

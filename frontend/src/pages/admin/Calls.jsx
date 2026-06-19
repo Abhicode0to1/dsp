@@ -11,6 +11,7 @@ import { Phone, Search, RefreshCw, Headphones, ArrowUpRight, X, AlertCircle, Mic
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
+import { transferAgents, parseRecordings } from '../../utils/callUtils';
 
 const STATUS_COLOR = {
   ended:     'bg-green-50 text-green-700 border-green-200',
@@ -112,7 +113,7 @@ function fmtClock(s) {
 // knownDuration) AND coax the element into reporting a finite duration so
 // scrubbing lands correctly. Backend now serves the file with HTTP range
 // support, so seeking actually fetches the right bytes.
-function RecordingPlayer({ attachmentId, mime, size, knownDuration, onClose }) {
+function RecordingPlayer({ attachmentId, mime, size, knownDuration, label, onClose }) {
   const url = getAttachmentDownloadUrl(attachmentId);
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -160,6 +161,7 @@ function RecordingPlayer({ attachmentId, mime, size, knownDuration, onClose }) {
   return (
     <div className="flex items-center gap-3 p-3 bg-indigo-50/40 border-t border-indigo-100">
       <Mic className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+      {label && <span className="text-[11px] font-semibold text-violet-700 flex-shrink-0 w-24 truncate" title={label}>{label}</span>}
       <audio
         ref={audioRef}
         src={url}
@@ -402,7 +404,18 @@ export default function AdminCalls() {
                         <p className="font-medium text-gray-800">{c.customer_name}</p>
                         <p className="text-xs text-gray-400">{c.customer_domain || c.customer_email}</p>
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{c.agent_name || <span className="text-gray-300">—</span>}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {(() => {
+                          const chain = transferAgents(c.participants);
+                          if (chain.length > 1) return (
+                            <span className="inline-flex items-center gap-1 flex-wrap">
+                              <span className="text-gray-800">{chain.join(' → ')}</span>
+                              <span className="text-[9px] uppercase tracking-wider font-bold bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded" title="This call was transferred between agents.">transfer</span>
+                            </span>
+                          );
+                          return c.agent_name || <span className="text-gray-300">—</span>;
+                        })()}
+                      </td>
                       <td className="px-4 py-3 text-center">
                         <span className={clsx('text-[10px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded',
                           c.initiated_by === 'agent' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700')}>
@@ -457,35 +470,59 @@ export default function AdminCalls() {
                           >
                             <UserCheck className="w-3 h-3" /> Redirect
                           </button>
-                        ) : c.recording_attachment_id ? (
+                        ) : (parseRecordings(c.recordings).length || c.recording_attachment_id) ? (
                           playingId === c.id ? (
                             <span className="text-xs text-indigo-600 font-medium">Playing below ↓</span>
                           ) : (
-                            <button
-                              onClick={() => setPlayingId(c.id)}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-medium inline-flex items-center gap-1"
-                            >
-                              <Headphones className="w-3 h-3" /> Play
-                            </button>
+                            (() => {
+                              const n = parseRecordings(c.recordings).length;
+                              return (
+                                <button
+                                  onClick={() => setPlayingId(c.id)}
+                                  className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-medium inline-flex items-center gap-1"
+                                >
+                                  <Headphones className="w-3 h-3" /> Play{n > 1 ? ` (${n})` : ''}
+                                </button>
+                              );
+                            })()
                           )
                         ) : (
                           <span className="text-xs text-gray-300">—</span>
                         )}
                       </td>
                     </tr>
-                    {playingId === c.id && c.recording_attachment_id && (
-                      <tr>
-                        <td colSpan={8} className="p-0">
-                          <RecordingPlayer
-                            attachmentId={c.recording_attachment_id}
-                            mime={c.recording_mime}
-                            size={c.recording_size}
-                            knownDuration={c.duration}
-                            onClose={() => setPlayingId(null)}
-                          />
-                        </td>
-                      </tr>
-                    )}
+                    {playingId === c.id && (() => {
+                      // One player per recording leg. A transferred call has a
+                      // recording from each agent (ref_id = this call id); play
+                      // them in agent order, labelled by who recorded each.
+                      const recs = parseRecordings(c.recordings);
+                      const list = recs.length ? recs : (c.recording_attachment_id
+                        ? [{ id: c.recording_attachment_id, mime: c.recording_mime, size: c.recording_size, uploader: c.agent_name }]
+                        : []);
+                      if (!list.length) return null;
+                      return (
+                        <tr>
+                          <td colSpan={8} className="p-0">
+                            {list.length > 1 && (
+                              <div className="px-3 pt-2 text-[11px] font-semibold text-violet-700 bg-indigo-50/40">
+                                🔁 Transferred call — {list.length} recording legs (one per agent):
+                              </div>
+                            )}
+                            {list.map((r, i) => (
+                              <RecordingPlayer
+                                key={r.id}
+                                attachmentId={r.id}
+                                mime={r.mime}
+                                size={r.size}
+                                knownDuration={list.length === 1 ? c.duration : undefined}
+                                label={list.length > 1 ? `${r.uploader || 'Agent'}'s leg` : null}
+                                onClose={() => setPlayingId(null)}
+                              />
+                            ))}
+                          </td>
+                        </tr>
+                      );
+                    })()}
                   </Fragment>
                 ))}
               </tbody>

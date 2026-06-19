@@ -577,10 +577,19 @@ exports.getAdminCalls = async (req, res) => {
     const [calls] = await pool.query(`
       SELECT ca.id, ca.created_at, ca.call_start_time, ca.call_end_time, ca.duration,
              ca.status, ca.initiated_by, ca.ended_by, ca.ticket_id, ca.recording_attachment_id,
-             ca.agent_id,
+             ca.agent_id, ca.participants,
              cu.name AS customer_name, cu.email AS customer_email, c.domain AS customer_domain,
              ag.name AS agent_name,
-             fa.size_bytes AS recording_size, fa.mime_type AS recording_mime
+             fa.size_bytes AS recording_size, fa.mime_type AS recording_mime,
+             -- All recording legs for this call (a transferred call has one per
+             -- agent), each tagged with the uploading agent's name so the admin
+             -- can play "Abhishek's leg" + "Ranjeet's leg" separately.
+             (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                'id', fr.id, 'mime', fr.mime_type, 'size', fr.size_bytes,
+                'uploaded_by', fr.uploaded_by, 'uploader', uu.name,
+                'created_at', fr.created_at))
+              FROM file_attachments fr LEFT JOIN users uu ON uu.id = fr.uploaded_by
+              WHERE fr.ref_type = 'call_recording' AND fr.ref_id = ca.id) AS recordings
       FROM calls ca
       JOIN customers c ON c.id = ca.customer_id
       JOIN users cu ON cu.id = c.user_id

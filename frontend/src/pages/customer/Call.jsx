@@ -6,6 +6,7 @@ import useAudioLevel from '../../hooks/useAudioLevel';
 import AudioWaveBars from '../../components/common/AudioWaveBars';
 import { useSocket } from '../../contexts/SocketContext';
 import { initiateCall, getCallHistory, getCustomerDashboard, getCustomerAgentStatus, getActiveChat } from '../../services/api';
+import { transferAgents, wasTransferred } from '../../utils/callUtils';
 import {
   Phone, PhoneOff, PhoneCall, Mic, MicOff,
   Clock, Lock, AlertTriangle, History, Loader, Users, MessageCircle, ArrowRightLeft,
@@ -739,9 +740,21 @@ export default function CustomerCall() {
                               card (and the page) to overflow horizontally. */}
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                             <p className="text-sm font-semibold text-gray-800 min-w-0 break-words">
-                              {c.agent_name ? `Call with ${c.agent_name}` : 'Support Call'}
+                              {(() => {
+                                const chain = transferAgents(c.participants);
+                                if (chain.length > 1) return `Call with ${chain.join(' → ')}`;
+                                return c.agent_name ? `Call with ${c.agent_name}` : 'Support Call';
+                              })()}
                             </p>
                             <div className="flex items-center gap-1.5 flex-wrap">
+                              {wasTransferred(c.participants) && (
+                                <span
+                                  className="text-xs px-2 py-0.5 rounded-full font-medium bg-violet-50 text-violet-700"
+                                  title="This call was transferred between agents."
+                                >
+                                  🔁 Transferred
+                                </span>
+                              )}
                               <span
                                 className={`text-xs px-2 py-0.5 rounded-full font-medium ${isOutbound ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'}`}
                                 title={isOutbound ? 'Our agent placed this call to you. It does not count toward your monthly call limit.' : 'You initiated this call from the customer panel.'}
