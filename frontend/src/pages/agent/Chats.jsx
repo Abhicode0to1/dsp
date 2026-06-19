@@ -1013,6 +1013,10 @@ export default function AgentChats() {
     if (acceptingRef.current.has(chatId)) return;
     acceptingRef.current.add(chatId);
     socket?.emit('accept_chat', { chatId });
+    // Stop the ringtone immediately on click — don't wait for the server's
+    // chat_taken/chat_request_accepted round-trip (which can race the audio
+    // start or lag, leaving the accepter still hearing the bell). Fixes bug #33.
+    window.dispatchEvent(new Event('dsp:stop-ring'));
     const chat = pendingChats.find(c => c.id === chatId);
     setActiveChat(chat || { id: chatId });
     setActiveChatEnded(false);  // new chat takes over — clear any frozen transcript

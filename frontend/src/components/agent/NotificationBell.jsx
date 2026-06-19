@@ -96,6 +96,15 @@ export default function NotificationBell() {
     try { r.ctx.close(); } catch {}
   }, []);
 
+  // Bug #33: when this agent accepts a chat, the Chats page fires this event so
+  // we silence the ring INSTANTLY — independent of the server round-trip
+  // (chat_taken / chat_request_accepted), which could lag or race the audio.
+  useEffect(() => {
+    const onStop = () => stopRing();
+    window.addEventListener('dsp:stop-ring', onStop);
+    return () => window.removeEventListener('dsp:stop-ring', onStop);
+  }, [stopRing]);
+
   const startRing = useCallback(() => {
     if (ringRef.current) return; // Already ringing — don't stack
     // Silent mode for admins on /admin/* — the agent panel in the other tab
