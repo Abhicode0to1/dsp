@@ -145,7 +145,40 @@ exports.download = async (req, res) => {
 
     const filePath = path.join(__dirname, '../../uploads', att.stored_name);
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found on disk' });
-    res.download(filePath, att.original_name);
+
+    // Range-aware streaming so audio/video players can SEEK (and so the seek
+    // bar fills). res.download() sent the whole file with no Accept-Ranges, so
+    // <audio> could never request a byte offset — recordings were unscrubbable.
+    const stat = fs.statSync(filePath);
+    const total = stat.size;
+    const mime = att.mime_type || 'application/octet-stream';
+    const safeName = String(att.original_name || 'download').replace(/"/g, '');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Content-Type', mime);
+
+    const range = req.headers.range;
+    if (range) {
+      const m = /bytes=(\d*)-(\d*)/.exec(range);
+      let start = m && m[1] ? parseInt(m[1], 10) : 0;
+      let end = m && m[2] ? parseInt(m[2], 10) : total - 1;
+      if (isNaN(start)) start = 0;
+      if (isNaN(end) || end >= total) end = total - 1;
+      if (start > end || start >= total) {
+        res.status(416).setHeader('Content-Range', `bytes */${total}`);
+        return res.end();
+      }
+      res.status(206);
+      res.setHeader('Content-Range', `bytes ${start}-${end}/${total}`);
+      res.setHeader('Content-Length', end - start + 1);
+      return fs.createReadStream(filePath, { start, end }).pipe(res);
+    }
+
+    // No Range header → full file. Keep the attachment filename so the
+    // "Download" link still saves with the original name.
+    res.status(200);
+    res.setHeader('Content-Length', total);
+    res.setHeader('Content-Disposition', `attachment; filename="${safeName}"`);
+    return fs.createReadStream(filePath).pipe(res);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

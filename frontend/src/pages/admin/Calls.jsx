@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, Fragment } from 'react';
+import { useEffect, useState, useCallback, useRef, Fragment } from 'react';
 import Layout from '../../components/common/Layout';
 import RowsPerPageSelect, { readStoredPageSize } from '../../components/common/RowsPerPageSelect';
 import { useSocket } from '../../contexts/SocketContext';
@@ -7,7 +7,7 @@ import {
   getCallBlacklist, blockCustomerCalls, unblockCustomerCalls,
   redirectRingingCall,
 } from '../../services/api';
-import { Phone, Search, RefreshCw, Headphones, ArrowUpRight, X, AlertCircle, Mic, Shield, Activity, UserCheck } from 'lucide-react';
+import { Phone, Search, RefreshCw, Headphones, ArrowUpRight, X, AlertCircle, Mic, Shield, Activity, UserCheck, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
@@ -97,13 +97,106 @@ function RedirectCallModal({ call, agents, onClose, onDone }) {
   );
 }
 
-// Inline player row — only mounted when admin clicks "Play"
-function RecordingPlayer({ attachmentId, mime, size, onClose }) {
+function fmtClock(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+
+// Inline player row — only mounted when admin clicks "Play".
+// We deliberately do NOT use a bare <audio controls>: WebM blobs from
+// MediaRecorder carry no duration in their header, so audio.duration is
+// Infinity and the native seek bar never fills (it ticks but stays empty).
+// Fix: seed the total from the DB value (calls.duration, passed as
+// knownDuration) AND coax the element into reporting a finite duration so
+// scrubbing lands correctly. Backend now serves the file with HTTP range
+// support, so seeking actually fetches the right bytes.
+function RecordingPlayer({ attachmentId, mime, size, knownDuration, onClose }) {
   const url = getAttachmentDownloadUrl(attachmentId);
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [duration, setDuration] = useState(knownDuration > 0 ? knownDuration : 0);
+  const [muted, setMuted] = useState(false);
+
+  // Standard metadata-less-WebM coax: if duration is Infinity, seek far past the
+  // end so the browser recomputes the true duration, then snap back to 0.
+  const handleLoadedMetadata = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (isFinite(a.duration) && a.duration > 0) {
+      setDuration(a.duration);
+      return;
+    }
+    const onTU = () => {
+      const el = audioRef.current;
+      if (!el) return;
+      if (isFinite(el.duration) && el.duration > 0) setDuration(el.duration);
+      el.currentTime = 0;
+      el.removeEventListener('timeupdate', onTU);
+    };
+    a.addEventListener('timeupdate', onTU);
+    try { a.currentTime = 1e101; } catch { /* ignore */ }
+  };
+
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) { a.play().catch(() => {}); setPlaying(true); }
+    else { a.pause(); setPlaying(false); }
+  };
+
+  const onSeek = (e) => {
+    const a = audioRef.current;
+    if (!a) return;
+    const t = Number(e.target.value);
+    try { a.currentTime = t; } catch { /* ignore */ }
+    setCurrent(t);
+  };
+
+  const total = duration || knownDuration || 0;
+
   return (
     <div className="flex items-center gap-3 p-3 bg-indigo-50/40 border-t border-indigo-100">
       <Mic className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-      <audio controls src={url} className="flex-1 h-9" />
+      <audio
+        ref={audioRef}
+        src={url}
+        preload="metadata"
+        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={() => { const a = audioRef.current; if (a && isFinite(a.currentTime)) setCurrent(a.currentTime); }}
+        onEnded={() => { setPlaying(false); setCurrent(0); }}
+        className="hidden"
+      />
+      <button
+        onClick={toggle}
+        className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 hover:bg-indigo-700"
+        aria-label={playing ? 'Pause' : 'Play'}
+      >
+        {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+      </button>
+      <span className="text-xs text-gray-600 tabular-nums flex-shrink-0 w-9 text-center">{fmtClock(current)}</span>
+      <input
+        type="range"
+        min={0}
+        max={total || 0}
+        step="0.1"
+        value={Math.min(current, total || 0)}
+        onChange={onSeek}
+        disabled={!total}
+        className="flex-1 accent-indigo-600 h-1 cursor-pointer"
+        style={{ minWidth: '120px' }}
+        aria-label="Seek"
+      />
+      <span className="text-xs text-gray-600 tabular-nums flex-shrink-0 w-9 text-center">{fmtClock(total)}</span>
+      <button
+        onClick={() => { const a = audioRef.current; if (a) { a.muted = !a.muted; setMuted(a.muted); } }}
+        className="text-gray-500 hover:text-gray-700 flex-shrink-0"
+        aria-label={muted ? 'Unmute' : 'Mute'}
+      >
+        {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+      </button>
       <a
         href={url}
         download
@@ -111,7 +204,7 @@ function RecordingPlayer({ attachmentId, mime, size, onClose }) {
       >
         <ArrowUpRight className="w-3 h-3" /> Download
       </a>
-      <span className="text-[10px] text-gray-400 flex-shrink-0">{formatBytes(size)} · {mime?.replace('audio/', '') || ''}</span>
+      <span className="text-[10px] text-gray-400 flex-shrink-0">{formatBytes(size)} · {mime?.replace('audio/', '') || 'webm'}</span>
       <button onClick={onClose} className="text-gray-400 hover:text-gray-600 flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
     </div>
   );
@@ -387,6 +480,7 @@ export default function AdminCalls() {
                             attachmentId={c.recording_attachment_id}
                             mime={c.recording_mime}
                             size={c.recording_size}
+                            knownDuration={c.duration}
                             onClose={() => setPlayingId(null)}
                           />
                         </td>
