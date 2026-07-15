@@ -176,6 +176,10 @@ async function runMigrations() {
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_api_key', '')`);
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_webhook_secret', '')`);
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_last_sync', '')`);
+  // Provider-agnostic connector: which billing app + how to authenticate.
+  // provider: 'reselleros' | 'generic-rest' | 'zoho'  ·  auth_style: 'bearer' | 'x-api-key'
+  await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_provider', 'reselleros')`);
+  await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_auth_style', 'bearer')`);
 
   // Razorpay payment gateway settings
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('razorpay_key_id', '')`);

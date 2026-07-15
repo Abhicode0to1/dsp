@@ -253,7 +253,9 @@ export const getHealthSlaForecast = (hours = 4) => api.get('/admin/health/sla-fo
 
 // ── Billing Sync ──────────────────────────────────────────────────────────────
 export const triggerBillingSync      = ()         => api.post('/admin/sync/pull');
+export const testBillingConnection   = (data)     => api.post('/admin/billing/test', data);
 export const lookupBillingCustomer   = (data)     => api.post('/admin/customers/lookup-billing', data);
+export const bulkImportBillingCustomers = (data)  => api.post('/admin/customers/bulk-import-billing', data);
 export const startCustomerOnboarding = (id, data) => api.post(`/admin/customers/${id}/start-onboarding`, data || {});
 export const importBillingCustomer   = (data)     => api.post('/admin/customers/import', data);
 export const createManualCustomer    = (data)     => api.post('/admin/customers/manual', data);

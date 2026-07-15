@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/common/Layout';
-import { getAdminSettings, updateAdminSettings, triggerBillingSync, sendTestEmail } from '../../services/api';
+import { getAdminSettings, updateAdminSettings, triggerBillingSync, testBillingConnection, sendTestEmail } from '../../services/api';
 import { Settings, Save, RefreshCw, Link, Eye, EyeOff, Copy, Check, RefreshCcw, CreditCard, Clock, Mail, Send, Shield, Palette, Wrench, Power, AlertTriangle, MessageSquare, Phone, Sparkles } from 'lucide-react';
 import TwoFactorPanel from '../../components/admin/TwoFactorPanel';
 import toast from 'react-hot-toast';
+import clsx from 'clsx';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 
 const HOUR_OPTIONS = Array.from({ length: 24 }, (_, h) => ({
@@ -64,6 +65,8 @@ export default function AdminSettings() {
     work_hours_start: '10',
     work_hours_end: '18',
     work_hours_days: '1,2,3,4,5,6',
+    billing_provider: 'reselleros',
+    billing_auth_style: 'bearer',
     billing_api_url: '',
     billing_api_key: '',
     billing_webhook_secret: '',
@@ -157,6 +160,9 @@ export default function AdminSettings() {
   const [showRzpSecret, setShowRzpSecret] = useState(false);
   const [copied, setCopied]           = useState(false);
   const [syncing, setSyncing]         = useState(false);
+  const [testing, setTesting]         = useState(false);
+  const [testResult, setTestResult]   = useState(null); // { ok, message }
+  const [testCustomerId, setTestCustomerId] = useState('');
 
   const load = () => {
     setLoading(true);
@@ -206,6 +212,28 @@ export default function AdminSettings() {
     } catch (err) {
       toast.error(err.response?.data?.error || 'Test email failed — check SMTP config');
     } finally { setSendingTest(false); }
+  };
+
+  const handleTestBilling = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      // Test the values currently in the form (may be unsaved).
+      const r = await testBillingConnection({
+        url:         settings.billing_api_url,
+        key:         settings.billing_api_key,
+        provider:    settings.billing_provider,
+        auth_style:  settings.billing_auth_style,
+        customer_id: testCustomerId.trim() || undefined,
+      });
+      setTestResult(r.data);
+      if (r.data.ok) toast.success('Billing connection OK');
+      else toast.error('Billing connection failed');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Test request failed';
+      setTestResult({ ok: false, message: msg });
+      toast.error(msg);
+    } finally { setTesting(false); }
   };
 
   const handleSyncNow = async () => {
@@ -1083,46 +1111,73 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Zoho Books Integration */}
+          {/* Billing App Integration */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
               <Link className="w-4 h-4 text-indigo-500" />
-              <h2 className="text-sm font-bold text-gray-700">Zoho Books Integration</h2>
+              <h2 className="text-sm font-bold text-gray-700">Billing App Integration</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
-              Connect your Zoho Books account to auto-sync customers and their support plans.
-              Two ways to import customers: <strong>this automatic sync</strong>, or
-              the <strong>Bulk Import (CSV)</strong> button on the Customers page.
+              Connect your billing app so the customer panel can show live plans, invoices,
+              quotes and payments. Pick the provider, paste the base URL + key, and set each
+              customer's Billing ID on the Customers page.
             </p>
 
             <div className="space-y-4">
-              {/* Pull sync URL */}
+              {/* Provider + auth style */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+                  <select
+                    className="input"
+                    value={settings.billing_provider}
+                    onChange={e => setSettings(s => ({ ...s, billing_provider: e.target.value }))}
+                  >
+                    <option value="reselleros">ResellerOS</option>
+                    <option value="generic-rest">Generic REST (spec-shaped)</option>
+                    <option value="zoho">Zoho Books (legacy)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Auth header</label>
+                  <select
+                    className="input"
+                    value={settings.billing_auth_style}
+                    onChange={e => setSettings(s => ({ ...s, billing_auth_style: e.target.value }))}
+                  >
+                    <option value="bearer">Authorization: Bearer</option>
+                    <option value="x-api-key">X-API-Key</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Base URL */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Zoho Books API Base URL
+                  Billing API Base URL
                 </label>
                 <input
                   type="url"
                   className="input"
-                  placeholder="https://books.zoho.in"
+                  placeholder="https://your-billing-app/api/v1"
                   value={settings.billing_api_url}
                   onChange={e => setSettings(s => ({ ...s, billing_api_url: e.target.value }))}
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  Support panel will call <code className="bg-gray-100 px-1 rounded">[url]/api/customers</code> during sync.
+                  Include the full base incl. any version prefix (e.g. <code className="bg-gray-100 px-1 rounded">/api/v1</code>). Do not add a trailing slash.
                 </p>
               </div>
 
               {/* API Key */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Zoho Books API Key
+                  Billing API Key
                 </label>
                 <div className="relative">
                   <input
                     type={showApiKey ? 'text' : 'password'}
                     className="input pr-10"
-                    placeholder="Bearer token for Zoho Books API"
+                    placeholder="Key issued by your billing app"
                     value={settings.billing_api_key}
                     onChange={e => setSettings(s => ({ ...s, billing_api_key: e.target.value }))}
                   />
@@ -1136,11 +1191,60 @@ export default function AdminSettings() {
                 </div>
               </div>
 
+              {/* Test connection */}
+              <div className="border-t border-gray-100 pt-4">
+                <div className="flex items-end gap-2 flex-wrap">
+                  <div className="flex-1 min-w-[160px]">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Test with Billing ID <span className="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="C-00001"
+                      value={testCustomerId}
+                      onChange={e => setTestCustomerId(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleTestBilling}
+                    disabled={testing || !settings.billing_api_url || !settings.billing_api_key}
+                    className="btn-secondary flex items-center gap-1.5 flex-shrink-0"
+                    title="Call the billing app with these settings and report the result"
+                  >
+                    {testing
+                      ? <><span className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> Testing…</>
+                      : <><RefreshCw className="w-4 h-4" /> Test connection</>}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  Tests the values above (even before saving). Uses <code className="bg-gray-100 px-1 rounded">C-00001</code> if left blank.
+                </p>
+                {testResult && (
+                  <div className={clsx(
+                    'mt-3 flex items-start gap-2 rounded-lg p-3 text-sm border',
+                    testResult.ok
+                      ? 'bg-green-50 border-green-200 text-green-800'
+                      : 'bg-red-50 border-red-200 text-red-700'
+                  )}>
+                    {testResult.ok ? <Check className="w-4 h-4 flex-shrink-0 mt-0.5" /> : <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
+                    <div className="min-w-0">
+                      <p className="font-medium">{testResult.message}</p>
+                      {testResult.url && <p className="text-xs opacity-70 break-all mt-0.5">GET {testResult.url}</p>}
+                      {testResult.ok && testResult.sampleKeys?.length > 0 && (
+                        <p className="text-xs opacity-70 mt-0.5">Fields returned: {testResult.sampleKeys.join(', ')}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Webhook Secret */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Webhook Secret
-                  <span className="text-gray-400 font-normal ml-1">(copy this into Zoho Books)</span>
+                  <span className="text-gray-400 font-normal ml-1">(only if your billing app pushes webhooks)</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -1168,31 +1272,35 @@ export default function AdminSettings() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  Zoho Books must send this as <code className="bg-gray-100 px-1 rounded">X-Webhook-Secret</code> header when pushing to{' '}
-                  <code className="bg-gray-100 px-1 rounded">/api/sync/customer</code>
+                  If your billing app supports webhooks, it should send this as an{' '}
+                  <code className="bg-gray-100 px-1 rounded">X-Webhook-Secret</code> header when pushing to{' '}
+                  <code className="bg-gray-100 px-1 rounded">/api/sync/customer</code>. (ResellerOS is read-only / poll-based — leave blank.)
                 </p>
               </div>
 
-              {/* Sync Now */}
+              {/* Sync Now — bulk pull; only providers with a list-all endpoint support it */}
               <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Manual sync from Zoho Books</p>
+                  <p className="text-sm font-medium text-gray-700">Manual bulk sync</p>
                   <p className="text-xs text-gray-400">
                     {settings.billing_last_sync
                       ? `Last synced: ${new Date(settings.billing_last_sync).toLocaleString('en-IN')}`
                       : 'Never synced'}
+                    {settings.billing_provider === 'reselleros' && ' · ResellerOS has no list-all endpoint — set Billing IDs per customer instead'}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleSyncNow}
-                  disabled={syncing || !settings.billing_api_url}
+                  disabled={syncing || !settings.billing_api_url || settings.billing_provider === 'reselleros'}
                   className="btn-primary flex items-center gap-1.5"
-                  title={!settings.billing_api_url ? 'Save your Zoho Books URL first' : 'Pull customers from Zoho Books'}
+                  title={settings.billing_provider === 'reselleros'
+                    ? 'ResellerOS does not expose a bulk customer list — link customers individually'
+                    : (!settings.billing_api_url ? 'Save your billing URL first' : 'Pull customers from the billing app')}
                 >
                   {syncing
                     ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Syncing…</>
-                    : <><RefreshCcw className="w-4 h-4" /> Sync from Zoho Books</>}
+                    : <><RefreshCcw className="w-4 h-4" /> Bulk sync</>}
                 </button>
               </div>
             </div>

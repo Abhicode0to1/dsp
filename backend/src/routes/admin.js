@@ -37,6 +37,7 @@ const {
   updateSettings,
   lookupBillingCustomer,
   importBillingCustomer,
+  bulkImportBillingCustomers,
   createManualCustomer,
   changeAgentPassword,
   changeCustomerPassword,
@@ -70,7 +71,7 @@ const {
   resetEmailTemplate,
   previewEmailTemplate,
 } = require('../controllers/emailTemplateController');
-const { triggerPullSync, getCustomerOverrides, upsertCustomerOverrides, deleteCustomerOverrides } = require('../controllers/syncController');
+const { triggerPullSync, getCustomerOverrides, upsertCustomerOverrides, deleteCustomerOverrides, testBillingConnection } = require('../controllers/syncController');
 const { authenticate, requireRole } = require('../middleware/auth');
 
 router.use(authenticate);
@@ -811,6 +812,7 @@ router.get('/reports/plan-changes', async (req, res) => {
   }
 });
 router.post('/sync/pull',              triggerPullSync);
+router.post('/billing/test',           testBillingConnection);
 router.get('/plans',              getPlans);
 router.put('/plans/:id',          updatePlan);
 router.get('/calls',              getAdminCalls);
@@ -1103,6 +1105,7 @@ router.get('/settings',                    getSettings);
 router.put('/settings',                    updateSettings);
 router.post('/customers/lookup-billing',   lookupBillingCustomer);
 router.post('/customers/import',           importBillingCustomer);
+router.post('/customers/bulk-import-billing', bulkImportBillingCustomers);
 router.post('/customers/manual',           createManualCustomer);
 router.post('/customers/bulk-import',      bulkImportCustomers);
 router.post('/customers/bulk-action',      bulkCustomerAction);

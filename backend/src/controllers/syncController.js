@@ -190,118 +190,83 @@ exports.receiveBillingWebhook = async (req, res) => {
   }
 };
 
-// POST /admin/sync/pull — admin triggers full sync from billing API
+// POST /admin/sync/pull — one-click "Sync all from Billing".
+// Pages through the billing app's customer list via the provider adapter and
+// creates/links every customer in DSP. Their subscriptions/invoices/payments
+// load live in the Billing tab, so we only store the link + basic products here.
+// The DSP support tier is NOT set from billing (managed inside DSP).
 exports.triggerPullSync = async (req, res) => {
+  const billing = require('../billing');
   try {
-    const base   = (await getSetting('billing_api_url')).replace(/\/$/, '');
-    const apiKey = await getSetting('billing_api_key');
+    if (!(await billing.isConfigured())) {
+      return res.status(400).json({ error: 'Billing app URL is not configured in Settings' });
+    }
 
-    if (!base) return res.status(400).json({ error: 'Billing API URL is not configured in Settings' });
-
-    // ── Step 1: sync contacts (no plan data expected) ──────────────────────
-    let page = 1, totalPages = 1;
+    let page = 1, pages = 1, total = 0;
     let created = 0, updated = 0, errors = 0;
     const errorLog = [];
 
-    while (page <= totalPages) {
-      const data = await fetchJson(`${base}/api/customers?page=${page}&per_page=100`, apiKey);
-      if (!data || !Array.isArray(data.customers))
-        return res.status(502).json({ error: 'Billing API returned unexpected response. Check your API URL.' });
-      totalPages = data.pages || 1;
-      for (const customer of data.customers) {
+    do {
+      let batch;
+      try {
+        batch = await billing.listCustomers({ page, perPage: 100 });
+      } catch (e) {
+        if (billing.isListUnsupportedError(e)) {
+          return res.status(501).json({
+            code: 'list_unsupported',
+            error: 'Your billing app has no "list all customers" endpoint yet, so DSP can\'t pull everyone automatically. Ask your billing dev to add GET /customers?page=&per_page= returning { customers:[...], pages, total }. Meanwhile use "Import from Billing" to add customers one at a time.',
+          });
+        }
+        throw e;
+      }
+
+      pages = batch.pages || 1;
+      total = batch.total || total;
+
+      for (const cust of batch.customers) {
         try {
-          const result = await upsertCustomer(customer);
+          // Best-effort: attach product names so the admin sees them; non-fatal.
+          let products;
+          try {
+            const subs = await billing.getSubscriptions(cust.billing_customer_id);
+            products = subs.map(s => s.name).filter(Boolean);
+          } catch { /* ignore */ }
+
+          const result = await upsertCustomer({ ...cust, products });
           if (result.action === 'created') {
             created++;
-            sendWelcomeEmail({ to: result.email, name: result.name, tempPassword: result.temp_password }).catch(() => {});
-          } else if (result.action === 'updated') updated++;
-        } catch (e) { errors++; errorLog.push(`${customer.email}: ${e.message}`); }
+            sendWelcomeEmail({ to: result.email, name: result.name, setupToken: result.setup_token }).catch(() => {});
+          } else if (result.action === 'updated') {
+            updated++;
+          }
+        } catch (e) {
+          errors++;
+          errorLog.push(`${cust.email || cust.billing_customer_id}: ${e.message}`);
+        }
       }
       page++;
-    }
-
-    // ── Step 2: sync support plans — fetch per-customer subscriptions ──────
-    let planUpdates = 0;
-    try {
-      // The global /api/subscriptions returns empty; fetch per customer instead
-      const [dspCustomers] = await pool.query(
-        `SELECT c.id AS customer_id, c.billing_customer_id, u.email
-         FROM customers c JOIN users u ON u.id = c.user_id
-         WHERE c.billing_customer_id IS NOT NULL AND c.billing_customer_id != ''`
-      );
-      console.log(`[Sync] Fetching subscriptions for ${dspCustomers.length} customers with billing_customer_id`);
-
-      for (const dspCust of dspCustomers) {
-        let raw = null;
-        try {
-          raw = await fetchJson(`${base}/api/customer/subscriptions?id=${dspCust.billing_customer_id}`, apiKey);
-          console.log(`[Sync] Customer ${dspCust.billing_customer_id} (${dspCust.email}) raw: ${JSON.stringify(raw).slice(0, 400)}`);
-        } catch (e) {
-          console.log(`[Sync] Failed to fetch subs for customer ${dspCust.billing_customer_id}: ${e.message}`);
-          continue;
-        }
-
-        // Normalise response: support_subscription may be a single object or array
-        const supportSub = raw?.support_subscription;
-        // Also check array-style fields in case the API evolves
-        const subArray = raw?.support_subscriptions ?? raw?.subscriptions ?? raw?.data ?? null;
-
-        // Build a unified list to process
-        const toProcess = [];
-        if (supportSub && typeof supportSub === 'object') toProcess.push(supportSub);
-        if (Array.isArray(subArray)) toProcess.push(...subArray);
-
-        if (toProcess.length === 0) {
-          console.log(`[Sync] Customer ${dspCust.email}: support_subscription is null/empty — skipping`);
-          continue;
-        }
-
-        for (const sub of toProcess) {
-          const productsRaw = sub.product_name || sub.products || sub.product || sub.items
-            || sub.plan || sub.plan_name || sub.name || '';
-          const productStr = Array.isArray(productsRaw)
-            ? productsRaw.map(p => (typeof p === 'object' ? (p.name || p.product_name || '') : p)).join(' ')
-            : String(productsRaw);
-
-          if (!/support/i.test(productStr)) continue;
-
-          const expiry = sub.renewal_date || sub.renewal || sub.next_renewal
-            || sub.end_date || sub.expiry || sub.valid_until || null;
-          const statusRaw = String(sub.status || sub.subscription_status || 'active').toLowerCase();
-          const isActive  = statusRaw === 'active' || statusRaw === 'paid' ? 1 : 0;
-          const planName  = normalizePlanName(productStr);
-          console.log(`[Sync Sub] customer=${dspCust.email} product="${productStr}" → plan=${planName} expiry=${expiry}`);
-
-          const [[planRow]] = await pool.query('SELECT id FROM plans WHERE name = ?', [planName]);
-          if (!planRow) { console.log(`[Sync Sub] No plan row for "${planName}"`); continue; }
-
-          let expiryDate = null;
-          if (expiry) { try { expiryDate = new Date(expiry).toISOString().split('T')[0]; } catch { expiryDate = null; } }
-
-          await pool.query(
-            `UPDATE customers SET plan_id = ?, plan_expiry = ?, billing_synced_at = NOW() WHERE id = ?`,
-            [planRow.id, expiryDate, dspCust.customer_id]
-          );
-          await pool.query(
-            `UPDATE users u JOIN customers c ON c.user_id = u.id SET u.is_active = ? WHERE c.id = ?`,
-            [isActive, dspCust.customer_id]
-          );
-          planUpdates++;
-        }
-      }
-
-      if (planUpdates === 0) {
-        console.log('[Sync] No plan updates from per-customer subscriptions. The billing app may not expose per-customer subscription endpoints. Check the per-customer endpoint logs above.');
-      }
-    } catch (subErr) {
-      console.warn('[Sync] Subscriptions step failed (non-fatal):', subErr.message);
-    }
+    } while (page <= pages);
 
     await updateLastSync();
-    res.json({ synced: created + updated, created, updated, planUpdates, errors, errorLog });
+    res.json({ synced: created + updated, created, updated, total, errors, errorLog });
   } catch (err) {
     console.error('[Pull Sync]', err.message);
     res.status(502).json({ error: err.message || 'Failed to connect to billing API' });
+  }
+};
+
+// POST /admin/billing/test — probe the billing app with saved or typed config
+exports.testBillingConnection = async (req, res) => {
+  try {
+    const billing = require('../billing');
+    const { url, key, provider, auth_style, customer_id } = req.body || {};
+    const result = await billing.testConnection({
+      url, key, provider, authStyle: auth_style, customerId: customer_id,
+    });
+    res.json(result);
+  } catch (err) {
+    console.error('[billing test]', err.message);
+    res.status(500).json({ ok: false, message: 'Test failed to run' });
   }
 };
 

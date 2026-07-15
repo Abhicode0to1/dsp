@@ -3,6 +3,7 @@ const { calculateFinalPrice, currentMonthYear, getTicketUsage, getChatUsage, get
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { upsertCustomer, getSetting, fetchJson, postJson } = require('./syncController');
+const billing = require('../billing');
 const { sendWelcomeEmail, sendAccountReadyEmail, sendAgentWelcomeEmail } = require('../utils/emailUtils');
 const { logPlanChange } = require('../utils/planHistory');
 
@@ -2362,6 +2363,7 @@ exports.getSettings = async (req, res) => {
 
 const ALLOWED_SETTING_KEYS = new Set([
   'auto_close_days', 'queue_sla_minutes',
+  'billing_provider', 'billing_auth_style',
   'billing_api_url', 'billing_api_key', 'billing_webhook_secret',
   'razorpay_key_id', 'razorpay_key_secret',
   'work_hours_start', 'work_hours_end', 'work_hours_days',
@@ -2509,22 +2511,26 @@ exports.lookupBillingCustomer = async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email is required' });
-
-    const billingUrl = await getSetting('billing_api_url');
-    const apiKey    = await getSetting('billing_api_key');
-    if (!billingUrl) return res.status(400).json({ error: 'Billing app URL is not configured in Settings' });
-
-    const url  = `${billingUrl.replace(/\/$/, '')}/api/customers?email=${encodeURIComponent(email)}&per_page=10`;
-    const data = await fetchJson(url, apiKey);
-
-    if (!data || !Array.isArray(data.customers)) {
-      return res.status(502).json({ error: 'Billing app returned an unexpected response' });
+    if (!(await billing.isConfigured())) {
+      return res.status(400).json({ error: 'Billing app URL is not configured in Settings' });
     }
 
-    const found = data.customers.find(c => c.email?.toLowerCase() === email.toLowerCase());
-    if (!found) return res.status(404).json({ error: 'No customer found with that email in billing app' });
+    const found = await billing.findCustomerByEmail(email.trim());
+    if (!found || !found.email) {
+      return res.status(404).json({ error: 'No customer found with that email in billing app' });
+    }
 
-    res.json({ customer: found });
+    // Attach the customer's product subscriptions for display context. These are
+    // the resold products (e.g. Google Workspace) — NOT the DSP support tier,
+    // which DSP manages itself. So we don't force a support plan on import.
+    let subscriptions = [];
+    try {
+      subscriptions = await billing.getSubscriptions(found.billing_customer_id);
+    } catch (e) {
+      console.warn('[Lookup Billing] subscription fetch failed:', e.message);
+    }
+
+    res.json({ customer: { ...found, subscriptions } });
   } catch (err) {
     console.error('[Lookup Billing]', err.message);
     res.status(502).json({ error: err.message || 'Failed to search billing app' });
@@ -2682,6 +2688,59 @@ exports.importBillingCustomer = async (req, res) => {
   } catch (err) {
     console.error('[Import Customer]', err.message);
     res.status(500).json({ error: err.message || 'Import failed' });
+  }
+};
+
+// POST /admin/customers/bulk-import-billing — look up a batch of emails in the
+// billing app and create/link each support account. ResellerOS has no list-all
+// endpoint, so this is how admins pull a known set of customers in one go.
+exports.bulkImportBillingCustomers = async (req, res) => {
+  try {
+    if (!(await billing.isConfigured())) {
+      return res.status(400).json({ error: 'Billing app URL is not configured in Settings' });
+    }
+    const rawList = Array.isArray(req.body.emails)
+      ? req.body.emails
+      : String(req.body.emails || '').split(/[\n,;]+/);
+    // Each token can be an email OR a Billing ID (e.g. C-00001) — ResellerOS
+    // identifies customers by Billing ID and test accounts may lack emails.
+    const tokens = [...new Set(rawList.map(t => String(t).trim()).filter(Boolean))];
+    if (!tokens.length) return res.status(400).json({ error: 'No emails or Billing IDs provided' });
+    if (tokens.length > 200) return res.status(400).json({ error: 'Too many entries — max 200 per batch' });
+
+    const results = [];
+    let created = 0, updated = 0, notFound = 0, failed = 0;
+
+    for (const token of tokens) {
+      const isEmail = /\S+@\S+\.\S+/.test(token);
+      const email = token; // label for the result row
+      try {
+        const found = isEmail
+          ? await billing.findCustomerByEmail(token)
+          : await billing.getCustomer(token);
+        if (!found || !found.billing_customer_id) { notFound++; results.push({ email, status: 'not_found' }); continue; }
+
+        // Create/link only — the DSP support tier is managed in DSP, not derived
+        // from the customer's resold-product subscriptions.
+        const result = await upsertCustomer({ ...found });
+        if (result.action === 'created') {
+          created++;
+          sendWelcomeEmail({ to: result.email, name: result.name, setupToken: result.setup_token }).catch(() => {});
+        } else if (result.action === 'updated') {
+          updated++;
+        } else {
+          results.push({ email, status: 'skipped', reason: result.reason }); continue;
+        }
+        results.push({ email, status: result.action, name: found.name, billing_customer_id: found.billing_customer_id });
+      } catch (e) {
+        failed++; results.push({ email, status: 'error', reason: e.message });
+      }
+    }
+
+    res.json({ total: emails.length, created, updated, not_found: notFound, failed, results });
+  } catch (err) {
+    console.error('[Bulk Import Billing]', err.message);
+    res.status(500).json({ error: err.message || 'Bulk import failed' });
   }
 };
 

@@ -6,7 +6,7 @@ import { PlanBadge, StatusBadge } from '../../components/common/PlanBadge';
 import {
   getAdminCustomers, getAdminCustomerById, updateAdminCustomer, getAdminPlans,
   getCustomerOverrides, updateCustomerOverrides, clearCustomerOverrides,
-  lookupBillingCustomer, importBillingCustomer, createManualCustomer, changeCustomerPassword,
+  lookupBillingCustomer, importBillingCustomer, triggerBillingSync, createManualCustomer, changeCustomerPassword,
   resetCustomerUsage, getAdminAgents, startCustomerOnboarding,
   deleteAdminCustomer, bulkImportCustomers, bulkCustomerAction, getAuditLogs,
   getCustomerPlanHistory, renewCustomerPlan, recordPaymentProof,
@@ -15,7 +15,7 @@ import { calculateFinalPriceFE, planView } from '../../utils/planUtils';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 import {
   Search, RefreshCw, X, Save, Globe, Calendar,
-  Package, Ticket, IndianRupee, Link, ShieldAlert, Trash2, UserPlus, KeyRound, RotateCcw, Sparkles, UserCheck, AlertTriangle, FileUp, CheckCircle2, XCircle, SkipForward, Mail, CreditCard,
+  Package, Ticket, IndianRupee, Link, ShieldAlert, Trash2, UserPlus, KeyRound, RotateCcw, Sparkles, UserCheck, AlertTriangle, FileUp, CheckCircle2, XCircle, SkipForward, Mail, CreditCard, UsersRound,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
@@ -1353,7 +1353,7 @@ function ImportCustomerModal({ onClose, onImported }) {
 
         <div className="px-6 py-5 space-y-4">
           <p className="text-sm text-gray-500">
-            Search Zoho Books for a customer by email and create their support portal account.
+            Search your billing app for a customer by email and create their support portal account.
           </p>
 
           <div>
@@ -1384,27 +1384,37 @@ function ImportCustomerModal({ onClose, onImported }) {
 
           {notFound && (
             <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
-              No customer found with that email in Zoho Books.
+              No customer found with that email in your billing app.
             </div>
           )}
 
           {found && (
             <>
               <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-semibold text-indigo-700 uppercase tracking-wide mb-2">Found in Zoho Books</p>
+                <p className="text-xs font-semibold text-indigo-700 uppercase tracking-wide mb-2">Found in billing app</p>
                 <div className="grid grid-cols-2 gap-y-1.5 text-sm">
                   <div><span className="text-gray-500">Name </span><span className="font-medium text-gray-800">{found.name}</span></div>
                   <div><span className="text-gray-500">Email </span><span className="font-medium text-gray-800">{found.email}</span></div>
                   <div><span className="text-gray-500">Domain </span><span className="font-medium text-gray-800">{found.domain || '—'}</span></div>
-                  <div><span className="text-gray-500">Plan </span><span className="font-medium capitalize text-gray-800">{found.plan || 'free'}</span></div>
-                  {found.plan_expiry && (
-                    <div className="col-span-2">
-                      <span className="text-gray-500">Expires </span>
-                      <span className="font-medium text-gray-800">{new Date(found.plan_expiry).toLocaleDateString('en-IN')}</span>
-                    </div>
-                  )}
+                  <div><span className="text-gray-500">Billing ID </span><span className="font-medium text-gray-800 font-mono">{found.billing_customer_id || '—'}</span></div>
                 </div>
+                {found.subscriptions?.length > 0 && (
+                  <div className="pt-2 mt-2 border-t border-indigo-100">
+                    <p className="text-xs font-semibold text-indigo-700 uppercase tracking-wide mb-1">Products ({found.subscriptions.length})</p>
+                    <div className="space-y-1">
+                      {found.subscriptions.slice(0, 4).map((s, i) => (
+                        <div key={i} className="text-xs text-gray-600 flex justify-between gap-2">
+                          <span className="truncate">{s.name}{s.seats ? ` · ${s.seats} seats` : ''}</span>
+                          {s.renewal_date && <span className="text-gray-400 whitespace-nowrap">renews {new Date(s.renewal_date).toLocaleDateString('en-IN')}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+              <p className="text-xs text-gray-400 -mt-1">
+                The support tier (Free / Basic / Moderate / Premium) is set inside the panel after import — it isn't taken from the billing app.
+              </p>
 
               {/* Onboarding toggle — off by default. Most imports are existing customers
                   being migrated; only check this for genuinely-new signups that need
@@ -1506,6 +1516,8 @@ export default function AdminCustomers() {
   const [showImport, setShowImport] = useState(false);
   const [showManual, setShowManual] = useState(false);
   const [showBulkImport, setShowBulkImport] = useState(false);
+  const [syncingAll, setSyncingAll] = useState(false);
+  const [syncBanner, setSyncBanner] = useState(null); // { ok, unsupported, message, stats }
 
   // Bulk-action selection — IDs of rows the admin has ticked. Held in a Set
   // so toggle/has lookups are O(1); rendered as the visible-page count.
@@ -1538,6 +1550,24 @@ export default function AdminCustomers() {
       .catch(() => toast.error('Failed to load'))
       .finally(() => setLoading(false));
   }, [search, planFilter, page, pageSize]);
+
+  const handleSyncAll = async () => {
+    setSyncingAll(true);
+    setSyncBanner(null);
+    try {
+      const res = await triggerBillingSync();
+      const { created = 0, updated = 0, total = 0, errors = 0 } = res.data;
+      setSyncBanner({ ok: true, stats: { created, updated, total, errors } });
+      toast.success(`Synced — ${created} created, ${updated} updated`);
+      load();
+    } catch (err) {
+      if (err.response?.status === 501 || err.response?.data?.code === 'list_unsupported') {
+        setSyncBanner({ unsupported: true, message: err.response.data.error });
+      } else {
+        toast.error(err.response?.data?.error || 'Sync failed');
+      }
+    } finally { setSyncingAll(false); }
+  };
 
   useEffect(() => {
     getAdminPlans().then(res => setPlans(res.data.plans));
@@ -1607,11 +1637,41 @@ export default function AdminCustomers() {
             <FileUp className="w-4 h-4" /> Bulk Import (CSV)
           </button>
           <button onClick={() => setShowImport(true)} className="btn-secondary flex items-center gap-1.5">
-            <UserPlus className="w-4 h-4" /> Import from Zoho Books
+            <UserPlus className="w-4 h-4" /> Import from Billing
+          </button>
+          <button onClick={handleSyncAll} disabled={syncingAll} className="btn-secondary flex items-center gap-1.5" title="Pull every customer from your billing app in one click">
+            {syncingAll
+              ? <><span className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> Syncing…</>
+              : <><UsersRound className="w-4 h-4" /> Sync all from Billing</>}
           </button>
           <button onClick={load} className="btn-secondary p-2 hidden lg:inline-flex"><RefreshCw className="w-4 h-4" /></button>
         </div>
       </div>
+
+      {/* Sync-all result / guidance banner */}
+      {syncBanner && (
+        <div className={`card p-4 mb-4 flex items-start gap-3 ${syncBanner.unsupported ? 'border-amber-200 bg-amber-50' : 'border-green-200 bg-green-50'}`}>
+          {syncBanner.unsupported
+            ? <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            : <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />}
+          <div className="flex-1 min-w-0 text-sm">
+            {syncBanner.unsupported ? (
+              <>
+                <p className="font-semibold text-amber-800">Can't sync all yet — billing app has no "list customers" endpoint</p>
+                <p className="text-amber-700 mt-0.5">{syncBanner.message}</p>
+              </>
+            ) : (
+              <p className="text-green-800">
+                <span className="font-semibold">Sync complete.</span>{' '}
+                {syncBanner.stats.created} created · {syncBanner.stats.updated} updated
+                {syncBanner.stats.total ? ` · ${syncBanner.stats.total} in billing` : ''}
+                {syncBanner.stats.errors ? ` · ${syncBanner.stats.errors} errors` : ''}
+              </p>
+            )}
+          </div>
+          <button onClick={() => setSyncBanner(null)} className="text-gray-400 hover:text-gray-600 flex-shrink-0"><X className="w-4 h-4" /></button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="card p-4 mb-4 flex flex-wrap gap-3 items-center">

@@ -20,6 +20,7 @@ const {
   sendBillingSyncFailedEmail,
 } = require('../utils/emailUtils');
 const { logPlanChange, inferKind } = require('../utils/planHistory');
+const billing = require('../billing');
 
 async function getSetting(key) {
   const [[row]] = await pool.query('SELECT value FROM admin_settings WHERE `key` = ?', [key]);
@@ -50,28 +51,6 @@ function postJson(url, bearerToken, body) {
     req.on('error', reject);
     req.setTimeout(15000, () => { req.destroy(); reject(new Error('Request timed out')); });
     req.write(data);
-    req.end();
-  });
-}
-
-function fetchFromBilling(url, bearerToken) {
-  return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    const lib = parsed.protocol === 'https:' ? https : http;
-    const options = {
-      hostname: parsed.hostname,
-      port: parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
-      path: parsed.pathname + parsed.search,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${bearerToken}` },
-    };
-    const req = lib.request(options, (resp) => {
-      let buf = '';
-      resp.on('data', c => { buf += c; });
-      resp.on('end', () => { try { resolve(JSON.parse(buf)); } catch { resolve({}); } });
-    });
-    req.on('error', reject);
-    req.setTimeout(15000, () => { req.destroy(); reject(new Error('Billing API timeout')); });
     req.end();
   });
 }
@@ -819,18 +798,12 @@ exports.botChat = async (req, res) => {
     if (/renewal.date.*domain|domain.*renewal.date|what.*renewal.date.*domain/.test(lower)) {
       let reply = 'For your domain renewal date, please check the Subscriptions tab on the Billing page, or raise a ticket and our team will share it.';
       try {
-        const billingUrl = await getSetting('billing_api_url');
-        const billingKey = await getSetting('billing_api_key');
-        if (billingUrl && billingKey && customer.billing_customer_id) {
-          const data = await fetchFromBilling(`${billingUrl}/api/subscriptions?customer_id=${customer.billing_customer_id}`, billingKey);
-          const subs = data.subscriptions ?? data ?? [];
-          const domainSub = Array.isArray(subs) && subs.find(s => /domain/i.test(s.sku_name || s.product_name || ''));
-          if (domainSub) {
-            const renewDate = domainSub.renewal_date || domainSub.commitment_end;
-            if (renewDate) {
-              const formatted = new Date(renewDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-              reply = `Your domain subscription (**${domainSub.sku_name || 'Domain'}**) is due for renewal on **${formatted}**. You can view all subscriptions on the Billing page.`;
-            }
+        if (customer.billing_customer_id && await billing.isConfigured()) {
+          const subs = await billing.getSubscriptions(customer.billing_customer_id);
+          const domainSub = subs.find(s => /domain/i.test(s.name || ''));
+          if (domainSub && domainSub.renewal_date) {
+            const formatted = new Date(domainSub.renewal_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            reply = `Your domain subscription (**${domainSub.name || 'Domain'}**) is due for renewal on **${formatted}**. You can view all subscriptions on the Billing page.`;
           }
         }
       } catch {}
@@ -1340,20 +1313,8 @@ exports.getCustomerSubscriptions = async (req, res) => {
   try {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.json({ subscriptions: [] });
-
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.json({ subscriptions: [] });
-
-    const data = await fetchFromBilling(
-      `${billingUrl}/api/customer/subscriptions?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-
-    // Billing app returns flat { subscriptions: [...], count: N }
-    const allSubs = data.subscriptions ?? (Array.isArray(data) ? data : []);
-
-    res.json({ subscriptions: allSubs });
+    const subscriptions = await billing.getSubscriptions(customer.billing_customer_id);
+    res.json({ subscriptions });
   } catch (err) {
     console.error('[Subscriptions]', err.message);
     res.status(500).json({ error: 'Unable to load subscriptions' });
@@ -1365,37 +1326,20 @@ exports.getCustomerInvoices = async (req, res) => {
   try {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.json({ invoices: [] });
-
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.json({ invoices: [] });
-
-    const data = await fetchFromBilling(
-      `${billingUrl}/api/customer/invoices?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    res.json({ invoices: data.invoices ?? (Array.isArray(data) ? data : []) });
+    const invoices = await billing.getInvoices(customer.billing_customer_id);
+    res.json({ invoices });
   } catch (err) {
     console.error('[Invoices]', err.message);
     res.status(500).json({ error: 'Unable to load invoices' });
   }
 };
 
-// GET /api/customer/quotes
+// GET /api/customer/quotes — pending only (unpaid / not cancelled)
 exports.getCustomerQuotes = async (req, res) => {
   try {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.json({ quotes: [] });
-
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.json({ quotes: [] });
-
-    const data = await fetchFromBilling(
-      `${billingUrl}/api/customer/quotations?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    const all = data.quotations ?? data.quotes ?? (Array.isArray(data) ? data : []);
+    const all = await billing.getQuotes(customer.billing_customer_id);
     const DONE_STATUSES = ['paid', 'payment', 'cancelled', 'expired', 'rejected'];
     const pending = all.filter(q => !DONE_STATUSES.includes((q.status || '').toLowerCase()));
     res.json({ quotes: pending });
@@ -1411,20 +1355,14 @@ exports.initiateQuotePayment = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.status(403).json({ error: 'Forbidden' });
 
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.status(503).json({ error: 'Billing service not configured' });
+    if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
     // Verify the quote belongs to this customer and use the authoritative amount
-    const quotesData = await fetchFromBilling(
-      `${billingUrl}/api/customer/quotations?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    const allQuotes = quotesData.quotations ?? quotesData.quotes ?? (Array.isArray(quotesData) ? quotesData : []);
+    const allQuotes = await billing.getQuotes(customer.billing_customer_id);
     const quote = allQuotes.find(q => String(q.id) === String(req.params.id));
     if (!quote) return res.status(404).json({ error: 'Quote not found or not yours' });
 
-    const amount = quote.total || quote.amount;
+    const amount = quote.amount;
     if (!amount || Number(amount) <= 0) return res.status(400).json({ error: 'Invalid quote amount' });
 
     const keyId     = await getSetting('razorpay_key_id');
@@ -1454,16 +1392,10 @@ exports.verifyQuotePayment = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.status(403).json({ error: 'Forbidden' });
 
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.status(503).json({ error: 'Billing service not configured' });
+    if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
-    // Verify the quote belongs to this customer before marking paid
-    const quotesData = await fetchFromBilling(
-      `${billingUrl}/api/customer/quotations?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    const allQuotes = quotesData.quotations ?? quotesData.quotes ?? (Array.isArray(quotesData) ? quotesData : []);
+    // Verify the quote belongs to this customer before confirming payment
+    const allQuotes = await billing.getQuotes(customer.billing_customer_id);
     const quote = allQuotes.find(q => String(q.id) === String(quoteId));
     if (!quote) return res.status(404).json({ error: 'Quote not found or not yours' });
 
@@ -1473,17 +1405,9 @@ exports.verifyQuotePayment = async (req, res) => {
       .digest('hex');
     if (hmac !== razorpay_signature) return res.status(400).json({ error: 'Payment verification failed' });
 
-    // Notify billing app to mark quote paid and generate invoice
-    if (billingUrl) {
-      try {
-        await postJson(`${billingUrl}/api/quotations/${quoteId}/mark-paid`, billingKey, {
-          razorpay_payment_id,
-          razorpay_order_id,
-        });
-      } catch (e) {
-        console.warn('[Quote Pay] Billing notification failed (non-fatal):', e.message);
-      }
-    }
+    // NOTE: ResellerOS is read-only (no write API), so DSP does not push the
+    // "mark paid" back to billing. Reconciliation is handled on the billing
+    // side / manually. When a provider exposes a write endpoint, wire it here.
     res.json({ success: true });
   } catch (err) {
     console.error('[Quote Pay Verify]', err.message);
@@ -1497,56 +1421,20 @@ exports.proxyInvoicePdf = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.status(403).json({ error: 'Not authorized' });
 
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.status(503).json({ error: 'Billing service not configured' });
+    if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
-    const invoiceId  = req.params.id;
+    const invoiceId = req.params.id;
     if (!/^\d+$/.test(invoiceId)) return res.status(400).json({ error: 'Invalid ID' });
 
-    const invoicesData = await fetchFromBilling(
-      `${billingUrl}/api/customer/invoices?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    const invoices = invoicesData.invoices ?? (Array.isArray(invoicesData) ? invoicesData : []);
+    const invoices = await billing.getInvoices(customer.billing_customer_id);
     const ownedInvoice = invoices.find(inv => String(inv.id) === String(invoiceId));
     if (!ownedInvoice) return res.status(404).json({ error: 'Invoice not found or not yours' });
 
-    const inline     = req.query.view === '1';
-    // Try customer-scoped path first, then generic
-    const pdfPaths = [
-      `/api/customer/invoices/${invoiceId}/pdf`
-    ];
+    const inline = req.query.view === '1';
+    const target = await billing.pdfTarget('invoice', { ...ownedInvoice, billing_customer_id: customer.billing_customer_id });
+    if (!target) return res.status(503).json({ error: 'PDF not available yet. Please contact your account manager.' });
 
-    const tryPath = (pathIndex) => {
-      if (pathIndex >= pdfPaths.length) {
-        return res.status(503).json({ error: 'PDF not available yet. Please contact your account manager.' });
-      }
-      const parsed = new URL(billingUrl + pdfPaths[pathIndex]);
-      const lib    = parsed.protocol === 'https:' ? https : http;
-      const proxyReq = lib.request({
-        hostname: parsed.hostname,
-        port:     parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
-        path:     parsed.pathname + parsed.search,
-        method:   'GET',
-        headers:  { Authorization: `Bearer ${billingKey}` },
-      }, (proxyRes) => {
-        const ct = proxyRes.headers['content-type'] || '';
-        if (proxyRes.statusCode !== 200 || !ct.includes('pdf')) {
-          // This path didn't return a PDF — try next
-          proxyRes.resume();
-          return tryPath(pathIndex + 1);
-        }
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition',
-          `${inline ? 'inline' : 'attachment'}; filename="invoice-${invoiceId}.pdf"`);
-        proxyRes.pipe(res);
-      });
-      proxyReq.on('error', () => tryPath(pathIndex + 1));
-      proxyReq.setTimeout(20000, () => { proxyReq.destroy(); tryPath(pathIndex + 1); });
-      proxyReq.end();
-    };
-    tryPath(0);
+    streamPdf(res, target, `invoice-${invoiceId}.pdf`, inline);
     return;
   } catch (err) {
     console.error('[Invoice PDF]', err.message);
@@ -1560,57 +1448,50 @@ exports.proxyQuotePdf = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.status(403).json({ error: 'Not authorized' });
 
-    const billingUrl = await getSetting('billing_api_url');
-    const billingKey = await getSetting('billing_api_key');
-    if (!billingUrl) return res.status(503).json({ error: 'Billing service not configured' });
+    if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
     const quoteId = req.params.id;
     if (!/^\d+$/.test(quoteId)) return res.status(400).json({ error: 'Invalid ID' });
 
-    const quotesData = await fetchFromBilling(
-      `${billingUrl}/api/customer/quotations?id=${encodeURIComponent(customer.billing_customer_id)}`,
-      billingKey
-    );
-    const allQuotes = quotesData.quotations ?? quotesData.quotes ?? (Array.isArray(quotesData) ? quotesData : []);
+    const allQuotes = await billing.getQuotes(customer.billing_customer_id);
     const ownedQuote = allQuotes.find(q => String(q.id) === String(quoteId));
     if (!ownedQuote) return res.status(404).json({ error: 'Quote not found or not yours' });
 
-    const inline  = req.query.view === '1';
-    const pdfPaths = [
-      `/api/customer/quotations/${quoteId}/pdf`
-    ];
+    const inline = req.query.view === '1';
+    const target = await billing.pdfTarget('quote', { ...ownedQuote, billing_customer_id: customer.billing_customer_id });
+    if (!target) return res.status(503).json({ error: 'PDF not available yet. Please contact your account manager.' });
 
-    const tryPath = (pathIndex) => {
-      if (pathIndex >= pdfPaths.length) {
-        return res.status(503).json({ error: 'PDF not available yet. Please contact your account manager.' });
-      }
-      const parsed = new URL(billingUrl + pdfPaths[pathIndex]);
-      const lib    = parsed.protocol === 'https:' ? https : http;
-      const proxyReq = lib.request({
-        hostname: parsed.hostname,
-        port:     parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
-        path:     parsed.pathname + parsed.search,
-        method:   'GET',
-        headers:  { Authorization: `Bearer ${billingKey}` },
-      }, (proxyRes) => {
-        const ct = proxyRes.headers['content-type'] || '';
-        if (proxyRes.statusCode !== 200 || !ct.includes('pdf')) {
-          proxyRes.resume();
-          return tryPath(pathIndex + 1);
-        }
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition',
-          `${inline ? 'inline' : 'attachment'}; filename="quotation-${quoteId}.pdf"`);
-        proxyRes.pipe(res);
-      });
-      proxyReq.on('error', () => tryPath(pathIndex + 1));
-      proxyReq.setTimeout(20000, () => { proxyReq.destroy(); tryPath(pathIndex + 1); });
-      proxyReq.end();
-    };
-    tryPath(0);
+    streamPdf(res, target, `quotation-${quoteId}.pdf`, inline);
     return;
   } catch (err) {
     console.error('[Quote PDF]', err.message);
     res.status(500).json({ error: 'Failed to download quotation' });
   }
 };
+
+// Stream a PDF from the billing app through DSP (keeps the API key server-side).
+// target = { url, headers } from billing.pdfTarget().
+function streamPdf(res, target, filename, inline) {
+  const parsed = new URL(target.url);
+  const lib = parsed.protocol === 'https:' ? https : http;
+  const proxyReq = lib.request({
+    hostname: parsed.hostname,
+    port:     parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
+    path:     parsed.pathname + parsed.search,
+    method:   'GET',
+    headers:  target.headers,
+  }, (proxyRes) => {
+    const ct = proxyRes.headers['content-type'] || '';
+    if (proxyRes.statusCode !== 200 || !ct.includes('pdf')) {
+      proxyRes.resume();
+      if (!res.headersSent) res.status(503).json({ error: 'PDF not available yet. Please contact your account manager.' });
+      return;
+    }
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename="${filename}"`);
+    proxyRes.pipe(res);
+  });
+  proxyReq.on('error', () => { if (!res.headersSent) res.status(502).json({ error: 'Failed to fetch PDF' }); });
+  proxyReq.setTimeout(20000, () => { proxyReq.destroy(); if (!res.headersSent) res.status(504).json({ error: 'PDF request timed out' }); });
+  proxyReq.end();
+}
