@@ -1340,7 +1340,11 @@ exports.getCustomerQuotes = async (req, res) => {
     const customer = await getCustomerWithPlan(req.user.id);
     if (!customer?.billing_customer_id) return res.json({ quotes: [] });
     const all = await billing.getQuotes(customer.billing_customer_id);
-    const DONE_STATUSES = ['paid', 'payment', 'cancelled', 'expired', 'rejected'];
+    // A quote stops being a "pending payment" once it's been paid, cancelled,
+    // expired, rejected — OR accepted/invoiced/converted (an accepted quote has
+    // been turned into an invoice, which then tracks payment; showing it here
+    // too would double-count it as still-owing).
+    const DONE_STATUSES = ['paid', 'payment', 'cancelled', 'expired', 'rejected', 'accepted', 'invoiced', 'converted'];
     const pending = all.filter(q => !DONE_STATUSES.includes((q.status || '').toLowerCase()));
     res.json({ quotes: pending });
   } catch (err) {
@@ -1424,7 +1428,9 @@ exports.proxyInvoicePdf = async (req, res) => {
     if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
     const invoiceId = req.params.id;
-    if (!/^\d+$/.test(invoiceId)) return res.status(400).json({ error: 'Invalid ID' });
+    // Billing IDs are alphanumeric with dashes (e.g. INV-ET-2026-27-0003), not
+    // just digits. Allow that but block anything that could enable path traversal.
+    if (!/^[A-Za-z0-9_-]+$/.test(invoiceId)) return res.status(400).json({ error: 'Invalid ID' });
 
     const invoices = await billing.getInvoices(customer.billing_customer_id);
     const ownedInvoice = invoices.find(inv => String(inv.id) === String(invoiceId));
@@ -1451,7 +1457,7 @@ exports.proxyQuotePdf = async (req, res) => {
     if (!(await billing.isConfigured())) return res.status(503).json({ error: 'Billing service not configured' });
 
     const quoteId = req.params.id;
-    if (!/^\d+$/.test(quoteId)) return res.status(400).json({ error: 'Invalid ID' });
+    if (!/^[A-Za-z0-9_-]+$/.test(quoteId)) return res.status(400).json({ error: 'Invalid ID' });
 
     const allQuotes = await billing.getQuotes(customer.billing_customer_id);
     const ownedQuote = allQuotes.find(q => String(q.id) === String(quoteId));

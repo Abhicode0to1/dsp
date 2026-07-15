@@ -238,7 +238,7 @@ export default function AdminSettings() {
 
   const handleSyncNow = async () => {
     if (!settings.billing_api_url) {
-      toast.error('Enter your Zoho Books URL first and save settings');
+      toast.error('Enter your billing app URL first and save settings');
       return;
     }
     setSyncing(true);

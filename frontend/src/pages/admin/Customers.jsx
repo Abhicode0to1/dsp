@@ -377,7 +377,7 @@ function EditModal({ customer, plans, onClose, onSave }) {
           <div>
             <label className="label">
               Support Plan
-              {isSynced && <span className="ml-1.5 text-xs text-amber-600 font-normal">(managed by Zoho Books — changes will be overwritten on next sync)</span>}
+              {isSynced && <span className="ml-1.5 text-xs text-amber-600 font-normal">(managed by your billing app — changes will be overwritten on next sync)</span>}
             </label>
             <select className="input" value={form.planId} onChange={e => setForm(f => ({ ...f, planId: e.target.value }))}>
               {plans
@@ -417,7 +417,7 @@ function EditModal({ customer, plans, onClose, onSave }) {
               value={form.transactionRef}
               onChange={e => setForm(f => ({ ...f, transactionRef: e.target.value }))}
             />
-            <p className="text-xs text-gray-400 mt-1">Sent to Zoho Books to link this payment to the plan change.</p>
+            <p className="text-xs text-gray-400 mt-1">Sent to your billing app to link this payment to the plan change.</p>
           </div>
           {selectedPlan && selectedPlan.name !== 'free' && (
             <div className="bg-indigo-50 rounded-lg p-3 text-sm">
@@ -547,7 +547,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
           <p className="text-base font-semibold text-gray-800">{c.name}</p>
           {isSynced && (
             <span className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded-full font-medium">
-              <Link className="w-2.5 h-2.5" /> Zoho Books
+              <Link className="w-2.5 h-2.5" /> Billing
             </span>
           )}
         </div>
@@ -687,7 +687,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
                   <tbody>
                     {isSynced && (
                       <>
-                        <tr><td className="text-gray-500 py-1.5 w-40">Zoho Books ID</td><td className="text-gray-800 font-mono">{c.billing_customer_id}</td></tr>
+                        <tr><td className="text-gray-500 py-1.5 w-40">Billing ID</td><td className="text-gray-800 font-mono">{c.billing_customer_id}</td></tr>
                         {c.billing_synced_at && <tr><td className="text-gray-500 py-1.5">Last synced</td><td className="text-gray-800">{new Date(c.billing_synced_at).toLocaleString('en-IN')}</td></tr>}
                       </>
                     )}
@@ -1174,7 +1174,7 @@ function ManualCustomerModal({ onClose, onCreated }) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={submit} className="p-5 space-y-4">
-          <p className="text-xs text-gray-500 -mt-1">Create a portal account directly — for customers who aren't in Zoho Books yet (trials, manually-acquired accounts, etc.).</p>
+          <p className="text-xs text-gray-500 -mt-1">Create a portal account directly — for customers who aren't in your billing app yet (trials, manually-acquired accounts, etc.).</p>
 
           <div>
             <label className="text-xs font-semibold text-gray-700 block mb-1">Full Name *</label>
@@ -1309,7 +1309,7 @@ function ImportCustomerModal({ onClose, onImported }) {
       setFound(res.data.customer);
     } catch (err) {
       if (err.response?.status === 404) setNotFound(true);
-      else toast.error(err.response?.data?.error || 'Search failed — check Zoho Books URL in Settings');
+      else toast.error(err.response?.data?.error || 'Search failed — check the billing app URL in Settings');
     } finally { setSearching(false); }
   };
 
@@ -1330,7 +1330,7 @@ function ImportCustomerModal({ onClose, onImported }) {
           ? (ticketId
               ? `Account created · Onboarding ticket #${ticketId} → ${agent || 'agent'} · Setup email sent`
               : 'Account created · Setup email sent')
-          : 'Customer account updated from Zoho Books',
+          : 'Customer account updated from billing app',
         { duration: 5000 }
       );
       onImported();
@@ -1826,7 +1826,7 @@ export default function AdminCustomers() {
                             <p className="text-sm font-medium text-gray-800 truncate">{c.name}</p>
                             {synced && !selectedId && (
                               <span className="inline-flex items-center gap-0.5 text-[10px] bg-indigo-50 text-indigo-600 border border-indigo-200 px-1.5 py-0.5 rounded-full">
-                                <Link className="w-2.5 h-2.5" /> Zoho
+                                <Link className="w-2.5 h-2.5" /> Billing
                               </span>
                             )}
                           </div>
