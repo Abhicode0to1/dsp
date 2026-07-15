@@ -20,7 +20,10 @@ function toDateStr(value) {
 //                 the admin sets one; new paid customers always require a date)
 //   isFree      – free / lifetime plan
 export function planView(customer) {
-  const isFree = customer?.plan_name === 'free';
+  // A customer with no plan assigned is treated as Free — everyone has at least
+  // the Free tier, which never expires. So both 'free' and "no plan" count as
+  // free here and must never render as "Expired".
+  const isFree = customer?.plan_name === 'free' || !customer?.plan_name;
   const hasExpiry = !!customer?.plan_expiry;
   const noExpirySet = !isFree && !hasExpiry && !!customer?.plan_name;
   const withinDate = hasExpiry && toDateStr(customer.plan_expiry) >= toDateStr(new Date());

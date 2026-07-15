@@ -122,7 +122,14 @@ async function upsertCustomer(data) {
   const [[userRow]] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
   const userId = userRow.id;
 
-  // Create customer record — only set plan_id if billing app provided plan data
+  // Create customer record. When the billing app sends no support plan (the
+  // common case — the DSP support tier is managed in DSP, not billing), default
+  // NEW customers to the Free plan so everyone has at least Free (which never
+  // expires) — never leave them plan-less (that showed as "Free · Expired").
+  // `planId` already resolves to the Free plan's id when planRaw is empty
+  // (normalizePlanName('') === 'free'). On DUPLICATE (existing customer being
+  // re-synced) we only overwrite the plan if the billing app actually sent one,
+  // so a paid customer is never silently downgraded to Free.
   const [custResult] = await pool.query(
     `INSERT INTO customers (user_id, plan_id, plan_expiry, domain, products, invoice_subtotal, billing_customer_id, billing_synced_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
@@ -133,7 +140,7 @@ async function upsertCustomer(data) {
        invoice_subtotal = VALUES(invoice_subtotal),
        billing_customer_id = VALUES(billing_customer_id),
        billing_synced_at = NOW()`,
-    [userId, planRaw ? planId : null, planRaw ? expiry : null, domain || null, productsJson, subtotal, billing_customer_id || null,
+    [userId, planId, planRaw ? expiry : null, domain || null, productsJson, subtotal, billing_customer_id || null,
      planRaw || null, planRaw || null]
   );
 

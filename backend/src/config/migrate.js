@@ -171,6 +171,16 @@ async function runMigrations() {
      WHERE p.name = 'free' AND c.plan_expiry IS NOT NULL`
   ).catch(err => console.error('[Migrate] free-expiry cleanup', err.message));
 
+  // Everyone gets at least the Free plan (which never expires). Back-fill any
+  // customer left plan-less — e.g. older billing-sync imports that set plan_id
+  // NULL — to Free, so they're never shown as "Free · Expired" or blocked from
+  // free-tier support. Idempotent (only touches NULL plan_id rows).
+  await pool.query(
+    `UPDATE customers SET plan_id = (SELECT id FROM plans WHERE name = 'free' LIMIT 1),
+            plan_expiry = NULL
+     WHERE plan_id IS NULL`
+  ).catch(err => console.error('[Migrate] free default backfill', err.message));
+
   // Billing integration settings
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_api_url', '')`);
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_api_key', '')`);
