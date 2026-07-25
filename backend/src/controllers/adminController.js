@@ -2432,6 +2432,7 @@ const ALLOWED_SETTING_KEYS = new Set([
   'bot_widget_enabled',          // '1' = show in-app bot to customers (default '1')
   'calls_system_enabled',        // '1' = allow voice calls system-wide (default '1' — kill switch)
   'whatsapp_enabled',            // '1' = enable WhatsApp channel (placeholder, default '0')
+  'screen_share_enabled',        // '1' = agents can request to view a customer's screen from live chat (default '0')
 ]);
 
 exports.updateSettings = async (req, res) => {

@@ -113,6 +113,11 @@ async function hydrateAutoAssign() {
 // In-memory call tracking: callId → { customerId, agentId, status }
 const activeCalls = new Map();
 
+// In-memory screen-share sessions: sessionId (DB row id) → { agentId, customerId,
+// chatId, timeoutId }. agentId/customerId are users.id (match `user_<id>` rooms).
+const activeScreenShares = new Map();
+const SCREEN_REQUEST_TIMEOUT_MS = 45 * 1000; // auto-cancel an unanswered request
+
 // In-memory agent availability: userId → 'online' | 'busy' | 'away'
 const agentStatuses = agentRegistry; // alias: now-shared registry (was `new Map()`)
 
@@ -1552,6 +1557,117 @@ module.exports = (io) => {
       }
     });
 
+    // ── Screen-share support sessions (Phase 1: agent VIEWS customer screen) ──
+    // Signalling mirrors the voice-call flow: request → accept/reject → WebRTC
+    // offer/answer/ICE relay → stop. View-only; the customer picks what to share
+    // and can stop any time. Sessions are keyed by the DB row id.
+    const endScreenSession = async (sessionId, endedBy) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s) return;
+      if (s.timeoutId) clearTimeout(s.timeoutId);
+      activeScreenShares.delete(sessionId);
+      await pool.query(
+        `UPDATE screen_share_sessions
+           SET status = IF(status='requested','cancelled','ended'), ended_at = NOW(), ended_by = ?
+         WHERE id = ? AND ended_at IS NULL`,
+        [endedBy, sessionId]
+      ).catch(() => {});
+      io.to(`user_${s.agentId}`).emit('screen_ended', { sessionId });
+      io.to(`user_${s.customerId}`).emit('screen_ended', { sessionId });
+    };
+
+    // Agent requests to view the customer's screen (from an active chat)
+    socket.on('screen_request', async ({ chatId }) => {
+      try {
+        if (socket.user.role !== 'agent' && socket.user.role !== 'admin') return;
+        const [[flag]] = await pool.query("SELECT value FROM admin_settings WHERE `key` = 'screen_share_enabled'");
+        if (!(flag && (flag.value === '1' || flag.value === 'true'))) {
+          return socket.emit('screen_error', { message: 'Screen sharing is turned off.' });
+        }
+        const [[chat]] = await pool.query('SELECT id, customer_id, agent_id, status FROM chats WHERE id = ?', [chatId]);
+        if (!chat) return socket.emit('screen_error', { message: 'Chat not found.' });
+        if (chat.status !== 'active') return socket.emit('screen_error', { message: 'Chat is not active.' });
+        if (socket.user.role === 'agent' && chat.agent_id !== socket.user.id) {
+          return socket.emit('screen_error', { message: 'This is not your chat.' });
+        }
+        const [[cust]] = await pool.query('SELECT user_id FROM customers WHERE id = ?', [chat.customer_id]);
+        if (!cust) return socket.emit('screen_error', { message: 'Customer not found.' });
+        const customerUserId = cust.user_id;
+        const agentUserId = socket.user.id;
+
+        const [ins] = await pool.query(
+          "INSERT INTO screen_share_sessions (chat_id, agent_id, customer_id, status) VALUES (?, ?, ?, 'requested')",
+          [chatId, agentUserId, customerUserId]
+        );
+        const sessionId = ins.insertId;
+
+        const timeoutId = setTimeout(() => {
+          if (activeScreenShares.has(sessionId)) {
+            endScreenSession(sessionId, 'system');
+            io.to(`user_${agentUserId}`).emit('screen_no_answer', { sessionId });
+          }
+        }, SCREEN_REQUEST_TIMEOUT_MS);
+
+        activeScreenShares.set(sessionId, { agentId: agentUserId, customerId: customerUserId, chatId, timeoutId });
+
+        io.to(`user_${customerUserId}`).emit('screen_request', { sessionId, chatId, agentName: socket.user.name });
+        socket.emit('screen_requested', { sessionId, chatId });
+        console.log(`[SCREEN] request #${sessionId}: agent ${agentUserId} → customer ${customerUserId} (chat ${chatId})`);
+      } catch (err) {
+        console.error('screen_request error:', err);
+        socket.emit('screen_error', { message: 'Could not send the request.' });
+      }
+    });
+
+    // Customer approves → mark active, tell agent to expect the screen offer
+    socket.on('screen_accept', async ({ sessionId }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s || s.customerId !== socket.user.id) return;
+      if (s.timeoutId) { clearTimeout(s.timeoutId); s.timeoutId = null; }
+      await pool.query("UPDATE screen_share_sessions SET status='active', accepted_at=NOW() WHERE id=?", [sessionId]).catch(() => {});
+      io.to(`user_${s.agentId}`).emit('screen_accepted', { sessionId });
+    });
+
+    // Customer declines
+    socket.on('screen_reject', async ({ sessionId }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s || s.customerId !== socket.user.id) return;
+      if (s.timeoutId) clearTimeout(s.timeoutId);
+      activeScreenShares.delete(sessionId);
+      await pool.query("UPDATE screen_share_sessions SET status='rejected', ended_at=NOW(), ended_by='customer' WHERE id=?", [sessionId]).catch(() => {});
+      io.to(`user_${s.agentId}`).emit('screen_rejected', { sessionId });
+    });
+
+    // Customer sends WebRTC offer (their screen) → relay to agent
+    socket.on('screen_offer', ({ sessionId, offerSdp }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s || s.customerId !== socket.user.id) return;
+      io.to(`user_${s.agentId}`).emit('screen_offer', { sessionId, offerSdp });
+    });
+
+    // Agent answers → relay to customer
+    socket.on('screen_answer', ({ sessionId, answerSdp }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s || s.agentId !== socket.user.id) return;
+      io.to(`user_${s.customerId}`).emit('screen_answer', { sessionId, answerSdp });
+    });
+
+    // ICE relay (either party → the other)
+    socket.on('screen_ice_candidate', ({ sessionId, candidate }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s) return;
+      if (socket.user.id === s.customerId) io.to(`user_${s.agentId}`).emit('screen_ice_candidate', { sessionId, candidate });
+      else if (socket.user.id === s.agentId) io.to(`user_${s.customerId}`).emit('screen_ice_candidate', { sessionId, candidate });
+    });
+
+    // Either party stops the session
+    socket.on('screen_stop', async ({ sessionId }) => {
+      const s = activeScreenShares.get(sessionId);
+      if (!s) return;
+      if (socket.user.id !== s.customerId && socket.user.id !== s.agentId) return;
+      await endScreenSession(sessionId, socket.user.id === s.customerId ? 'customer' : 'agent');
+    });
+
     // ── Collision Detection (viewing_ticket) ─────────────────────────────────
     socket.on('viewing_ticket', ({ ticketId }) => {
       if (socket.currentTicketId && socket.currentTicketId !== ticketId) {
@@ -1570,6 +1686,14 @@ module.exports = (io) => {
 
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.user?.name}`);
+
+      // End any screen-share session involving this user (either party dropping
+      // tears it down and notifies the other side).
+      for (const [sessionId, s] of activeScreenShares.entries()) {
+        if (s.customerId === socket.user.id || s.agentId === socket.user.id) {
+          endScreenSession(sessionId, 'system').catch(() => {});
+        }
+      }
 
       // Clean up any active/ringing calls involving this user
       let touchedCallMonitors = false;

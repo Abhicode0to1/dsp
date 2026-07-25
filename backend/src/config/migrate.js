@@ -35,6 +35,24 @@ async function runMigrations() {
     FOREIGN KEY (created_by) REFERENCES users(id)
   )`);
 
+  // Screen-share support sessions (Phase 1: agent views customer's screen,
+  // view-only, initiated from a live chat). One row per request; audit + history.
+  // customer_id / agent_id are users.id (matches the `user_<id>` socket rooms).
+  await run(`CREATE TABLE IF NOT EXISTS screen_share_sessions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    chat_id INT DEFAULT NULL,
+    agent_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    status ENUM('requested','active','ended','rejected','cancelled') DEFAULT 'requested',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    accepted_at TIMESTAMP NULL DEFAULT NULL,
+    ended_at TIMESTAMP NULL DEFAULT NULL,
+    ended_by ENUM('agent','customer','system') DEFAULT NULL,
+    INDEX (chat_id), INDEX (agent_id), INDEX (customer_id),
+    FOREIGN KEY (agent_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
   // Plan-level SLA config (tiered SLA by support plan)
   await run(`ALTER TABLE plans ADD COLUMN sla_response_hours INT DEFAULT NULL`);
   await run(`ALTER TABLE plans ADD COLUMN sla_resolve_hours INT DEFAULT NULL`);
@@ -190,6 +208,9 @@ async function runMigrations() {
   // provider: 'reselleros' | 'generic-rest' | 'zoho'  ·  auth_style: 'bearer' | 'x-api-key'
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_provider', 'reselleros')`);
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('billing_auth_style', 'bearer')`);
+
+  // Screen-share support sessions — off by default (feature flag).
+  await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('screen_share_enabled', '0')`);
 
   // Razorpay payment gateway settings
   await pool.query(`INSERT IGNORE INTO admin_settings (\`key\`, value) VALUES ('razorpay_key_id', '')`);

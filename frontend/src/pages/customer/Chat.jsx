@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useSocket } from '../../contexts/SocketContext';
 import { useCustomerCall } from '../../contexts/CustomerCallContext';
 import useImagePaste from '../../hooks/useImagePaste';
+import CustomerScreenShare from '../../components/customer/CustomerScreenShare';
 import {
   initiateChat, initiateCall, getActiveChat, closeChat,
   rateChat, getChatHistory, getCustomerDashboard,
@@ -597,6 +598,7 @@ export default function CustomerChat() {
 
   return (
     <Layout>
+      <CustomerScreenShare />
       {showCsat && chat && (
         <CsatModal
           chatId={chat.id}

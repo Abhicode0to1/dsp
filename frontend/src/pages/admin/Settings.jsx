@@ -142,6 +142,7 @@ export default function AdminSettings() {
     // ── Channel kill switches
     bot_widget_enabled: '1',
     calls_system_enabled: '1',
+    screen_share_enabled: '0',
     whatsapp_enabled: '0',
     // ── Renewal & expiry (Phase 4)
     renewal_window_days: '30',
@@ -952,6 +953,15 @@ export default function AdminSettings() {
                 <div>
                   <p className="text-sm font-medium text-gray-700">Allow voice calls system-wide</p>
                   <p className="text-[11px] text-gray-400">Off = block all new call attempts (e.g. during a WebRTC outage). Existing active calls finish normally.</p>
+                </div>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={settings.screen_share_enabled === '1'}
+                  onChange={e => setSettings(s => ({ ...s, screen_share_enabled: e.target.checked ? '1' : '0' }))}
+                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Allow agents to request customer screen view</p>
+                  <p className="text-[11px] text-gray-400">Off = hides the "Request screen view" button in live chat. View-only; the customer must approve each time.</p>
                 </div>
               </label>
               <label className="flex items-start gap-3 cursor-pointer opacity-70">

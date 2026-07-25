@@ -122,6 +122,7 @@ app.get('/api/public-settings', async (_req, res) => {
       brand_color:             pick('brand_color'),
       bot_widget_enabled:      bool('bot_widget_enabled', true),
       calls_system_enabled:    bool('calls_system_enabled', true),
+      screen_share_enabled:    bool('screen_share_enabled', false),
       whatsapp_enabled:        bool('whatsapp_enabled', false),
       csat_after_chat:         bool('csat_after_chat', true),
       csat_after_ticket:       bool('csat_after_ticket', true),
