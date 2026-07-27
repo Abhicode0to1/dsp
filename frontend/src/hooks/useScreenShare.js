@@ -19,6 +19,12 @@ export function useScreenShare() {
   const [error, setError] = useState('');
   const [remoteStream, setRemoteStream] = useState(null); // agent: customer's screen
   const [isSharing, setIsSharing] = useState(false);      // customer: sharing now
+  const [rejectReason, setRejectReason] = useState(null); // agent: why a request ended without sharing
+
+  // Browsers can only capture the screen on DESKTOP. Mobile (iOS Safari, mobile
+  // Chrome) has no getDisplayMedia, so the customer can't share from a phone.
+  const supportsScreenShare = typeof navigator !== 'undefined'
+    && !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
 
   const pcRef = useRef(null);
   const localStreamRef = useRef(null);
@@ -95,6 +101,13 @@ export function useScreenShare() {
   const acceptShare = useCallback(async () => {
     if (!socket || !sessionIdRef.current) return;
     const sid = sessionIdRef.current;
+    // Device can't capture its screen (mobile) — tell the agent it's unsupported,
+    // not a plain decline.
+    if (!supportsScreenShare) {
+      socket.emit('screen_reject', { sessionId: sid, reason: 'unsupported' });
+      reset(); setState('idle');
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
       localStreamRef.current = stream;
@@ -121,10 +134,10 @@ export function useScreenShare() {
       setState('idle');
       setSessionId(null);
     }
-  }, [socket, makePeer, cleanup]);
+  }, [socket, makePeer, cleanup, supportsScreenShare, reset]);
 
-  const declineShare = useCallback(() => {
-    if (socket && sessionIdRef.current) socket.emit('screen_reject', { sessionId: sessionIdRef.current });
+  const declineShare = useCallback((reason) => {
+    if (socket && sessionIdRef.current) socket.emit('screen_reject', { sessionId: sessionIdRef.current, reason });
     reset();
     setState('idle');
   }, [socket, reset]);
@@ -151,7 +164,7 @@ export function useScreenShare() {
       setState('incoming');
     };
     const onAccepted = () => { setState('connecting'); };
-    const onRejected = () => { cleanup(); setState('rejected'); };
+    const onRejected = ({ reason } = {}) => { setRejectReason(reason || null); cleanup(); setState('rejected'); };
     const onNoAnswer = () => { cleanup(); setState('no_answer'); };
 
     // Agent receives the customer's offer → answer.
@@ -223,6 +236,7 @@ export function useScreenShare() {
 
   return {
     state, sessionId, agentName, error, remoteStream, isSharing,
+    supportsScreenShare, rejectReason,
     requestScreen, acceptShare, declineShare, stop, dismiss,
   };
 }

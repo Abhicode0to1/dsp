@@ -12,7 +12,7 @@ import { useResizableWindow } from '../../hooks/useResizableWindow';
 export default function AgentScreenShare({ chatId, disabled }) {
   const { settings } = usePublicSettings();
   const enabled = settings?.screen_share_enabled === true;
-  const { state, error, remoteStream, requestScreen, stop, dismiss } = useScreenShare();
+  const { state, error, rejectReason, remoteStream, requestScreen, stop, dismiss } = useScreenShare();
   const videoRef = useRef(null);
   const [minimized, setMinimized] = useState(false);
   const win = useResizableWindow({ storageKey: 'agent_screen_box' });
@@ -23,7 +23,11 @@ export default function AgentScreenShare({ chatId, disabled }) {
 
   // Surface terminal outcomes as toasts, then reset back to idle.
   useEffect(() => {
-    if (state === 'rejected')  { toast('Customer declined the screen request', { icon: '🚫' }); dismiss(); }
+    if (state === 'rejected') {
+      if (rejectReason === 'unsupported') toast("Customer's device can't share its screen — screen view needs a computer", { icon: '📱', duration: 6000 });
+      else toast('Customer declined the screen request', { icon: '🚫' });
+      dismiss();
+    }
     if (state === 'no_answer') { toast('No response to the screen request', { icon: '⌛' }); dismiss(); }
     if (state === 'error' && error) { toast.error(error); dismiss(); }
     // eslint-disable-next-line react-hooks/exhaustive-deps

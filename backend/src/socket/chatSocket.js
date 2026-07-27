@@ -1628,14 +1628,14 @@ module.exports = (io) => {
       io.to(`user_${s.agentId}`).emit('screen_accepted', { sessionId });
     });
 
-    // Customer declines
-    socket.on('screen_reject', async ({ sessionId }) => {
+    // Customer declines (reason 'unsupported' when the device can't capture its screen)
+    socket.on('screen_reject', async ({ sessionId, reason }) => {
       const s = activeScreenShares.get(sessionId);
       if (!s || s.customerId !== socket.user.id) return;
       if (s.timeoutId) clearTimeout(s.timeoutId);
       activeScreenShares.delete(sessionId);
       await pool.query("UPDATE screen_share_sessions SET status='rejected', ended_at=NOW(), ended_by='customer' WHERE id=?", [sessionId]).catch(() => {});
-      io.to(`user_${s.agentId}`).emit('screen_rejected', { sessionId });
+      io.to(`user_${s.agentId}`).emit('screen_rejected', { sessionId, reason: reason || null });
     });
 
     // Customer sends WebRTC offer (their screen) → relay to agent
