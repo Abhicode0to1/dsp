@@ -160,6 +160,13 @@ export function useScreenShare() {
       // Customer got an incoming request.
       roleRef.current = 'customer';
       setSessionId(sid); sessionIdRef.current = sid;
+      // Phones can't screen-share. Auto-decline with a reason so the AGENT is
+      // told it's a device limitation — and never bother the customer with a
+      // popup for something their device can't do.
+      if (!supportsScreenShare) {
+        socket.emit('screen_reject', { sessionId: sid, reason: 'unsupported' });
+        return;
+      }
       setAgentName(name || 'Support agent');
       setState('incoming');
     };
@@ -223,7 +230,7 @@ export function useScreenShare() {
       socket.off('screen_ended', onEnded);
       socket.off('screen_error', onErr);
     };
-  }, [socket, makePeer, drainCandidates, cleanup]);
+  }, [socket, makePeer, drainCandidates, cleanup, supportsScreenShare]);
 
   // Stop sharing / close pc if the component using the hook unmounts mid-session.
   useEffect(() => () => {
