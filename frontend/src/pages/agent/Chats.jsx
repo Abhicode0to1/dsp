@@ -19,7 +19,7 @@ import {
   Minus, Star, CheckCheck, Check, Mail, Paperclip, Lock, Archive, Search, Phone,
 } from 'lucide-react';
 import CannedPicker from '../../components/common/CannedPicker';
-import AgentScreenShare from '../../components/agent/AgentScreenShare';
+import ScreenShareButton from '../../components/common/ScreenShareButton';
 import useImagePaste from '../../hooks/useImagePaste';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 import toast from 'react-hot-toast';
@@ -1338,7 +1338,7 @@ export default function AgentChats() {
                         <Phone className="w-3.5 h-3.5" />
                       </button>
                     </Tip>
-                    <AgentScreenShare chatId={activeChat.id} disabled={activeChatEnded} />
+                    <ScreenShareButton chatId={activeChat.id} disabled={activeChatEnded} />
                     <Tip label="Convert to Ticket">
                       <button onClick={() => setConvertTarget(activeChat)} className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
                         <Ticket className="w-3.5 h-3.5" />

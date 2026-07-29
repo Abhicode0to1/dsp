@@ -24,6 +24,7 @@ import CustomerCallMiniOverlay from './components/customer/CustomerCallMiniOverl
 import CustomerCallModal from './components/customer/CustomerCallModal';
 import FeedbackWidget from './components/common/FeedbackWidget';
 import { CustomerCallProvider } from './contexts/CustomerCallContext';
+import { ScreenShareProvider } from './contexts/ScreenShareContext';
 
 import LoginPage from './pages/Login';
 import CustomerDashboard from './pages/customer/Dashboard';
@@ -188,6 +189,7 @@ export default function App() {
               page that unmounts on nav. It's a no-op for non-customers (no
               socket events match), so safe to host at the very top. */}
           <CustomerCallProvider>
+            <ScreenShareProvider>
             <AppRoutes />
             {/* Overlays are siblings of <Routes>, NOT nested inside any route's
                 Layout, so they survive navigation. This is the fix for bug #21
@@ -195,6 +197,7 @@ export default function App() {
                 navigates between sidebar items, React keeps these mounted
                 with their WebRTC connection, ringtone state, etc. intact. */}
             <PersistentOverlays />
+            </ScreenShareProvider>
           </CustomerCallProvider>
         </SocketProvider>
         </PublicSettingsProvider>

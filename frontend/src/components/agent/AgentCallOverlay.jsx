@@ -14,6 +14,7 @@ import { startCallRecording, uploadCallRecording } from '../../utils/callRecorde
 import { useDraggable } from '../../hooks/useDraggable';
 import useAudioLevel from '../../hooks/useAudioLevel';
 import AudioWaveBars from '../common/AudioWaveBars';
+import ScreenShareButton from '../common/ScreenShareButton';
 
 function formatDuration(s) {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
@@ -871,6 +872,13 @@ export default function AgentCallOverlay() {
                 <PhoneOff className="w-3.5 h-3.5" /> End
               </button>
             </div>
+            {/* Screen view — only renders when enabled + agent on desktop.
+                Uses the shared screen-share engine (ScreenShareProvider). */}
+            <ScreenShareButton
+              callId={callInfo?.callId}
+              showLabel
+              className="mt-1.5 w-full flex items-center justify-center gap-1 px-2 py-2 rounded-lg text-xs font-medium transition-colors bg-purple-100 text-purple-700 hover:bg-purple-200"
+            />
             </>
           )}
 

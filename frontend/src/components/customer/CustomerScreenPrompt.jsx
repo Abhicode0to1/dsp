@@ -1,15 +1,12 @@
 import { Monitor, ShieldCheck, X } from 'lucide-react';
-import { useScreenShare } from '../../hooks/useScreenShare';
 
-// Customer side of screen-share. Mounted on the customer's live-chat page so it
-// can receive an agent's request. Shows a consent popup, then (while sharing) a
-// persistent banner with a Stop button. The customer is always in control.
-export default function CustomerScreenShare() {
-  const { state, agentName, isSharing, acceptShare, declineShare, stop } = useScreenShare();
-
-  // Note: on phones the request is auto-declined inside the hook (device can't
-  // capture its screen), so `incoming` never becomes true there — the customer
-  // is never shown a popup for something their device can't do.
+// Customer-facing screen-share UI, driven by the shared screen-share state
+// (from ScreenShareProvider) — mounted ONCE app-wide so it works whether the
+// customer is in a live chat or on a call, on any page. On phones the request
+// is auto-declined inside the hook, so `incoming` never becomes true there and
+// the customer is never shown a popup for something their device can't do.
+export default function CustomerScreenPrompt({ screen }) {
+  const { state, agentName, isSharing, acceptShare, declineShare, stop } = screen;
   const incoming = state === 'incoming';
 
   return (

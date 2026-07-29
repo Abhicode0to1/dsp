@@ -88,13 +88,14 @@ export function useScreenShare() {
     pendingCandidates.current = [];
   }, []);
 
-  // ── Agent: request to view a chat customer's screen ─────────────────────────
-  const requestScreen = useCallback((chatId) => {
+  // ── Agent: request to view a customer's screen ──────────────────────────────
+  // target is { chatId } (from live chat) or { callId } (from a voice call).
+  const requestScreen = useCallback((target) => {
     if (!socket) return;
     roleRef.current = 'agent';
     setError('');
     setState('requesting');
-    socket.emit('screen_request', { chatId });
+    socket.emit('screen_request', target || {});
   }, [socket]);
 
   // ── Customer: accept → capture screen → send offer ──────────────────────────

@@ -562,6 +562,11 @@ module.exports = (io) => {
         io.to('agents').to('chat_monitors').emit('chat_removed', { chatId });
         console.log(`Chat ${chatId} closed by ${socket.user.name}`);
 
+        // Closing the chat also ends any screen share started from it.
+        for (const [sid, sc] of activeScreenShares.entries()) {
+          if (sc.chatId === chatId) endScreenSession(sid, 'system');
+        }
+
         // Agent just freed up — try to flush the oldest waiting chat to a free agent.
         // Customers don't trigger this branch (they only close their own chat).
         if (isAgent) {
@@ -1552,6 +1557,14 @@ module.exports = (io) => {
         socket.emit('call_ended', endPayload);
         notifyCallMonitors(io);
         console.log(`Call ${callId} ended, duration ${duration}s, counted=${counted} (threshold=${threshold}s)`);
+
+        // Ending the call also ends any screen share between these two — the
+        // support interaction is over, so the customer's screen must stop.
+        for (const [sid, sc] of activeScreenShares.entries()) {
+          if (sc.agentId === stored.agentId && sc.customerId === stored.customerId) {
+            endScreenSession(sid, 'system');
+          }
+        }
       } catch (err) {
         console.error('call_end error:', err);
       }
@@ -1576,28 +1589,46 @@ module.exports = (io) => {
       io.to(`user_${s.customerId}`).emit('screen_ended', { sessionId });
     };
 
-    // Agent requests to view the customer's screen (from an active chat)
-    socket.on('screen_request', async ({ chatId }) => {
+    // Agent requests to view the customer's screen — from an active chat
+    // ({ chatId }) OR an active voice call ({ callId }).
+    socket.on('screen_request', async ({ chatId, callId }) => {
       try {
         if (socket.user.role !== 'agent' && socket.user.role !== 'admin') return;
         const [[flag]] = await pool.query("SELECT value FROM admin_settings WHERE `key` = 'screen_share_enabled'");
         if (!(flag && (flag.value === '1' || flag.value === 'true'))) {
           return socket.emit('screen_error', { message: 'Screen sharing is turned off.' });
         }
-        const [[chat]] = await pool.query('SELECT id, customer_id, agent_id, status FROM chats WHERE id = ?', [chatId]);
-        if (!chat) return socket.emit('screen_error', { message: 'Chat not found.' });
-        if (chat.status !== 'active') return socket.emit('screen_error', { message: 'Chat is not active.' });
-        if (socket.user.role === 'agent' && chat.agent_id !== socket.user.id) {
-          return socket.emit('screen_error', { message: 'This is not your chat.' });
-        }
-        const [[cust]] = await pool.query('SELECT user_id FROM customers WHERE id = ?', [chat.customer_id]);
-        if (!cust) return socket.emit('screen_error', { message: 'Customer not found.' });
-        const customerUserId = cust.user_id;
-        const agentUserId = socket.user.id;
 
+        // Resolve the target customer (users.id) + optional chat id for the audit
+        // record, verifying the requesting agent actually owns the chat/call.
+        let customerUserId = null;
+        let recordChatId = null;
+        if (chatId) {
+          const [[chat]] = await pool.query('SELECT id, customer_id, agent_id, status FROM chats WHERE id = ?', [chatId]);
+          if (!chat) return socket.emit('screen_error', { message: 'Chat not found.' });
+          if (chat.status !== 'active') return socket.emit('screen_error', { message: 'Chat is not active.' });
+          if (socket.user.role === 'agent' && chat.agent_id !== socket.user.id) {
+            return socket.emit('screen_error', { message: 'This is not your chat.' });
+          }
+          const [[cust]] = await pool.query('SELECT user_id FROM customers WHERE id = ?', [chat.customer_id]);
+          if (!cust) return socket.emit('screen_error', { message: 'Customer not found.' });
+          customerUserId = cust.user_id;
+          recordChatId = chatId;
+        } else if (callId) {
+          const stored = activeCalls.get(callId);
+          if (!stored) return socket.emit('screen_error', { message: 'Call not found or already ended.' });
+          if (socket.user.role === 'agent' && stored.agentId !== socket.user.id) {
+            return socket.emit('screen_error', { message: 'This is not your call.' });
+          }
+          customerUserId = stored.customerId; // already a users.id
+        } else {
+          return socket.emit('screen_error', { message: 'No chat or call specified.' });
+        }
+
+        const agentUserId = socket.user.id;
         const [ins] = await pool.query(
           "INSERT INTO screen_share_sessions (chat_id, agent_id, customer_id, status) VALUES (?, ?, ?, 'requested')",
-          [chatId, agentUserId, customerUserId]
+          [recordChatId, agentUserId, customerUserId]
         );
         const sessionId = ins.insertId;
 
@@ -1608,11 +1639,11 @@ module.exports = (io) => {
           }
         }, SCREEN_REQUEST_TIMEOUT_MS);
 
-        activeScreenShares.set(sessionId, { agentId: agentUserId, customerId: customerUserId, chatId, timeoutId });
+        activeScreenShares.set(sessionId, { agentId: agentUserId, customerId: customerUserId, chatId: recordChatId, timeoutId });
 
-        io.to(`user_${customerUserId}`).emit('screen_request', { sessionId, chatId, agentName: socket.user.name });
-        socket.emit('screen_requested', { sessionId, chatId });
-        console.log(`[SCREEN] request #${sessionId}: agent ${agentUserId} → customer ${customerUserId} (chat ${chatId})`);
+        io.to(`user_${customerUserId}`).emit('screen_request', { sessionId, chatId: recordChatId, agentName: socket.user.name });
+        socket.emit('screen_requested', { sessionId });
+        console.log(`[SCREEN] request #${sessionId}: agent ${agentUserId} → customer ${customerUserId} (${chatId ? 'chat ' + chatId : 'call ' + callId})`);
       } catch (err) {
         console.error('screen_request error:', err);
         socket.emit('screen_error', { message: 'Could not send the request.' });
