@@ -1718,7 +1718,7 @@ export default function AdminCustomers() {
           <input
             type="text"
             className="input pl-9 pr-9"
-            placeholder="Search name, email, domain, Billing ID, tag…"
+            placeholder="Search name, email, domain, tag… (type ‘billing’ for billing-linked)"
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
           />

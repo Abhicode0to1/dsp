@@ -264,8 +264,14 @@ exports.getCustomers = async (req, res) => {
 
     if (search) {
       // One search box → matches name, email, domain, Billing ID, and tags.
-      where += ' AND (u.name LIKE ? OR u.email LIKE ? OR c.domain LIKE ? OR c.billing_customer_id LIKE ? OR c.tags LIKE ?)';
+      // Plus: the keyword "billing" / "linked" matches every billing-app-linked
+      // customer (those with a Billing ID), since that badge isn't stored text.
       const s = `%${search}%`;
+      const term = String(search).trim().toLowerCase();
+      const billingKeyword = ['billing', 'linked', 'billing-linked'].includes(term);
+      where += ' AND (u.name LIKE ? OR u.email LIKE ? OR c.domain LIKE ? OR c.billing_customer_id LIKE ? OR c.tags LIKE ?'
+        + (billingKeyword ? " OR (c.billing_customer_id IS NOT NULL AND c.billing_customer_id <> '')" : '')
+        + ')';
       params.push(s, s, s, s, s);
     }
     if (plan) { where += ' AND p.name = ?'; params.push(plan); }
