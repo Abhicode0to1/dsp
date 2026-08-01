@@ -4,7 +4,7 @@ import { useNavigate, Link as RouterLink, useSearchParams } from 'react-router-d
 import Layout from '../../components/common/Layout';
 import { PlanBadge, StatusBadge } from '../../components/common/PlanBadge';
 import {
-  getAdminCustomers, getAdminCustomerById, updateAdminCustomer, getAdminPlans,
+  getAdminCustomers, getAdminCustomerById, updateAdminCustomer, updateCustomerTags, getAdminPlans,
   getCustomerOverrides, updateCustomerOverrides, clearCustomerOverrides,
   lookupBillingCustomer, importBillingCustomer, triggerBillingSync, createManualCustomer, changeCustomerPassword,
   resetCustomerUsage, getAdminAgents, startCustomerOnboarding,
@@ -15,7 +15,7 @@ import { calculateFinalPriceFE, planView } from '../../utils/planUtils';
 import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 import {
   Search, RefreshCw, X, Save, Globe, Calendar,
-  Package, Ticket, IndianRupee, Link, ShieldAlert, Trash2, UserPlus, KeyRound, RotateCcw, Sparkles, UserCheck, AlertTriangle, FileUp, CheckCircle2, XCircle, SkipForward, Mail, CreditCard, UsersRound,
+  Package, Ticket, IndianRupee, Link, ShieldAlert, Trash2, UserPlus, KeyRound, RotateCcw, Sparkles, UserCheck, AlertTriangle, FileUp, CheckCircle2, XCircle, SkipForward, Mail, CreditCard, UsersRound, Tag,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
@@ -474,9 +474,10 @@ function EditModal({ customer, plans, onClose, onSave }) {
 }
 
 // ── Customer Detail Panel ──────────────────────────────────────────────────
-function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
+function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagClick }) {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [tagInput, setTagInput] = useState('');
   const [showChangePw, setShowChangePw] = useState(false);
   const [resettingUsage, setResettingUsage] = useState(false);
   const [startingOnboard, setStartingOnboard] = useState(false);
@@ -522,6 +523,23 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
     }
   };
 
+  // Save a customer's tag list (add/remove), optimistically updating the panel.
+  const saveTags = async (nextTags) => {
+    try {
+      const res = await updateCustomerTags(customerId, nextTags);
+      setData(d => ({ ...d, customer: { ...d.customer, tags: res.data.tags } }));
+    } catch { toast.error('Failed to update tags'); }
+  };
+  const addTag = () => {
+    const t = tagInput.trim();
+    setTagInput('');
+    if (!t) return;
+    const current = data?.customer?.tags || [];
+    if (current.some(x => x.toLowerCase() === t.toLowerCase())) return;
+    saveTags([...current, t]);
+  };
+  const removeTag = (t) => saveTags((data?.customer?.tags || []).filter(x => x !== t));
+
   if (!data) return (
     <div className="card p-8 flex items-center justify-center">
       <div className="w-7 h-7 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
@@ -529,6 +547,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
   );
 
   const c = data.customer;
+  const tags = c.tags || [];
   // Canonical plan status (shared with the customer panel via utils/planUtils).
   const { active: planActive, noExpirySet } = planView(c);
   const isSynced = Boolean(c.billing_customer_id);
@@ -594,6 +613,25 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose }) {
           </button>
         </div>
       )}
+
+      {/* Tags — admin labels; click a tag to filter the list by it */}
+      <div className="px-4 py-2.5 border-b border-gray-100 flex items-center gap-1.5 flex-wrap">
+        <span className="inline-flex items-center gap-1 text-xs text-gray-400 font-medium mr-0.5"><Tag className="w-3.5 h-3.5" /> Tags</span>
+        {tags.map(t => (
+          <span key={t} className="inline-flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 pl-2 pr-1 py-0.5 rounded-full">
+            <button onClick={() => onTagClick?.(t)} className="hover:underline" title={`Filter by "${t}"`}>{t}</button>
+            <button onClick={() => removeTag(t)} className="text-indigo-400 hover:text-red-600" title="Remove tag"><X className="w-3 h-3" /></button>
+          </span>
+        ))}
+        <input
+          value={tagInput}
+          onChange={e => setTagInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+          onBlur={addTag}
+          placeholder={tags.length ? 'Add tag…' : 'Add a tag (e.g. VIP)…'}
+          className="text-xs px-2 py-1 rounded-full border border-dashed border-gray-300 focus:border-indigo-400 focus:outline-none w-32"
+        />
+      </div>
 
       {/* Tabs (Zoho-style horizontal tabs under the header) */}
       <div className="border-b border-gray-100 px-4 flex items-center gap-1 text-sm">
@@ -1680,7 +1718,7 @@ export default function AdminCustomers() {
           <input
             type="text"
             className="input pl-9 pr-9"
-            placeholder="Search name, email, domain..."
+            placeholder="Search name, email, domain, Billing ID, tag…"
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
@@ -1911,6 +1949,7 @@ export default function AdminCustomers() {
               onEdit={setEditCustomer}
               onDelete={setDeleteCust}
               onClose={() => setSelectedId(null)}
+              onTagClick={(t) => { setSearch(t); setPage(1); }}
             />
           </div>
         )}

@@ -263,15 +263,16 @@ exports.getCustomers = async (req, res) => {
     const params = [];
 
     if (search) {
-      where += ' AND (u.name LIKE ? OR u.email LIKE ? OR c.domain LIKE ?)';
+      // One search box → matches name, email, domain, Billing ID, and tags.
+      where += ' AND (u.name LIKE ? OR u.email LIKE ? OR c.domain LIKE ? OR c.billing_customer_id LIKE ? OR c.tags LIKE ?)';
       const s = `%${search}%`;
-      params.push(s, s, s);
+      params.push(s, s, s, s, s);
     }
     if (plan) { where += ' AND p.name = ?'; params.push(plan); }
 
     const [customers] = await pool.query(
       `SELECT c.id, u.name, u.email, c.domain, c.products, c.plan_expiry,
-              c.invoice_subtotal, c.created_at,
+              c.invoice_subtotal, c.created_at, c.billing_customer_id, c.tags,
               p.id AS plan_id, p.name AS plan_name,
               CASE
                 WHEN p.name IS NULL OR p.name = 'free' THEN 0
@@ -301,7 +302,9 @@ exports.getCustomers = async (req, res) => {
     const formatted = customers.map(c => {
       let products = [];
       try { products = JSON.parse(c.products || '[]'); } catch {}
-      return { ...c, products, missing_payment_proof: !!c.missing_payment_proof };
+      let tags = [];
+      try { tags = JSON.parse(c.tags || '[]'); } catch {}
+      return { ...c, products, tags, missing_payment_proof: !!c.missing_payment_proof };
     });
 
     res.json({ customers: formatted, total, page: parseInt(page), limit: parseInt(limit) });
@@ -327,6 +330,8 @@ exports.getCustomerById = async (req, res) => {
 
     let products = [];
     try { products = JSON.parse(rows[0].products || '[]'); } catch {}
+    let tags = [];
+    try { tags = JSON.parse(rows[0].tags || '[]'); } catch {}
 
     const [tickets] = await pool.query(
       'SELECT * FROM tickets WHERE customer_id = ? ORDER BY created_at DESC LIMIT 10',
@@ -373,7 +378,7 @@ exports.getCustomerById = async (req, res) => {
     }
 
     res.json({
-      customer: { ...rows[0], products, missing_payment_proof: missingPaymentProof },
+      customer: { ...rows[0], products, tags, missing_payment_proof: missingPaymentProof },
       tickets,
       invoices,
       tickets_used: ticketsUsed,
@@ -383,6 +388,31 @@ exports.getCustomerById = async (req, res) => {
     });
   } catch (err) {
     console.error('[getCustomerById]', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// PUT /admin/customers/:id/tags — replace a customer's tags with the given list.
+exports.updateCustomerTags = async (req, res) => {
+  try {
+    const raw = Array.isArray(req.body.tags) ? req.body.tags : [];
+    // Normalize: trim, cap length, drop blanks, dedupe (case-insensitive), cap count.
+    const seen = new Set();
+    const tags = [];
+    for (let t of raw) {
+      t = String(t).trim().slice(0, 32);
+      if (!t) continue;
+      const k = t.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k);
+      tags.push(t);
+      if (tags.length >= 20) break;
+    }
+    const [r] = await pool.query('UPDATE customers SET tags = ? WHERE id = ?', [JSON.stringify(tags), req.params.id]);
+    if (!r.affectedRows) return res.status(404).json({ error: 'Customer not found' });
+    res.json({ tags });
+  } catch (err) {
+    console.error('[updateCustomerTags]', err.message);
     res.status(500).json({ error: 'Server error' });
   }
 };

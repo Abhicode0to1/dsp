@@ -53,6 +53,9 @@ async function runMigrations() {
     FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE
   )`);
 
+  // Custom, admin-assigned tags on customers (searchable labels like VIP/reseller).
+  await run(`ALTER TABLE customers ADD COLUMN tags JSON DEFAULT NULL`);
+
   // Plan-level SLA config (tiered SLA by support plan)
   await run(`ALTER TABLE plans ADD COLUMN sla_response_hours INT DEFAULT NULL`);
   await run(`ALTER TABLE plans ADD COLUMN sla_resolve_hours INT DEFAULT NULL`);

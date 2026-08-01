@@ -145,6 +145,7 @@ export const getAdminDashboard    = ()          => api.get('/admin/dashboard');
 export const getAdminCustomers    = (params)    => api.get('/admin/customers', { params });
 export const getAdminCustomerById = (id)        => api.get(`/admin/customers/${id}`);
 export const updateAdminCustomer  = (id, data)  => api.put(`/admin/customers/${id}`, data);
+export const updateCustomerTags   = (id, tags)  => api.put(`/admin/customers/${id}/tags`, { tags });
 export const getAdminPlans        = ()          => api.get('/admin/plans');
 export const updateAdminPlan      = (id, data)  => api.put(`/admin/plans/${id}`, data);
 export const getAdminCalls        = (params)    => api.get('/admin/calls', { params });

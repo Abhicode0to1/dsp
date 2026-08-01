@@ -3,6 +3,7 @@ const {
   getDashboard,
   getCustomers,
   getCustomerById,
+  updateCustomerTags,
   updateCustomer,
   getPlans,
   updatePlan,
@@ -320,6 +321,7 @@ router.put('/feedback/:id',         require('../controllers/feedbackController')
 router.get('/dashboard',          getDashboard);
 router.get('/customers',               getCustomers);
 router.get('/customers/:id',           getCustomerById);
+router.put('/customers/:id/tags',      updateCustomerTags);
 router.put('/customers/:id',           updateCustomer);
 router.delete('/customers/:id',        deleteCustomer);
 router.put('/customers/:id/password',  changeCustomerPassword);
