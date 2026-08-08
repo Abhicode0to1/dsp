@@ -140,7 +140,7 @@ export function EmailTemplatesPanel() {
   // Colored audience badges. Each audience has a consistent dot + label.
   const AUDIENCE_STYLE = {
     'Customer':     { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200',    icon: Users    },
-    'Agent':        { bg: 'bg-indigo-50',  text: 'text-indigo-700',  border: 'border-indigo-200',  icon: UserCog  },
+    'Agent':        { bg: 'bg-blue-50',  text: 'text-blue-700',  border: 'border-blue-200',  icon: UserCog  },
     'Admin':        { bg: 'bg-red-50',     text: 'text-red-700',     border: 'border-red-200',     icon: Shield   },
     'CC Recipient': { bg: 'bg-gray-100',   text: 'text-gray-600',    border: 'border-gray-200',    icon: UserPlus },
   };
@@ -197,11 +197,11 @@ export function EmailTemplatesPanel() {
                               onClick={() => setSelectedKey(item.key)}
                               className={clsx(
                                 'w-full text-left px-3 py-2 text-sm transition-colors',
-                                active ? 'bg-indigo-50 border-l-2 border-indigo-600' : 'hover:bg-gray-50 border-l-2 border-transparent'
+                                active ? 'bg-blue-50 border-l-2 border-blue-600' : 'hover:bg-gray-50 border-l-2 border-transparent'
                               )}
                             >
                               <div className="flex items-center justify-between gap-2 mb-1">
-                                <span className={clsx('truncate', active ? 'text-indigo-700 font-semibold' : 'text-gray-700')}>{item.label}</span>
+                                <span className={clsx('truncate', active ? 'text-blue-700 font-semibold' : 'text-gray-700')}>{item.label}</span>
                                 {item.customized && (
                                   <span title="Custom version saved" className="flex-shrink-0">
                                     <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
@@ -342,13 +342,13 @@ export function EmailTemplatesPanel() {
                     textarea's `{` autocomplete shortcut. */}
                 <aside className="col-span-12 lg:col-span-3">
                   <div className="card p-0 sticky top-4 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100 bg-indigo-50/40">
-                      <p className="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                    <div className="px-4 py-3 border-b border-gray-100 bg-blue-50/40">
+                      <p className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                         <Info className="w-3.5 h-3.5" />
                         Available placeholders
                       </p>
-                      <p className="text-[11px] text-indigo-700/80 mt-1 leading-snug">
-                        Click any chip to insert at end of body. <strong>Inside the body</strong>, type <code className="bg-white border border-indigo-200 px-1 rounded font-mono">{'{'}</code> for an autocomplete picker. For the subject line, type or paste <code className="bg-white border border-indigo-200 px-1 rounded font-mono">{'{{name}}'}</code> manually.
+                      <p className="text-[11px] text-blue-700/80 mt-1 leading-snug">
+                        Click any chip to insert at end of body. <strong>Inside the body</strong>, type <code className="bg-white border border-blue-200 px-1 rounded font-mono">{'{'}</code> for an autocomplete picker. For the subject line, type or paste <code className="bg-white border border-blue-200 px-1 rounded font-mono">{'{{name}}'}</code> manually.
                       </p>
                     </div>
                     <div className="p-3 space-y-1.5">
@@ -368,7 +368,7 @@ export function EmailTemplatesPanel() {
                                 {{onboardingTicketId}} from overflowing the narrow
                                 sidebar column. text-[11px] is a hair smaller than
                                 text-xs to fit more without wrapping for short names. */}
-                            <div className="font-mono text-[11px] font-semibold text-indigo-700 group-hover:text-emerald-700 mb-0.5 break-all leading-tight">
+                            <div className="font-mono text-[11px] font-semibold text-blue-700 group-hover:text-emerald-700 mb-0.5 break-all leading-tight">
                               {`{{${name}}}`}
                             </div>
                             {hint && (
@@ -406,7 +406,7 @@ export default function AdminEmailTemplates() {
     <Layout>
       <div>
         <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-          <Mail className="w-6 h-6 text-indigo-500" />
+          <Mail className="w-6 h-6 text-blue-500" />
           Email Templates
         </h1>
         <EmailTemplatesPanel />

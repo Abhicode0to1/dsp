@@ -5,7 +5,7 @@ export default function UsageBar({ label, used, limit, icon: Icon, color = 'indi
   const isUnlimited = limit === null;
 
   const colorMap = {
-    indigo: { bar: 'bg-indigo-500', text: 'text-indigo-600', bg: 'bg-indigo-50' },
+    indigo: { bar: 'bg-blue-500', text: 'text-blue-600', bg: 'bg-blue-50' },
     green:  { bar: 'bg-green-500',  text: 'text-green-600',  bg: 'bg-green-50'  },
     amber:  { bar: 'bg-amber-500',  text: 'text-amber-600',  bg: 'bg-amber-50'  },
     orange: { bar: 'bg-orange-500', text: 'text-orange-600', bg: 'bg-orange-50' },

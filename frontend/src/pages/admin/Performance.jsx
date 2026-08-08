@@ -67,8 +67,8 @@ function ScoreBadge({ value }) {
 function KpiCard({ icon: Icon, label, value, sub, color }) {
   return (
     <div className={clsx('card p-4 flex items-start gap-3', color)}>
-      <div className={clsx('p-2 rounded-lg flex-shrink-0', color === 'border-l-4 border-green-400' ? 'bg-green-50' : color === 'border-l-4 border-amber-400' ? 'bg-amber-50' : color === 'border-l-4 border-red-400' ? 'bg-red-50' : 'bg-indigo-50')}>
-        <Icon className={clsx('w-5 h-5', color === 'border-l-4 border-green-400' ? 'text-green-600' : color === 'border-l-4 border-amber-400' ? 'text-amber-600' : color === 'border-l-4 border-red-400' ? 'text-red-600' : 'text-indigo-600')} />
+      <div className={clsx('p-2 rounded-lg flex-shrink-0', color === 'border-l-4 border-green-400' ? 'bg-green-50' : color === 'border-l-4 border-amber-400' ? 'bg-amber-50' : color === 'border-l-4 border-red-400' ? 'bg-red-50' : 'bg-blue-50')}>
+        <Icon className={clsx('w-5 h-5', color === 'border-l-4 border-green-400' ? 'text-green-600' : color === 'border-l-4 border-amber-400' ? 'text-amber-600' : color === 'border-l-4 border-red-400' ? 'text-red-600' : 'text-blue-600')} />
       </div>
       <div>
         <p className="text-xs text-gray-500 font-medium">{label}</p>
@@ -144,7 +144,7 @@ export default function AdminPerformance() {
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
-                className={clsx('px-3 py-1.5 transition-colors', period === p.value ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
+                className={clsx('px-3 py-1.5 transition-colors', period === p.value ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
               >
                 {p.label}
               </button>
@@ -156,7 +156,7 @@ export default function AdminPerformance() {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
@@ -181,7 +181,7 @@ export default function AdminPerformance() {
               label="Top Agent"
               value={topAgent ? topAgent.combined_avg : '—'}
               sub={topAgent?.agent_name}
-              color="border-l-4 border-indigo-400"
+              color="border-l-4 border-blue-400"
             />
             <KpiCard
               icon={Users}
@@ -207,7 +207,7 @@ export default function AdminPerformance() {
                 {period !== 'all' && (
                   <button
                     onClick={() => setPeriod('all')}
-                    className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium"
+                    className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
                   >
                     Show all ratings instead
                   </button>
@@ -236,13 +236,13 @@ export default function AdminPerformance() {
                       <tr
                         key={a.agent_id}
                         onClick={() => openAgentReviews(a)}
-                        className="hover:bg-indigo-50/40 cursor-pointer transition-colors"
+                        className="hover:bg-blue-50/40 cursor-pointer transition-colors"
                         title="Click to read this agent's reviews"
                       >
                         <td className="px-5 py-4 text-xs text-gray-400 font-mono">{idx + 1}</td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700 flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
                               {a.agent_name?.[0]?.toUpperCase()}
                             </div>
                             <span className="font-medium text-gray-800 underline-offset-2 group-hover:underline">{a.agent_name}</span>
@@ -302,7 +302,7 @@ export default function AdminPerformance() {
                 {period !== 'all' && (
                   <button
                     onClick={() => setPeriod('all')}
-                    className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium"
+                    className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
                   >
                     Check all-time low ratings
                   </button>
@@ -387,7 +387,7 @@ function AgentReviewsDrawer({ agent, data, loading, period, onClose }) {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-40">
-              <div className="w-7 h-7 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+              <div className="w-7 h-7 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : reviews.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400">

@@ -1,35 +1,15 @@
-// Inline SVG logo components so text color follows `currentColor` (Tailwind
-// `text-white`, `text-gray-900`, etc). Three variants matching the brand pack:
-//   <CloudOnly />  — just the blue cloud (favicon / collapsed sidebar)
-//   <LogoMark />   — cloud + vertical separator bar (sidebar header at narrow widths)
-//   <LogoFull />   — cloud + bar + "ANUTECH / DIGITAL" text (login, setup-password)
-// The cloud is always brand blue (#0DA1FF); the bar + text use `currentColor`
-// so a single component renders correctly on light and dark backgrounds.
+// Real brand assets (public/anutech-logo-*.png), replacing the earlier
+// hand-drawn cloud SVG placeholder. Two variants:
+//   <CloudOnly />  — just the arrow mark (favicon / collapsed sidebar)
+//   <LogoFull />   — arrow mark + "ANUTECH DIGITAL PVT LTD" wordmark (sidebar
+//                    expanded header, login, setup-password)
+// Both images have transparent backgrounds. `className` controls sizing —
+// pass a height utility (e.g. h-9) same as before; width is automatic.
 
 export function CloudOnly({ className = '', ...rest }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 64" className={className} aria-hidden="true" {...rest}>
-      <path fill="#0DA1FF" d="M76 60H22A18 18 0 0 1 22 24l1 0A20 20 0 0 1 62 22a14 14 0 0 1 14 14 13 13 0 0 1 0 24Z" />
-    </svg>
-  );
-}
-
-export function LogoMark({ className = '', ...rest }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 64" className={className} aria-label="Anutech Digital" {...rest}>
-      <path fill="#0DA1FF" d="M76 60H22A18 18 0 0 1 22 24l1 0A20 20 0 0 1 62 22a14 14 0 0 1 14 14 13 13 0 0 1 0 24Z" />
-      <rect x="100" y="10" width="5" height="44" rx="1" fill="currentColor" />
-    </svg>
-  );
+  return <img src="/anutech-logo-mark.png" alt="Anutech" className={className} {...rest} />;
 }
 
 export function LogoFull({ className = '', ...rest }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" className={className} aria-label="Anutech Digital" {...rest}>
-      <path fill="#0DA1FF" d="M86 92H22A22 22 0 0 1 22 48l1 0A24 24 0 0 1 70 46a18 18 0 0 1 18 18 16 16 0 0 1-2 28Z" />
-      <rect x="120" y="22" width="6" height="64" rx="1" fill="currentColor" />
-      <text x="146" y="55" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="32" letterSpacing="2" fill="currentColor">ANUTECH</text>
-      <text x="146" y="92" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="32" letterSpacing="6" fill="currentColor">DIGITAL</text>
-    </svg>
-  );
+  return <img src="/anutech-logo-full.png" alt="Anutech Digital" className={className} {...rest} />;
 }

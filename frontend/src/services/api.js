@@ -41,6 +41,8 @@ export default api;
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const login           = (data) => api.post('/auth/login', data);
 export const logout          = ()     => api.post('/auth/logout');
+// Phase 1 integration: exchanges the Customer Panel's signed handoff token for a real DSP session
+export const ssoLogin        = (data) => api.post('/auth/sso', data);
 // 2FA — partial token from login is sent back to verify-login with the code
 export const verifyLogin2fa  = (data) => api.post('/auth/2fa/verify-login', data);
 export const get2faStatus    = ()     => api.get('/auth/2fa/status');

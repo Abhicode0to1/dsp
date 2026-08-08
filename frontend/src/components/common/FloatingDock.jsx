@@ -54,7 +54,7 @@ export default function FloatingDock({ showAssistant = false }) {
             onClick={openBot}
             title="Support assistant"
             aria-label="Open support assistant"
-            className="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg flex items-center justify-center transition-colors flex-shrink-0"
+            className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center transition-colors flex-shrink-0"
           >
             <MessageCircle className="w-5 h-5" />
           </button>

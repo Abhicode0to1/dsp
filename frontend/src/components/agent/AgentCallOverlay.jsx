@@ -831,7 +831,7 @@ export default function AgentCallOverlay() {
                       key={a.id}
                       disabled={transferring}
                       onClick={() => handleTransfer(a.id)}
-                      className="w-full text-left px-2.5 py-1.5 text-xs bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-colors truncate flex items-center gap-1.5"
+                      className="w-full text-left px-2.5 py-1.5 text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors truncate flex items-center gap-1.5"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
                       {a.name}
@@ -845,7 +845,7 @@ export default function AgentCallOverlay() {
             {/* Your mic activity strip — sits above the action buttons so the
                 agent can confirm their mic is actually picking up sound. */}
             <div className="flex items-center justify-center gap-2 mb-2">
-              <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-indigo-500" maxHeight={14} minHeight={3} barWidth={2} />
+              <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-blue-500" maxHeight={14} minHeight={3} barWidth={2} />
               <span className="text-[10px] text-gray-400">Your mic</span>
             </div>
             <div className="flex gap-1.5">
@@ -940,7 +940,7 @@ function WrapupPanel({ wrapup, submitting, onResolved, onCreateTicket, onSkip })
   return (
     <div className="p-4">
       <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="w-4 h-4 text-indigo-500" />
+        <Sparkles className="w-4 h-4 text-blue-500" />
         <span className="text-sm font-bold text-gray-800">Call wrap-up</span>
         <span className="ml-auto text-[10px] text-gray-400">Auto-close in {secondsLeft}s</span>
       </div>
@@ -959,10 +959,10 @@ function WrapupPanel({ wrapup, submitting, onResolved, onCreateTicket, onSkip })
         <button
           onClick={onCreateTicket}
           disabled={submitting || !wrapup.customerId}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
         >
           {submitting
-            ? <><span className="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" /> Creating…</>
+            ? <><span className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" /> Creating…</>
             : <><Ticket className="w-3.5 h-3.5" /> Create follow-up ticket</>}
         </button>
         <button

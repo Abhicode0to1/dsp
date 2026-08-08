@@ -64,11 +64,11 @@ export default function PushToggle() {
       className="w-full flex items-center justify-between gap-2 px-4 py-2 text-xs border-b border-gray-100 hover:bg-gray-50 disabled:opacity-60 transition-colors"
     >
       <span className="flex items-center gap-1.5 text-gray-600">
-        {enabled ? <BellRing className="w-3.5 h-3.5 text-indigo-600" /> : <BellOff className="w-3.5 h-3.5 text-gray-400" />}
+        {enabled ? <BellRing className="w-3.5 h-3.5 text-blue-600" /> : <BellOff className="w-3.5 h-3.5 text-gray-400" />}
         {denied ? 'Notifications blocked' : enabled ? 'Push notifications on' : 'Get notified when the app is closed'}
       </span>
       {!denied && (
-        <span className={`font-semibold ${enabled ? 'text-gray-400' : 'text-indigo-600'}`}>
+        <span className={`font-semibold ${enabled ? 'text-gray-400' : 'text-blue-600'}`}>
           {busy ? '…' : enabled ? 'Turn off' : 'Enable'}
         </span>
       )}

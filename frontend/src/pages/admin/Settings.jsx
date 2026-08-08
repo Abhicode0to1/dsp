@@ -267,7 +267,7 @@ export default function AdminSettings() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <form onSubmit={save} className="max-w-xl space-y-6">
@@ -311,7 +311,7 @@ export default function AdminSettings() {
                 type="checkbox"
                 checked={settings.billing_extras_enabled === '1' || settings.billing_extras_enabled === 1 || settings.billing_extras_enabled === true}
                 onChange={e => setSettings(s => ({ ...s, billing_extras_enabled: e.target.checked ? '1' : '0' }))}
-                className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer"
+                className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer"
               />
               <div>
                 <p className="text-sm font-medium text-gray-700">Show Subscriptions / Paid Invoices / Pending Payments tabs</p>
@@ -412,7 +412,7 @@ export default function AdminSettings() {
           {/* SMTP Configuration — outgoing email server */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Mail className="w-4 h-4 text-indigo-500" />
+              <Mail className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">SMTP Configuration</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -468,7 +468,7 @@ export default function AdminSettings() {
               <input type="checkbox"
                 checked={settings.smtp_secure === '1'}
                 onChange={e => setSettings(s => ({ ...s, smtp_secure: e.target.checked ? '1' : '0' }))}
-                className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
               <div>
                 <p className="text-sm font-medium text-gray-700">Use implicit TLS (port 465)</p>
                 <p className="text-[11px] text-gray-400">Leave unchecked for STARTTLS on port 587. Some legacy hosts require this.</p>
@@ -482,7 +482,7 @@ export default function AdminSettings() {
           {/* Cloudflare TURN — voice/video calls relay */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Phone className="w-4 h-4 text-indigo-500" />
+              <Phone className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Cloudflare TURN (Calls)</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -516,7 +516,7 @@ export default function AdminSettings() {
           {/* Anthropic — AI bot / KB assistant */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-4 h-4 text-indigo-500" />
+              <Sparkles className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Anthropic (AI Assistant)</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -542,7 +542,7 @@ export default function AdminSettings() {
           {/* Email Defaults */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Mail className="w-4 h-4 text-indigo-500" />
+              <Mail className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Email Defaults</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -608,13 +608,13 @@ export default function AdminSettings() {
           {/* Inbound Email — IMAP poller for customer replies → ticket messages */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Mail className="w-4 h-4 text-indigo-500" />
+              <Mail className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Inbound Email (customer replies → tickets)</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
               Point the poller at the mailbox that <strong>receives replies to system emails</strong> — typically the same address you send from (e.g. <code className="bg-gray-100 px-1 rounded text-[10px]">noreply@yourdomain.com</code>). The poller polls every 60 seconds, parses new replies, and routes them to the right ticket. Review what gets ingested in <strong>System Health → Inbound Mail</strong>.
             </p>
-            <div className="mb-4 px-3 py-2 rounded-lg bg-indigo-50 border border-indigo-200 text-[11px] text-indigo-900">
+            <div className="mb-4 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-[11px] text-blue-900">
               <strong>⚠ Don't point this at your publicly-advertised support address.</strong> The publicly-advertised <code>support@</code> mailbox is for human-handled general queries — keep it as a regular Gmail inbox that an agent checks manually. The poller below is for the automated reply loop only.
             </div>
             <label className="flex items-start gap-3 cursor-pointer mb-4">
@@ -686,7 +686,7 @@ export default function AdminSettings() {
                 <label className="flex items-center gap-2 mt-7 text-sm text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={settings.imap_secure === '1'}
                     onChange={e => setSettings(s => ({ ...s, imap_secure: e.target.checked ? '1' : '0' }))}
-                    className="w-4 h-4 accent-indigo-600" />
+                    className="w-4 h-4 accent-blue-600" />
                   Use implicit TLS (port 993)
                 </label>
               </div>
@@ -699,7 +699,7 @@ export default function AdminSettings() {
           {/* Customer Experience */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <MessageSquare className="w-4 h-4 text-indigo-500" />
+              <MessageSquare className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Customer Experience</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">Toggles for survey timing, attachments, and email noise.</p>
@@ -707,7 +707,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.csat_after_chat === '1'}
                   onChange={e => setSettings(s => ({ ...s, csat_after_chat: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Show CSAT rating after a chat ends</p>
                   <p className="text-[11px] text-gray-400">Customer is asked to rate the agent immediately after the chat closes.</p>
@@ -716,7 +716,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.csat_after_ticket === '1'}
                   onChange={e => setSettings(s => ({ ...s, csat_after_ticket: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Email CSAT survey when a ticket closes</p>
                   <p className="text-[11px] text-gray-400">Sends the survey link via email a few minutes after ticket close.</p>
@@ -725,7 +725,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.ticket_created_email_enabled === '1'}
                   onChange={e => setSettings(s => ({ ...s, ticket_created_email_enabled: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Send confirmation email when a ticket is created</p>
                   <p className="text-[11px] text-gray-400">Off = ticket appears in customer portal only, no email noise.</p>
@@ -735,7 +735,7 @@ export default function AdminSettings() {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" checked={settings.allow_chat_attachments === '1'}
                     onChange={e => setSettings(s => ({ ...s, allow_chat_attachments: e.target.checked ? '1' : '0' }))}
-                    className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                    className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                   <div>
                     <p className="text-sm font-medium text-gray-700">Allow file attachments in live chat</p>
                     <p className="text-[11px] text-gray-400">Off = paperclip icon hidden for customers + agents.</p>
@@ -765,7 +765,7 @@ export default function AdminSettings() {
           {/* Security & Access */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Shield className="w-4 h-4 text-indigo-500" />
+              <Shield className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Security & Access</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -792,20 +792,20 @@ export default function AdminSettings() {
               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={settings.password_require_digit === '1'}
                   onChange={e => setSettings(s => ({ ...s, password_require_digit: e.target.checked ? '1' : '0' }))}
-                  className="w-4 h-4 accent-indigo-600" />
+                  className="w-4 h-4 accent-blue-600" />
                 Require digit
               </label>
               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={settings.password_require_symbol === '1'}
                   onChange={e => setSettings(s => ({ ...s, password_require_symbol: e.target.checked ? '1' : '0' }))}
-                  className="w-4 h-4 accent-indigo-600" />
+                  className="w-4 h-4 accent-blue-600" />
                 Require symbol
               </label>
             </div>
             <label className="flex items-start gap-3 cursor-pointer mt-4 pt-3 border-t border-gray-100">
               <input type="checkbox" checked={settings.require_admin_2fa === '1'}
                 onChange={e => setSettings(s => ({ ...s, require_admin_2fa: e.target.checked ? '1' : '0' }))}
-                className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
               <div>
                 <p className="text-sm font-medium text-gray-700">Require 2-factor authentication for all admin accounts</p>
                 <p className="text-[11px] text-gray-400">When ON, admins who haven't enrolled are prompted at next sign-in. Active admins are NOT immediately logged out — they're given a grace period to enrol.</p>
@@ -830,7 +830,7 @@ export default function AdminSettings() {
           {/* Branding */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Palette className="w-4 h-4 text-indigo-500" />
+              <Palette className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Branding</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">Customise outgoing emails + customer portal for white-labelling.</p>
@@ -865,7 +865,7 @@ export default function AdminSettings() {
           {/* Operations */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Wrench className="w-4 h-4 text-indigo-500" />
+              <Wrench className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Operations & Maintenance</h2>
             </div>
             <div className="space-y-4">
@@ -899,7 +899,7 @@ export default function AdminSettings() {
           {/* Renewal & Expiry (Phase 4) */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-indigo-500" />
+              <Clock className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Renewal & Expiry</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -918,7 +918,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer pt-2 border-t border-gray-100">
                 <input type="checkbox" checked={settings.auto_lapse_to_free === '1'}
                   onChange={e => setSettings(s => ({ ...s, auto_lapse_to_free: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Auto-lapse expired customers to Free</p>
                   <p className="text-[11px] text-gray-400">
@@ -932,7 +932,7 @@ export default function AdminSettings() {
           {/* Channel Kill Switches */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Power className="w-4 h-4 text-indigo-500" />
+              <Power className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Channel Kill Switches</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">System-wide on/off for entire channels — useful during an outage. Per-plan toggles still apply on top.</p>
@@ -940,7 +940,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.bot_widget_enabled === '1'}
                   onChange={e => setSettings(s => ({ ...s, bot_widget_enabled: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Show in-app AI bot to customers</p>
                   <p className="text-[11px] text-gray-400">Off = hide the bot widget across the customer panel.</p>
@@ -949,7 +949,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.calls_system_enabled === '1'}
                   onChange={e => setSettings(s => ({ ...s, calls_system_enabled: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Allow voice calls system-wide</p>
                   <p className="text-[11px] text-gray-400">Off = block all new call attempts (e.g. during a WebRTC outage). Existing active calls finish normally.</p>
@@ -958,7 +958,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={settings.screen_share_enabled === '1'}
                   onChange={e => setSettings(s => ({ ...s, screen_share_enabled: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Allow agents to request customer screen view</p>
                   <p className="text-[11px] text-gray-400">Off = hides the "Request screen view" button in live chat. View-only; the customer must approve each time.</p>
@@ -967,7 +967,7 @@ export default function AdminSettings() {
               <label className="flex items-start gap-3 cursor-pointer opacity-70">
                 <input type="checkbox" checked={settings.whatsapp_enabled === '1'}
                   onChange={e => setSettings(s => ({ ...s, whatsapp_enabled: e.target.checked ? '1' : '0' }))}
-                  className="mt-0.5 w-4 h-4 accent-indigo-600 cursor-pointer" />
+                  className="mt-0.5 w-4 h-4 accent-blue-600 cursor-pointer" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Enable WhatsApp channel <span className="text-[10px] text-amber-700 uppercase font-bold ml-1">placeholder</span></p>
                   <p className="text-[11px] text-gray-400">Reserved for the WhatsApp integration — saved but not yet wired.</p>
@@ -979,7 +979,7 @@ export default function AdminSettings() {
           {/* Assignment Routing */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Settings className="w-4 h-4 text-indigo-500" />
+              <Settings className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Assignment Routing</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -1062,7 +1062,7 @@ export default function AdminSettings() {
           {/* Working Hours */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-indigo-500" />
+              <Clock className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Working Hours</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">
@@ -1108,7 +1108,7 @@ export default function AdminSettings() {
                           setSettings(s => ({ ...s, work_hours_days: next.join(',') }));
                         }}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
-                          isOn ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'
+                          isOn ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'
                         }`}
                       >
                         {d.label}
@@ -1124,7 +1124,7 @@ export default function AdminSettings() {
           {/* Billing App Integration */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
-              <Link className="w-4 h-4 text-indigo-500" />
+              <Link className="w-4 h-4 text-blue-500" />
               <h2 className="text-sm font-bold text-gray-700">Billing App Integration</h2>
             </div>
             <p className="text-xs text-gray-400 mb-4">

@@ -51,7 +51,7 @@ export default function RowsPerPageSelect({
       <select
         value={value}
         onChange={handleChange}
-        className="border border-gray-200 rounded px-1.5 py-0.5 text-xs bg-white cursor-pointer hover:border-gray-300 focus:border-indigo-400 focus:outline-none"
+        className="border border-gray-200 rounded px-1.5 py-0.5 text-xs bg-white cursor-pointer hover:border-gray-300 focus:border-blue-400 focus:outline-none"
       >
         {options.map(n => <option key={n} value={n}>{n}</option>)}
       </select>

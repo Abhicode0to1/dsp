@@ -146,7 +146,7 @@ function TagsDisplay({ tags }) {
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map(t => (
-        <span key={t} className="inline-flex items-center gap-0.5 text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full">
+        <span key={t} className="inline-flex items-center gap-0.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
           <Tag className="w-2.5 h-2.5" />{t}
         </span>
       ))}
@@ -179,7 +179,7 @@ function PendingReasonBadge({ reason }) {
 function RequestTypeBadge({ type }) {
   if (!type) return null;
   return (
-    <span className="inline-flex items-center text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full font-medium">
+    <span className="inline-flex items-center text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-medium">
       {type}
     </span>
   );
@@ -213,7 +213,7 @@ function TagsInput({ tags = [], onChange }) {
   return (
     <div className="flex flex-wrap gap-1 items-center min-h-8 px-2 py-1.5 border border-gray-200 rounded-lg bg-white text-sm">
       {tags.map(t => (
-        <span key={t} className="inline-flex items-center gap-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full text-xs">
+        <span key={t} className="inline-flex items-center gap-0.5 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full text-xs">
           {t}
           <button type="button" onClick={() => remove(t)}><X className="w-2.5 h-2.5 hover:text-red-600" /></button>
         </span>
@@ -292,7 +292,7 @@ function MacrosPicker({ onApply }) {
           {macros.map(m => (
             <div key={m.id} className="flex items-center group">
               <button type="button" onClick={() => { onApply(m.actions); setOpen(false); }}
-                className="flex-1 text-left text-xs text-gray-700 hover:bg-indigo-50 px-2 py-1.5 rounded-lg transition-colors">
+                className="flex-1 text-left text-xs text-gray-700 hover:bg-blue-50 px-2 py-1.5 rounded-lg transition-colors">
                 {m.name}
               </button>
               <button type="button" onClick={() => handleDelete(m.id)} className="hidden group-hover:flex p-1 text-red-400 hover:text-red-600">
@@ -315,7 +315,7 @@ function MacrosPicker({ onApply }) {
               </div>
             </div>
           ) : (
-            <button type="button" onClick={() => setShowCreate(true)} className="mt-1.5 w-full text-xs text-indigo-600 hover:bg-indigo-50 px-2 py-1.5 rounded-lg flex items-center gap-1">
+            <button type="button" onClick={() => setShowCreate(true)} className="mt-1.5 w-full text-xs text-blue-600 hover:bg-blue-50 px-2 py-1.5 rounded-lg flex items-center gap-1">
               <Plus className="w-3 h-3" /> New macro
             </button>
           )}
@@ -373,7 +373,7 @@ function TemplatesPicker({ onApply, context }) {
                 onApply(resolved, t);
                 setOpen(false);
               }}
-              className="w-full text-left text-xs text-gray-700 hover:bg-indigo-50 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-2"
+              className="w-full text-left text-xs text-gray-700 hover:bg-blue-50 px-2 py-1.5 rounded-lg transition-colors flex items-center gap-2"
             >
               <span className="flex-1 font-medium">{t.name}</span>
               {t.default_priority && (
@@ -400,7 +400,7 @@ function MarkdownToolbar({ onInsert }) {
       {tools.map((t, i) => (
         <button key={i} type="button" title={t.title}
           onClick={() => onInsert(t.wrap, t.prefix)}
-          className="p-1 rounded text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+          className="p-1 rounded text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
           {t.icon}
         </button>
       ))}
@@ -496,7 +496,7 @@ function ReplyAssistant({ currentTicket, history, replyText, templates, onUseTem
         <button
           type="button"
           onClick={() => onUseTemplate(templateMatch)}
-          className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100"
+          className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100"
           title="Insert this template"
         >
           💡 Use snippet: <strong>{templateMatch.title || templateMatch.name}</strong>
@@ -582,7 +582,7 @@ function TicketContextStrip({ ticket, history }) {
             </span>
           )}
           {latestLabel && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-full">
               <Clock className="w-2.5 h-2.5" /> {latestLabel}
             </span>
           )}
@@ -713,7 +713,7 @@ function ReassignModal({ ticket, onClose }) {
           <div className="flex flex-wrap gap-1.5">
             {QUICK_REASONS.map(r => (
               <button key={r} type="button" onClick={() => send(r)} disabled={saving}
-                className="text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors disabled:opacity-50">
+                className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50">
                 {r}
               </button>
             ))}
@@ -757,10 +757,10 @@ function KanbanBoard({ tickets, onSelect, unreadTickets }) {
             <div className="space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-0.5">
               {colTickets.map(t => (
                 <div key={t.id} onClick={() => onSelect(t)}
-                  className={clsx('bg-white rounded-xl border p-3 cursor-pointer transition-all overflow-hidden', PRIORITY_STRIPE[t.priority], ageClass(t.created_at, t.status), t.sla_breached && t.status !== 'closed' ? 'ring-2 ring-red-300 bg-red-50/50' : '', unreadTickets.has(t.id) ? 'border-blue-300' : 'border-gray-200 hover:border-indigo-200 hover:shadow-sm')}>
+                  className={clsx('bg-white rounded-xl border p-3 cursor-pointer transition-all overflow-hidden', PRIORITY_STRIPE[t.priority], ageClass(t.created_at, t.status), t.sla_breached && t.status !== 'closed' ? 'ring-2 ring-red-300 bg-red-50/50' : '', unreadTickets.has(t.id) ? 'border-blue-300' : 'border-gray-200 hover:border-blue-200 hover:shadow-sm')}>
                   <p className="text-xs text-gray-400 font-mono mb-0.5">#{t.id}</p>
                   <p className="text-sm font-semibold text-gray-800 line-clamp-2 mb-1.5">{t.subject}</p>
-                  {t.request_type && <p className="text-xs text-indigo-600 mb-1">{t.request_type}</p>}
+                  {t.request_type && <p className="text-xs text-blue-600 mb-1">{t.request_type}</p>}
                   {t.status === 'pending' && t.pending_reason && (
                     <p className="text-xs text-amber-600 mb-1">{t.pending_reason}</p>
                   )}
@@ -814,10 +814,10 @@ function RelatedTicketsPanel({ ticketId, customerId, onSelect }) {
       {open && (
         <div className="px-4 pb-3">
           <div className="flex gap-1.5 mb-2">
-            <button type="button" onClick={() => setTab('tickets')} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-colors', tab === 'tickets' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-400 hover:text-gray-600')}>
+            <button type="button" onClick={() => setTab('tickets')} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-colors', tab === 'tickets' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600')}>
               <Ticket className="w-3 h-3" /> Tickets {related.length > 0 && `(${related.length})`}
             </button>
-            <button type="button" onClick={() => setTab('chats')} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-colors', tab === 'chats' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-400 hover:text-gray-600')}>
+            <button type="button" onClick={() => setTab('chats')} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-colors', tab === 'chats' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600')}>
               <MessageSquare className="w-3 h-3" /> Chats {chats.length > 0 && `(${chats.length})`}
             </button>
           </div>
@@ -1519,23 +1519,23 @@ export default function AgentTickets() {
           <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden text-xs font-semibold">
             <button
               onClick={() => { setTicketScope('mine'); setSelectedTicket(null); setSelectedIds(new Set()); }}
-              className={clsx('px-3 py-2 transition-colors', ticketScope === 'mine' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-50')}
+              className={clsx('px-3 py-2 transition-colors', ticketScope === 'mine' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50')}
             >
               My Tickets
             </button>
             <button
               onClick={() => { setTicketScope('all'); setSelectedTicket(null); setSelectedIds(new Set()); }}
-              className={clsx('px-3 py-2 transition-colors', ticketScope === 'all' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-50')}
+              className={clsx('px-3 py-2 transition-colors', ticketScope === 'all' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50')}
             >
               All Tickets
             </button>
           </div>
 
           <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-            <button onClick={() => setViewMode('list')} className={clsx('p-2 transition-colors', viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-50')} title="List view">
+            <button onClick={() => setViewMode('list')} className={clsx('p-2 transition-colors', viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50')} title="List view">
               <ListIcon className="w-4 h-4" />
             </button>
-            <button onClick={() => setViewMode('kanban')} className={clsx('p-2 transition-colors', viewMode === 'kanban' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-50')} title="Kanban view">
+            <button onClick={() => setViewMode('kanban')} className={clsx('p-2 transition-colors', viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50')} title="Kanban view">
               <LayoutGrid className="w-4 h-4" />
             </button>
           </div>
@@ -1597,9 +1597,9 @@ export default function AgentTickets() {
                         PRIORITY_STRIPE[t.priority],
                         ageClass(t.created_at, t.status),
                         t.sla_breached && t.status !== 'closed' && 'ring-2 ring-red-300 bg-red-50/40',
-                        selectedTicket?.id === t.id ? 'border-indigo-400 ring-1 ring-indigo-200 shadow-md' :
-                        isSelected ? 'border-indigo-300 bg-indigo-50/40 shadow-sm' :
-                        hasUnread ? 'border-blue-300 shadow-sm hover:shadow-md' : 'border-gray-200 hover:border-indigo-200 hover:shadow-sm'
+                        selectedTicket?.id === t.id ? 'border-blue-400 ring-1 ring-blue-200 shadow-md' :
+                        isSelected ? 'border-blue-300 bg-blue-50/40 shadow-sm' :
+                        hasUnread ? 'border-blue-300 shadow-sm hover:shadow-md' : 'border-gray-200 hover:border-blue-200 hover:shadow-sm'
                       )}>
                       {hasUnread && (
                         <span className="absolute top-3 right-3 flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
@@ -1612,7 +1612,7 @@ export default function AgentTickets() {
                           onClick={e => toggleSelectTicket(e, t.id)}
                           className={clsx(
                             'absolute top-3 left-3 w-4 h-4 rounded border-2 flex items-center justify-center transition-all z-10',
-                            isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 hover:border-indigo-400 bg-white',
+                            isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300 hover:border-blue-400 bg-white',
                             selectedIds.size === 0 && 'opacity-0 group-hover:opacity-100'
                           )}
                           title={isSelected ? 'Deselect' : 'Select for bulk action'}
@@ -1652,7 +1652,7 @@ export default function AgentTickets() {
                       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                         <SlaCountdown ticket={t} compact />
                         {tags.slice(0, 2).map(tag => (
-                          <span key={tag} className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded-full">{tag}</span>
+                          <span key={tag} className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full">{tag}</span>
                         ))}
                       </div>
                       {!selectedTicket && (
@@ -1691,7 +1691,7 @@ export default function AgentTickets() {
               {historyFromTicket && historyFromTicket.id !== selectedTicket.id && (
                 <button
                   onClick={returnFromHistory}
-                  className="sticky top-0 z-20 flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white border-b border-indigo-700 text-xs font-medium hover:bg-indigo-700 transition-colors w-full shadow-sm"
+                  className="sticky top-0 z-20 flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white border-b border-blue-700 text-xs font-medium hover:bg-blue-700 transition-colors w-full shadow-sm"
                 >
                   <ChevronRight className="w-3.5 h-3.5 rotate-180" />
                   Back to #{historyFromTicket.id}{historyFromTicket.subject ? ` · ${historyFromTicket.subject}` : ''}
@@ -1730,7 +1730,7 @@ export default function AgentTickets() {
                       onClick={toggleLayoutLock}
                       title={layoutLocked ? 'Layout locked — click to allow resizing panes' : 'Lock layout (prevents accidental resize of message / reply panes)'}
                       className={clsx('p-1.5 rounded-lg border transition-colors', layoutLocked
-                        ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                        ? 'bg-blue-50 text-blue-700 border-blue-200'
                         : 'border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-100')}
                     >
                       <Lock className="w-3.5 h-3.5" />
@@ -1859,10 +1859,10 @@ export default function AgentTickets() {
                                 onClick={() => setLightboxSrc(getAttachmentDownloadUrl(att.id))}
                               />
                               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
-                                <button onClick={() => setLightboxSrc(getAttachmentDownloadUrl(att.id))} className="p-1 bg-white rounded text-gray-700 hover:text-indigo-600" title="View">
+                                <button onClick={() => setLightboxSrc(getAttachmentDownloadUrl(att.id))} className="p-1 bg-white rounded text-gray-700 hover:text-blue-600" title="View">
                                   <Eye className="w-3 h-3" />
                                 </button>
-                                <a href={getAttachmentDownloadUrl(att.id)} download className="p-1 bg-white rounded text-gray-700 hover:text-indigo-600" title="Download">
+                                <a href={getAttachmentDownloadUrl(att.id)} download className="p-1 bg-white rounded text-gray-700 hover:text-blue-600" title="Download">
                                   <Download className="w-3 h-3" />
                                 </a>
                                 <button onClick={async () => { try { await deleteAttachment(att.id); setTicketAttachments(a => a.filter(x => x.id !== att.id)); } catch { toast.error('Failed to delete'); } }} className="p-1 bg-white rounded text-red-400 hover:text-red-600">
@@ -1875,7 +1875,7 @@ export default function AgentTickets() {
                             <>
                               <Paperclip className="w-3 h-3 text-gray-400 flex-shrink-0" />
                               <span className="text-xs text-gray-700 truncate max-w-[120px]">{att.original_name}</span>
-                              <a href={getAttachmentDownloadUrl(att.id)} download className="text-indigo-500 hover:text-indigo-700 ml-1">
+                              <a href={getAttachmentDownloadUrl(att.id)} download className="text-blue-500 hover:text-blue-700 ml-1">
                                 <Download className="w-3 h-3" />
                               </a>
                               <button onClick={async () => { try { await deleteAttachment(att.id); setTicketAttachments(a => a.filter(x => x.id !== att.id)); } catch { toast.error('Failed to delete'); } }} className="text-red-400 hover:text-red-600 ml-0.5">
@@ -1892,7 +1892,7 @@ export default function AgentTickets() {
 
               {/* Tabs */}
               <div className="flex border-b border-gray-100 bg-white">
-                <button onClick={() => setActiveTab('messages')} className={clsx('px-4 py-2.5 text-xs font-semibold transition-colors border-b-2', activeTab === 'messages' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700')}>
+                <button onClick={() => setActiveTab('messages')} className={clsx('px-4 py-2.5 text-xs font-semibold transition-colors border-b-2', activeTab === 'messages' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700')}>
                   Messages ({ticketMessages.length})
                 </button>
                 <button onClick={() => setActiveTab('notes')} className={clsx('px-4 py-2.5 text-xs font-semibold transition-colors border-b-2 flex items-center gap-1.5', activeTab === 'notes' ? 'border-amber-500 text-amber-700' : 'border-transparent text-gray-500 hover:text-gray-700')}>
@@ -1961,11 +1961,11 @@ export default function AgentTickets() {
                       );
                       return (
                         <div key={m.id} className={clsx('flex gap-3', isAgent ? 'flex-row-reverse' : 'flex-row')}>
-                          <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', isAgent ? 'bg-indigo-100' : 'bg-gray-200')}>
-                            {isAgent ? <Headphones className="w-4 h-4 text-indigo-600" /> : <User className="w-4 h-4 text-gray-600" />}
+                          <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', isAgent ? 'bg-blue-100' : 'bg-gray-200')}>
+                            {isAgent ? <Headphones className="w-4 h-4 text-blue-600" /> : <User className="w-4 h-4 text-gray-600" />}
                           </div>
                           <div className={clsx('max-w-lg flex flex-col', isAgent ? 'items-end' : 'items-start')}>
-                            <div className={clsx('px-4 py-2.5 rounded-xl text-sm shadow-sm whitespace-pre-wrap break-words', isAgent ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
+                            <div className={clsx('px-4 py-2.5 rounded-xl text-sm shadow-sm whitespace-pre-wrap break-words', isAgent ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
                               {renderMarkdown(m.message)}
                             </div>
                             <p className="text-xs text-gray-400 mt-1" title={fullDate(m.created_at)}>{m.sender_name} · {timeAgo(m.created_at)}</p>
@@ -2005,7 +2005,7 @@ export default function AgentTickets() {
                           }}
                           onApply={(resolvedText) => setReply(r => r ? r + '\n' + resolvedText : resolvedText)}
                         />
-                        <button type="button" onClick={() => setShowMarkdown(m => !m)} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-colors', showMarkdown ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'text-gray-500 border-gray-200 hover:border-gray-300')}>
+                        <button type="button" onClick={() => setShowMarkdown(m => !m)} className={clsx('flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-colors', showMarkdown ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-500 border-gray-200 hover:border-gray-300')}>
                           <Bold className="w-3 h-3" /> MD
                         </button>
                         <input type="file" ref={fileInputRef} className="hidden" multiple accept="image/*,.pdf,.doc,.docx,.txt,.csv,.zip,.log,.xlsx,.xls" onChange={e => {
@@ -2025,7 +2025,7 @@ export default function AgentTickets() {
                       {pendingFiles.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
                           {pendingFiles.map((f, i) => (
-                            <div key={i} className="flex items-center gap-1 bg-indigo-50 border border-indigo-200 rounded px-2 py-0.5 text-xs text-indigo-700">
+                            <div key={i} className="flex items-center gap-1 bg-blue-50 border border-blue-200 rounded px-2 py-0.5 text-xs text-blue-700">
                               <Paperclip className="w-2.5 h-2.5" />
                               <span className="truncate max-w-[100px]">{f.name}</span>
                               <button type="button" onClick={() => setPendingFiles(p => p.filter((_, j) => j !== i))}><X className="w-2.5 h-2.5 hover:text-red-600" /></button>

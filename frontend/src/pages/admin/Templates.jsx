@@ -188,7 +188,7 @@ function TicketTemplatesPanel() {
 
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-gray-400 py-10 justify-center">
-          <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
           Loading templates…
         </div>
       ) : templates.length === 0 ? (
@@ -209,7 +209,7 @@ function TicketTemplatesPanel() {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3 className="text-sm font-bold text-gray-800">{t.name}</h3>
                     {t.request_type && (
-                      <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-medium">
                         {t.request_type}
                       </span>
                     )}
@@ -231,7 +231,7 @@ function TicketTemplatesPanel() {
                   </button>
                   <button
                     onClick={() => setModal(t)}
-                    className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     title="Edit"
                   >
                     <Pencil className="w-4 h-4" />
@@ -281,8 +281,8 @@ export default function AdminTemplates() {
     <Layout>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-            <LayoutTemplate className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+            <LayoutTemplate className="w-5 h-5 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Templates</h1>
@@ -305,7 +305,7 @@ export default function AdminTemplates() {
                 className={clsx(
                   'flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
                   active
-                    ? 'text-indigo-700 border-indigo-600'
+                    ? 'text-blue-700 border-blue-600'
                     : 'text-gray-500 border-transparent hover:text-gray-700'
                 )}
               >

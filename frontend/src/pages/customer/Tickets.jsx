@@ -103,7 +103,7 @@ export default function CustomerTickets() {
                 key={s}
                 data-testid={`CustomerTickets-StatusFilter-${s || 'all'}`}
                 onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${statusFilter === s ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
                 {s === '' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
               </button>
@@ -144,7 +144,7 @@ export default function CustomerTickets() {
             <p className="text-sm">No tickets yet</p>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-bot-widget'))}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold mt-1"
+              className="text-xs text-blue-600 hover:text-blue-800 font-semibold mt-1"
             >
               Use the assistant to raise one →
             </button>
@@ -173,14 +173,14 @@ export default function CustomerTickets() {
                     key={t.id}
                     data-testid={`CustomerTickets-Row-${t.id}`}
                     onClick={() => navigate(`/customer/tickets/${t.id}`)}
-                    className="hover:bg-indigo-50/40 transition-colors cursor-pointer"
+                    className="hover:bg-blue-50/40 transition-colors cursor-pointer"
                   >
                     <td className={`p-0 w-1 ${PRIORITY_STRIPE[t.priority] || 'bg-gray-200'}`} />
                     <td className="px-4 py-3 text-sm text-gray-500 font-mono">#{t.id}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         {hasUnread && (
-                          <span className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" title="New activity since last visit" />
+                          <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" title="New activity since last visit" />
                         )}
                         <p className="text-sm font-medium text-gray-800 line-clamp-1">{t.subject}</p>
                       </div>
@@ -209,7 +209,7 @@ export default function CustomerTickets() {
                     <button
                       data-testid={`CustomerTickets-Row-${t.id}`}
                       onClick={() => navigate(`/customer/tickets/${t.id}`)}
-                      className="w-full text-left flex items-stretch gap-3 px-3 py-3 hover:bg-indigo-50/40 active:bg-indigo-50 transition-colors"
+                      className="w-full text-left flex items-stretch gap-3 px-3 py-3 hover:bg-blue-50/40 active:bg-blue-50 transition-colors"
                     >
                       <span className={`w-1 rounded-full flex-shrink-0 ${PRIORITY_STRIPE[t.priority] || 'bg-gray-200'}`} aria-hidden="true" />
                       <div className="flex-1 min-w-0">
@@ -219,7 +219,7 @@ export default function CustomerTickets() {
                         </div>
                         <div className="flex items-start gap-1.5 mt-0.5">
                           {hasUnread && (
-                            <span className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0 mt-1.5" title="New activity since last visit" />
+                            <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" title="New activity since last visit" />
                           )}
                           <p className="text-sm font-medium text-gray-800 line-clamp-2">{t.subject}</p>
                         </div>

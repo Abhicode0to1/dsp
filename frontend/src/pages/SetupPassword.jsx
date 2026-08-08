@@ -58,7 +58,7 @@ export default function SetupPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
       <div className="w-full max-w-md">
         <div className="card p-8 shadow-xl">
           {/* Header */}
@@ -93,7 +93,7 @@ export default function SetupPassword() {
 
           {!checking && tokenUser && (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-sm">
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm">
                 <p className="text-gray-600 text-xs">Setting up account for</p>
                 <p className="font-semibold text-gray-800">{tokenUser.name}</p>
                 <p className="text-xs text-gray-500 font-mono">{tokenUser.email}</p>

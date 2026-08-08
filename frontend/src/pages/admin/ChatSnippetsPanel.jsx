@@ -161,7 +161,7 @@ export default function ChatSnippetsPanel() {
 
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-gray-400 py-10 justify-center">
-          <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
           Loading…
         </div>
       ) : list.length === 0 ? (
@@ -182,7 +182,7 @@ export default function ChatSnippetsPanel() {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3 className="text-sm font-bold text-gray-800">{s.name}</h3>
                     {s.shortcut && (
-                      <span className="text-[11px] font-mono bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-mono bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">
                         /{s.shortcut}
                       </span>
                     )}
@@ -198,7 +198,7 @@ export default function ChatSnippetsPanel() {
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button onClick={() => setPreviewing(s)} className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg" title="Preview with sample values"><Eye className="w-4 h-4" /></button>
-                  <button onClick={() => setModal(s)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => setModal(s)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit"><Pencil className="w-4 h-4" /></button>
                   <button onClick={() => handleDelete(s.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>

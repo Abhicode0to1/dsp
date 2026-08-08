@@ -159,8 +159,8 @@ function RecordingPlayer({ attachmentId, mime, size, knownDuration, label, onClo
   const total = duration || knownDuration || 0;
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-indigo-50/40 border-t border-indigo-100">
-      <Mic className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+    <div className="flex items-center gap-3 p-3 bg-blue-50/40 border-t border-blue-100">
+      <Mic className="w-4 h-4 text-blue-600 flex-shrink-0" />
       {label && <span className="text-[11px] font-semibold text-violet-700 flex-shrink-0 w-24 truncate" title={label}>{label}</span>}
       <audio
         ref={audioRef}
@@ -173,7 +173,7 @@ function RecordingPlayer({ attachmentId, mime, size, knownDuration, label, onClo
       />
       <button
         onClick={toggle}
-        className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 hover:bg-indigo-700"
+        className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 hover:bg-blue-700"
         aria-label={playing ? 'Pause' : 'Play'}
       >
         {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -187,7 +187,7 @@ function RecordingPlayer({ attachmentId, mime, size, knownDuration, label, onClo
         value={Math.min(current, total || 0)}
         onChange={onSeek}
         disabled={!total}
-        className="flex-1 accent-indigo-600 h-1 cursor-pointer"
+        className="flex-1 accent-blue-600 h-1 cursor-pointer"
         style={{ minWidth: '120px' }}
         aria-label="Seek"
       />
@@ -286,7 +286,7 @@ export default function AdminCalls() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Phone className="w-5 h-5 text-indigo-500" /> Calls
+            <Phone className="w-5 h-5 text-blue-500" /> Calls
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">All voice call records. Recordings are retained for 30 days.</p>
         </div>
@@ -305,7 +305,7 @@ export default function AdminCalls() {
             className={clsx(
               'flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
               tab === t.key
-                ? 'text-indigo-700 border-indigo-600'
+                ? 'text-blue-700 border-blue-600'
                 : 'text-gray-500 border-transparent hover:text-gray-700'
             )}
           >
@@ -448,7 +448,7 @@ export default function AdminCalls() {
                             'text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-full border whitespace-nowrap',
                             c.ended_by === 'customer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                             c.ended_by === 'agent'    ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                            c.ended_by === 'admin'    ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                            c.ended_by === 'admin'    ? 'bg-blue-50 text-blue-700 border-blue-200' :
                                                          'bg-gray-50 text-gray-600 border-gray-200'
                           )} title={
                             c.ended_by === 'customer' ? 'Customer hung up' :
@@ -472,14 +472,14 @@ export default function AdminCalls() {
                           </button>
                         ) : (parseRecordings(c.recordings).length || c.recording_attachment_id) ? (
                           playingId === c.id ? (
-                            <span className="text-xs text-indigo-600 font-medium">Playing below ↓</span>
+                            <span className="text-xs text-blue-600 font-medium">Playing below ↓</span>
                           ) : (
                             (() => {
                               const n = parseRecordings(c.recordings).length;
                               return (
                                 <button
                                   onClick={() => setPlayingId(c.id)}
-                                  className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-medium inline-flex items-center gap-1"
+                                  className="text-xs px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 font-medium inline-flex items-center gap-1"
                                 >
                                   <Headphones className="w-3 h-3" /> Play{n > 1 ? ` (${n})` : ''}
                                 </button>
@@ -504,7 +504,7 @@ export default function AdminCalls() {
                         <tr>
                           <td colSpan={8} className="p-0">
                             {list.length > 1 && (
-                              <div className="px-3 pt-2 text-[11px] font-semibold text-violet-700 bg-indigo-50/40">
+                              <div className="px-3 pt-2 text-[11px] font-semibold text-violet-700 bg-blue-50/40">
                                 🔁 Transferred call — {list.length} recording legs (one per agent):
                               </div>
                             )}

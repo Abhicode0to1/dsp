@@ -13,7 +13,7 @@ import { useMemo } from 'react';
 export default function AudioWaveBars({
   level = 0,
   bars = 5,
-  color = 'bg-indigo-500',
+  color = 'bg-blue-500',
   className = '',
   barWidth = 3,
   maxHeight = 24,

@@ -130,15 +130,17 @@ export default function LoginPage() {
   // so when the card (with the demo-accounts list) is taller than the window it
   // scrolls instead of butting against / clipping at the browser top.
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-gray-900 flex items-center justify-center px-4 py-10 sm:py-12 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 flex items-center justify-center px-4 py-10 sm:py-12 overflow-y-auto">
       <div className="w-full max-w-md">
-        {/* Logo — full lockup (cloud + ANUTECH / DIGITAL) on dark background */}
-        <div className="text-center mb-8">
-          <LogoFull className="mx-auto h-20 text-white mb-3" />
-          <p className="text-gray-400 text-sm mt-1">Centralized Customer Support Platform</p>
-        </div>
-
+        {/* Logo lives inside the white card (below) rather than floating on
+            the dark page background — its text is baked in dark, not
+            currentColor, so it needs a light surface to read against. */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-6">
+            <LogoFull className="mx-auto h-14 w-auto mb-2" />
+            <p className="text-gray-500 text-sm">Centralized Customer Support Platform</p>
+          </div>
+
           {/* Mode toggle */}
           <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
             <button
@@ -172,7 +174,7 @@ export default function LoginPage() {
               has 2FA on (or the global admin-2FA requirement is on). */}
           {twoFaState && (
             <form onSubmit={handle2faSubmit} className="space-y-4">
-              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-sm text-indigo-800">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
                 <p className="font-semibold mb-1">Two-factor verification</p>
                 {twoFaState.must_setup ? (
                   <p className="text-xs">Two-factor is required for admin accounts. You'll be prompted to set up your authenticator app after this sign-in — for now, type the code from any existing setup, or contact a super-admin if you've never enrolled.</p>

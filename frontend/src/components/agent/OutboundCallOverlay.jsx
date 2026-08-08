@@ -396,13 +396,13 @@ export default function OutboundCallOverlay() {
     <div
       ref={drag.ref}
       {...drag.handleProps}
-      className="fixed bottom-6 left-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-indigo-400 w-72 overflow-hidden"
+      className="fixed bottom-6 left-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-blue-400 w-72 overflow-hidden"
       title="Drag to move"
     >
       <div className="p-4">
         <div className="flex items-center gap-3 mb-3">
-          <div className={clsx('w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0', state === 'active' ? 'bg-green-100' : 'bg-indigo-100')}>
-            {state === 'active' ? <Phone className="w-5 h-5 text-green-600" /> : <User className="w-5 h-5 text-indigo-600" />}
+          <div className={clsx('w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0', state === 'active' ? 'bg-green-100' : 'bg-blue-100')}>
+            {state === 'active' ? <Phone className="w-5 h-5 text-green-600" /> : <User className="w-5 h-5 text-blue-600" />}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">
@@ -415,7 +415,7 @@ export default function OutboundCallOverlay() {
               )}
             </div>
             {target.ticketId && (
-              <p className="text-[10px] text-indigo-600 truncate">Re: #{target.ticketId}</p>
+              <p className="text-[10px] text-blue-600 truncate">Re: #{target.ticketId}</p>
             )}
           </div>
           {state === 'active' && (
@@ -463,7 +463,7 @@ export default function OutboundCallOverlay() {
                     key={a.id}
                     disabled={transferring}
                     onClick={() => handleTransfer(a.id)}
-                    className="w-full text-left px-2.5 py-1.5 text-xs bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-colors truncate flex items-center gap-1.5"
+                    className="w-full text-left px-2.5 py-1.5 text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors truncate flex items-center gap-1.5"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
                     {a.name}
@@ -476,7 +476,7 @@ export default function OutboundCallOverlay() {
           <>
           {state === 'active' && (
             <div className="flex items-center justify-center gap-2 mb-2">
-              <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-indigo-500" maxHeight={14} minHeight={3} barWidth={2} />
+              <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-blue-500" maxHeight={14} minHeight={3} barWidth={2} />
               <span className="text-[10px] text-gray-400">Your mic</span>
             </div>
           )}

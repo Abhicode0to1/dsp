@@ -46,7 +46,7 @@ function actionColor(action) {
     return 'bg-red-100 text-red-700 border-red-200';
   if (a.includes('reset'))    return 'bg-amber-100 text-amber-700 border-amber-200';
   if (a.includes('resent') || a.includes('added') || a.includes('created'))
-    return 'bg-indigo-100 text-indigo-700 border-indigo-200';
+    return 'bg-blue-100 text-blue-700 border-blue-200';
   if (a.includes('changed') || a.includes('updated'))
     return 'bg-blue-100 text-blue-700 border-blue-200';
   return 'bg-gray-100 text-gray-600 border-gray-200';
@@ -54,7 +54,7 @@ function actionColor(action) {
 
 function roleColor(role) {
   switch (role) {
-    case 'admin':    return 'bg-indigo-50 text-indigo-700 border-indigo-200';
+    case 'admin':    return 'bg-blue-50 text-blue-700 border-blue-200';
     case 'agent':    return 'bg-purple-50 text-purple-700 border-purple-200';
     case 'customer': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
     default:         return 'bg-gray-50 text-gray-600 border-gray-200';
@@ -248,16 +248,16 @@ export default function AuditLog() {
   const SortIcon = ({ col }) => {
     if (filters.sort !== col) return <span className="inline-block w-3" />;
     return filters.order === 'asc'
-      ? <ArrowUp   className="w-3 h-3 inline-block ml-0.5 text-indigo-500" />
-      : <ArrowDown className="w-3 h-3 inline-block ml-0.5 text-indigo-500" />;
+      ? <ArrowUp   className="w-3 h-3 inline-block ml-0.5 text-blue-500" />
+      : <ArrowDown className="w-3 h-3 inline-block ml-0.5 text-blue-500" />;
   };
 
   return (
     <Layout>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-indigo-50 rounded-lg flex items-center justify-center">
-            <ClipboardList className="w-5 h-5 text-indigo-600" />
+          <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center">
+            <ClipboardList className="w-5 h-5 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Audit Log</h1>
@@ -270,7 +270,7 @@ export default function AuditLog() {
               type="checkbox"
               checked={autoRefresh}
               onChange={e => setAutoRefresh(e.target.checked)}
-              className="w-3.5 h-3.5 accent-indigo-600"
+              className="w-3.5 h-3.5 accent-blue-600"
             />
             <Zap className={clsx('w-3.5 h-3.5', autoRefresh ? 'text-amber-500' : 'text-gray-400')} />
             <span>Live (30s)</span>
@@ -408,7 +408,7 @@ export default function AuditLog() {
               className={clsx(
                 'px-2.5 py-1 rounded-lg border text-xs font-medium',
                 activePreset === p.id
-                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                  ? 'border-blue-300 bg-blue-50 text-blue-700'
                   : 'border-gray-200 hover:border-gray-300 text-gray-600'
               )}
             >
@@ -485,7 +485,7 @@ export default function AuditLog() {
       <div className="card overflow-hidden">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <div className="w-7 h-7 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-7 h-7 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -597,7 +597,7 @@ function SortableHeader({ col, onSort, sortIcon, className, children }) {
 
 function KpiTile({ label, value, sub, icon: Icon, tone, onClick, active }) {
   const tones = {
-    indigo:  'border-indigo-200 bg-indigo-50 text-indigo-800',
+    indigo:  'border-blue-200 bg-blue-50 text-blue-800',
     amber:   'border-amber-200 bg-amber-50 text-amber-800',
     emerald: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   };
@@ -634,7 +634,7 @@ function AuditDetailModal({ log, onClose }) {
       >
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <ClipboardList className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+            <ClipboardList className="w-5 h-5 text-blue-600 flex-shrink-0" />
             <h2 className="text-lg font-bold text-gray-800 truncate">{inferLabel(log.action)}</h2>
             <span className={clsx('text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ml-1 flex-shrink-0', actionColor(log.action))}>
               {log.action}
@@ -671,7 +671,7 @@ function AuditDetailModal({ log, onClose }) {
                     <span className="font-mono text-gray-500">#{log.entity_id}</span>
                   )}
                   {link && (
-                    <RouterLink to={link} className="text-indigo-600 hover:underline inline-flex items-center gap-0.5 text-xs">
+                    <RouterLink to={link} className="text-blue-600 hover:underline inline-flex items-center gap-0.5 text-xs">
                       open <ExternalLink className="w-3 h-3" />
                     </RouterLink>
                   )}

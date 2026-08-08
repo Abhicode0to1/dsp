@@ -279,9 +279,9 @@ function ConvertToTicketModal({ chat, onClose, onConverted }) {
             <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
             <textarea className="input w-full min-h-20 resize-y" rows={3} placeholder="Describe the issue..." value={notes} onChange={e => setNotes(e.target.value)} spellCheck={true} autoCorrect="on" autoCapitalize="sentences" lang="en" />
           </div>
-          <div className="flex items-start gap-2 bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2.5">
-            <Ticket className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-indigo-700 space-y-1">
+          <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
+            <Ticket className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-blue-700 space-y-1">
               <p>The ticket will be assigned to you with the full chat history.</p>
               {isLive ? (
                 <p><strong>The live chat stays open</strong> — we'll draft a message in the chat input so you can let the customer know about the ticket before ending the chat.</p>
@@ -436,7 +436,7 @@ function TranscriptModal({ chatId, customerName, customerEmail, onClose }) {
             return (
               <div key={m.id} className={clsx('flex gap-3', isAgent ? 'flex-row-reverse' : 'flex-row')}>
                 <div className={clsx('flex flex-col max-w-md', isAgent ? 'items-end' : 'items-start')}>
-                  <div className={clsx('px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
+                  <div className={clsx('px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
                     {renderMarkdown(m.message)}
                   </div>
                   <p className="text-xs text-gray-400 mt-1">{m.sender_name} · {new Date(m.created_at).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' })}</p>
@@ -589,7 +589,7 @@ function ChatArchiveView({ onConvert }) {
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <button
                         onClick={() => setViewing(c)}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-medium mr-1.5"
+                        className="text-xs px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 font-medium mr-1.5"
                       >
                         View
                       </button>
@@ -1154,7 +1154,7 @@ export default function AgentChats() {
           onClick={() => setChatView('live')}
           className={clsx(
             'flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-            chatView === 'live' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'
+            chatView === 'live' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'
           )}
         >
           <MessageSquare className="w-4 h-4" /> Live
@@ -1165,7 +1165,7 @@ export default function AgentChats() {
           onClick={() => setChatView('archive')}
           className={clsx(
             'flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-            chatView === 'archive' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'
+            chatView === 'archive' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'
           )}
         >
           <Archive className="w-4 h-4" /> Archive
@@ -1227,13 +1227,13 @@ export default function AgentChats() {
             const isAlert = queueAlerts.some(a => a.chatId === c.id);
             const isNext = idx === 0;
             return (
-              <div key={c.id} className={clsx('bg-white rounded-xl border shadow-sm p-4', isAlert ? 'border-amber-300 bg-amber-50/50' : isNext && arr.length > 1 ? 'border-indigo-300 ring-1 ring-indigo-100' : 'border-gray-200')}>
+              <div key={c.id} className={clsx('bg-white rounded-xl border shadow-sm p-4', isAlert ? 'border-amber-300 bg-amber-50/50' : isNext && arr.length > 1 ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-200')}>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-sm font-bold text-amber-700 flex-shrink-0 relative">
                     {c.customer_name?.[0]?.toUpperCase() || '?'}
                     {/* Queue position chip — only show when more than one is waiting */}
                     {arr.length > 1 && (
-                      <span className={clsx('absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white', isNext ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700')}>
+                      <span className={clsx('absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white', isNext ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}>
                         {idx + 1}
                       </span>
                     )}
@@ -1255,7 +1255,7 @@ export default function AgentChats() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-400">
-                    {arr.length > 1 && isNext ? <span className="font-semibold text-indigo-600">Next · </span> : null}
+                    {arr.length > 1 && isNext ? <span className="font-semibold text-blue-600">Next · </span> : null}
                     Waiting {timeAgo(c.created_at)}
                   </span>
                   <button
@@ -1314,7 +1314,7 @@ export default function AgentChats() {
                     <Tip label="Customer Context">
                       <button
                         onClick={() => setShowContext(v => !v)}
-                        className={clsx('p-1.5 rounded-lg border transition-colors', showContext ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'border-gray-200 text-gray-500 hover:bg-gray-100')}
+                        className={clsx('p-1.5 rounded-lg border transition-colors', showContext ? 'bg-blue-50 text-blue-700 border-blue-200' : 'border-gray-200 text-gray-500 hover:bg-gray-100')}
                       >
                         <User className="w-3.5 h-3.5" />
                       </button>
@@ -1340,7 +1340,7 @@ export default function AgentChats() {
                     </Tip>
                     <ScreenShareButton chatId={activeChat.id} disabled={activeChatEnded} />
                     <Tip label="Convert to Ticket">
-                      <button onClick={() => setConvertTarget(activeChat)} className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
+                      <button onClick={() => setConvertTarget(activeChat)} className="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200">
                         <Ticket className="w-3.5 h-3.5" />
                       </button>
                     </Tip>
@@ -1390,7 +1390,7 @@ export default function AgentChats() {
                 {pendingScrollHint && (
                   <button
                     onClick={jumpToBottom}
-                    className="sticky top-2 left-1/2 -translate-x-1/2 z-10 mx-auto block text-xs px-3 py-1.5 rounded-full bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition-colors animate-pulse"
+                    className="sticky top-2 left-1/2 -translate-x-1/2 z-10 mx-auto block text-xs px-3 py-1.5 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-colors animate-pulse"
                   >
                     ↓ New message
                   </button>
@@ -1407,11 +1407,11 @@ export default function AgentChats() {
                   const isLast  = idx === chatMessages.length - 1;
                   return (
                     <div key={m.id} className={clsx('flex gap-3', isAgent ? 'flex-row-reverse' : 'flex-row')}>
-                      <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', isAgent ? 'bg-indigo-100' : 'bg-gray-200')}>
-                        {isAgent ? <Headphones className="w-4 h-4 text-indigo-600" /> : <User className="w-4 h-4 text-gray-600" />}
+                      <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', isAgent ? 'bg-blue-100' : 'bg-gray-200')}>
+                        {isAgent ? <Headphones className="w-4 h-4 text-blue-600" /> : <User className="w-4 h-4 text-gray-600" />}
                       </div>
                       <div className={clsx('max-w-lg flex flex-col', isAgent ? 'items-end' : 'items-start')}>
-                        <div className={clsx('px-4 py-2.5 rounded-xl text-sm shadow-sm', isAgent ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
+                        <div className={clsx('px-4 py-2.5 rounded-xl text-sm shadow-sm', isAgent ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none')}>
                           {m.file_url ? (
                             m.file_type?.startsWith('image/') ? (
                               <div>
@@ -1464,7 +1464,7 @@ export default function AgentChats() {
                   </span>
                   <button
                     onClick={dismissEndedChat}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium"
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium"
                   >
                     Dismiss
                   </button>
@@ -1475,13 +1475,13 @@ export default function AgentChats() {
                   <CannedPicker onSelect={text => setChatInput(v => v ? v + ' ' + text : text)} />
                 </div>
                 {pendingAttachment && (
-                  <div className="flex items-center gap-2 px-2 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-xs">
+                  <div className="flex items-center gap-2 px-2 py-1.5 bg-blue-50 border border-blue-100 rounded-lg text-xs">
                     {pendingAttachment.file.type?.startsWith('image/') ? (
                       <img src={pendingAttachment.dataUrl} alt="" className="w-8 h-8 object-cover rounded flex-shrink-0" />
                     ) : (
-                      <Paperclip className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                      <Paperclip className="w-4 h-4 text-blue-600 flex-shrink-0" />
                     )}
-                    <span className="truncate flex-1 text-indigo-700 font-medium">{pendingAttachment.file.name}</span>
+                    <span className="truncate flex-1 text-blue-700 font-medium">{pendingAttachment.file.name}</span>
                     <button type="button" onClick={() => setPendingAttachment(null)} className="text-gray-400 hover:text-red-500 flex-shrink-0">
                       <X className="w-4 h-4" />
                     </button>
@@ -1507,7 +1507,7 @@ export default function AgentChats() {
                       type="button"
                       onClick={() => fileRef.current?.click()}
                       title="Attach a file"
-                      className={clsx('transition-colors flex-shrink-0', pendingAttachment ? 'text-indigo-600' : 'text-gray-400 hover:text-indigo-600')}
+                      className={clsx('transition-colors flex-shrink-0', pendingAttachment ? 'text-blue-600' : 'text-gray-400 hover:text-blue-600')}
                     >
                       <Paperclip className="w-4 h-4" />
                     </button>

@@ -101,7 +101,7 @@ export default function CustomerChatHistory() {
 
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : chats.length === 0 ? (
         <div className="card p-12 flex flex-col items-center text-gray-400">
@@ -116,8 +116,8 @@ export default function CustomerChatHistory() {
             return (
               <div key={c.id} className="card p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                    <UserCircle2 className="w-5 h-5 text-indigo-400" />
+                  <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <UserCircle2 className="w-5 h-5 text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
@@ -144,7 +144,7 @@ export default function CustomerChatHistory() {
                       {c.status === 'closed' && !c.rating && (
                         <button
                           onClick={() => setRatingFor(c.id)}
-                          className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold"
+                          className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
                         >
                           Rate session →
                         </button>

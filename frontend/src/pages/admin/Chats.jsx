@@ -49,7 +49,7 @@ function AgentAvailability({ socket }) {
   return (
     <div className="card overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-        <Users className="w-4 h-4 text-indigo-500" />
+        <Users className="w-4 h-4 text-blue-500" />
         <h3 className="text-sm font-semibold text-gray-700">Agent Availability</h3>
       </div>
       <div className="divide-y divide-gray-50">
@@ -59,7 +59,7 @@ function AgentAvailability({ socket }) {
           return (
             <div key={a.id} className="flex items-center gap-3 px-5 py-3">
               <div className="relative">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">
                   {a.name?.[0]?.toUpperCase()}
                 </div>
                 <span className={clsx('absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white', statusColor[s] || statusColor.offline)} />
@@ -96,7 +96,7 @@ function AnalyticsPanel() {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!data) return null;
 
   const { totals, byAgent, byHour, ratings } = data;
@@ -112,7 +112,7 @@ function AnalyticsPanel() {
         {[7, 14, 30].map(d => (
           <button key={d} onClick={() => setDays(d)}
             className={clsx('text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors',
-              days === d ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 text-gray-500 hover:border-gray-300')}>
+              days === d ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-gray-300')}>
             {d}d
           </button>
         ))}
@@ -121,7 +121,7 @@ function AnalyticsPanel() {
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Chats',       value: totals.total,        icon: <MessageSquare className="w-5 h-5 text-indigo-500" />, bg: 'bg-indigo-50' },
+          { label: 'Total Chats',       value: totals.total,        icon: <MessageSquare className="w-5 h-5 text-blue-500" />, bg: 'bg-blue-50' },
           { label: 'Resolved',          value: totals.closed,       icon: <CheckCircle className="w-5 h-5 text-green-500" />, bg: 'bg-green-50' },
           { label: 'Avg First Response',value: fmtSecs(totals.avg_first_response_secs), icon: <Clock className="w-5 h-5 text-amber-500" />, bg: 'bg-amber-50' },
           { label: 'Avg CSAT',          value: ratings.avg_rating ? `${parseFloat(ratings.avg_rating).toFixed(1)} ★` : '—', icon: <Star className="w-5 h-5 text-amber-400" />, bg: 'bg-yellow-50' },
@@ -140,7 +140,7 @@ function AnalyticsPanel() {
       {byAgent.length > 0 && (
         <div className="card overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-indigo-500" />
+            <TrendingUp className="w-4 h-4 text-blue-500" />
             <h3 className="text-sm font-semibold text-gray-700">Agent Performance</h3>
           </div>
           <div className="overflow-x-auto">
@@ -172,7 +172,7 @@ function AnalyticsPanel() {
       {byHour.length > 0 && (
         <div className="card p-5">
           <div className="flex items-center gap-2 mb-4">
-            <Activity className="w-4 h-4 text-indigo-500" />
+            <Activity className="w-4 h-4 text-blue-500" />
             <h3 className="text-sm font-semibold text-gray-700">Peak Hours</h3>
           </div>
           <div className="flex items-end gap-1 h-24">
@@ -183,7 +183,7 @@ function AnalyticsPanel() {
               const pct = cnt / max;
               return (
                 <div key={h} className="flex-1 flex flex-col items-center gap-1" title={`${h}:00 — ${cnt} chats`}>
-                  <div className="w-full rounded-sm bg-indigo-500 opacity-80 transition-all" style={{ height: `${Math.max(4, pct * 80)}px` }} />
+                  <div className="w-full rounded-sm bg-blue-500 opacity-80 transition-all" style={{ height: `${Math.max(4, pct * 80)}px` }} />
                   {h % 6 === 0 && <span className="text-[9px] text-gray-400">{h}h</span>}
                 </div>
               );
@@ -243,7 +243,7 @@ function ArchivePanel({ agents }) {
                 return (
                   <div key={m.id} className={clsx('flex gap-2', isAgent ? 'flex-row-reverse' : 'flex-row')}>
                     <div className={clsx('max-w-xs flex flex-col', isAgent ? 'items-end' : 'items-start')}>
-                      <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none')}>
+                      <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none')}>
                         {renderMarkdown(m.message)}
                       </div>
                       <p className="text-xs text-gray-400 mt-0.5">{m.sender_name}</p>
@@ -302,7 +302,7 @@ function ArchivePanel({ agents }) {
                 <td className="px-4 py-3 text-right">{c.rating ? `${c.rating} ★` : '—'}</td>
                 <td className="px-4 py-3 text-right text-gray-400 text-xs">{timeAgo(c.closed_at)}</td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openChat(c)} className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                  <button onClick={() => openChat(c)} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
                     <Eye className="w-3.5 h-3.5" /> View
                   </button>
                 </td>
@@ -617,7 +617,7 @@ export default function AdminChats() {
         {tabCfg.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={clsx('flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors',
-              tab === t.key ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700')}>
+              tab === t.key ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700')}>
             {t.icon}{t.label}
           </button>
         ))}
@@ -627,7 +627,7 @@ export default function AdminChats() {
       {tab === 'live' && (
         loading ? (
           <div className="flex h-64 items-center justify-center">
-            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -694,7 +694,7 @@ export default function AdminChats() {
                           <p className="text-xs text-gray-400">{chat.agent_name ? `with ${chat.agent_name}` : 'Unassigned'}</p>
                         </div>
                       </div>
-                      <button onClick={() => { setMonitorChat(chat); setMonitorMsgs([]); setTab('monitor'); }} className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                      <button onClick={() => { setMonitorChat(chat); setMonitorMsgs([]); setTab('monitor'); }} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
                         <Eye className="w-3.5 h-3.5" /> Monitor
                       </button>
                     </div>
@@ -733,7 +733,7 @@ export default function AdminChats() {
                   return (
                     <div key={m.id} className={clsx('flex gap-2', isAgent ? 'flex-row-reverse' : 'flex-row')}>
                       <div className={clsx('max-w-sm flex flex-col', isAgent ? 'items-end' : 'items-start')}>
-                        <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none')}>
+                        <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isAgent ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none')}>
                           {renderMarkdown(m.message)}
                         </div>
                         <p className="text-xs text-gray-400 mt-0.5">{m.sender_name}</p>

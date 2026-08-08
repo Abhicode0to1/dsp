@@ -160,10 +160,10 @@ export default function VariableSuggestInput({
               onMouseEnter={() => setActiveIndex(i)}
               className={clsx(
                 'w-full text-left px-3 py-2 text-sm flex items-start justify-between gap-3 transition-colors',
-                i === activeIndex ? 'bg-indigo-50' : 'hover:bg-gray-50'
+                i === activeIndex ? 'bg-blue-50' : 'hover:bg-gray-50'
               )}
             >
-              <span className="font-mono text-xs text-indigo-700">{`{{${v.name}}}`}</span>
+              <span className="font-mono text-xs text-blue-700">{`{{${v.name}}}`}</span>
               {v.hint && <span className="text-[11px] text-gray-500 text-right truncate max-w-[60%]">{v.hint}</span>}
             </button>
           ))}

@@ -88,13 +88,13 @@ export default function CustomerProfile() {
         {/* Account info */}
         <div className="card p-5 mb-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
               {user?.name?.[0]?.toUpperCase() || '?'}
             </div>
             <div>
               <p className="text-base font-semibold text-gray-800">{user?.name}</p>
               <p className="text-sm text-gray-500">{user?.email}</p>
-              <span className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 capitalize">{user?.role}</span>
+              <span className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 capitalize">{user?.role}</span>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function CustomerProfile() {
         {/* Change password */}
         <div className="card p-5">
           <div className="flex items-center gap-2 mb-5">
-            <KeyRound className="w-4 h-4 text-indigo-500" />
+            <KeyRound className="w-4 h-4 text-blue-500" />
             <h2 className="text-sm font-semibold text-gray-700">Change Password</h2>
           </div>
 
@@ -118,7 +118,7 @@ export default function CustomerProfile() {
                   <button
                     type="button"
                     onClick={() => switchMode('otp')}
-                    className="text-xs text-indigo-600 hover:text-indigo-800 hover:underline"
+                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
                   >
                     Don't know it? Verify via email OTP
                   </button>
@@ -145,7 +145,7 @@ export default function CustomerProfile() {
                   <button
                     type="button"
                     onClick={() => switchMode('password')}
-                    className="text-xs text-indigo-600 hover:text-indigo-800 hover:underline"
+                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
                   >
                     Use current password instead
                   </button>
@@ -161,7 +161,7 @@ export default function CustomerProfile() {
                     className="btn-secondary w-full justify-center"
                   >
                     {requestingOtp
-                      ? <span className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                      ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                       : <><Mail className="w-4 h-4" /> Send OTP to my email</>}
                   </button>
                 ) : (
@@ -184,7 +184,7 @@ export default function CustomerProfile() {
                         type="button"
                         onClick={handleRequestOtp}
                         disabled={requestingOtp}
-                        className="text-indigo-600 hover:underline disabled:opacity-50"
+                        className="text-blue-600 hover:underline disabled:opacity-50"
                       >
                         {requestingOtp ? 'Sending…' : 'Resend'}
                       </button>

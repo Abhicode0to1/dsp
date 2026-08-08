@@ -29,7 +29,7 @@ const RESPONSE_LABEL = {
 const PLAN_COLOR = {
   free:     { header: 'bg-gray-100 text-gray-600',    btn: '', border: 'border-gray-200' },
   basic:    { header: 'bg-blue-50 text-blue-700',     btn: 'bg-blue-600 hover:bg-blue-700', border: 'border-blue-200' },
-  moderate: { header: 'bg-indigo-50 text-indigo-700', btn: 'bg-indigo-600 hover:bg-indigo-700', border: 'border-indigo-300' },
+  moderate: { header: 'bg-blue-50 text-blue-700', btn: 'bg-blue-600 hover:bg-blue-700', border: 'border-blue-300' },
   premium:  { header: 'bg-purple-50 text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700', border: 'border-purple-300' },
 };
 
@@ -64,7 +64,7 @@ function TabButton({ active, onClick, icon: Icon, label, comingSoon = false }) {
         comingSoon
           ? 'opacity-50 text-gray-500 cursor-not-allowed hover:text-gray-500'
           : active
-            ? 'bg-white text-indigo-600 shadow-sm'
+            ? 'bg-white text-blue-600 shadow-sm'
             : 'text-gray-500 hover:text-gray-700'
       )}
     >
@@ -78,7 +78,7 @@ function TabButton({ active, onClick, icon: Icon, label, comingSoon = false }) {
 function TabSpinner() {
   return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-7 h-7 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -163,8 +163,8 @@ function SubscriptionsTab() {
           return (
             <div key={s.id ?? i} className="flex items-center justify-between px-5 py-4 gap-4 flex-wrap">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Package className="w-4 h-4 text-indigo-500" />
+                <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Package className="w-4 h-4 text-blue-500" />
                 </div>
                 <div className="min-w-0">
                   <p className="font-semibold text-gray-800 text-sm truncate">{s.name || s.sku_name || s.product_name || 'Service'}</p>
@@ -243,7 +243,7 @@ function InvoicePdfModal({ inv, onClose }) {
           {pdfUrl && (
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
             >
               <Download className="w-3.5 h-3.5" /> Download
             </button>
@@ -430,7 +430,7 @@ function InvoicesTab() {
                 <StatusBadge status={inv.status || 'paid'} />
                 <button
                   onClick={() => setViewInv(inv)}
-                  className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5" /> View / Download
                 </button>
@@ -729,7 +729,7 @@ export default function CustomerBilling() {
   if (loading) return (
     <Layout>
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
       </div>
     </Layout>
   );
@@ -738,7 +738,7 @@ export default function CustomerBilling() {
     <Layout>
       <div className="flex flex-col items-center justify-center h-64 gap-3 text-gray-400">
         <p className="text-sm font-medium text-gray-600">Failed to load billing info</p>
-        <button onClick={() => window.location.reload()} className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold underline">Retry</button>
+        <button onClick={() => window.location.reload()} className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline">Retry</button>
       </div>
     </Layout>
   );
@@ -855,7 +855,7 @@ export default function CustomerBilling() {
                   key={plan.id}
                   className={clsx(
                     'card flex flex-col border-2 overflow-hidden',
-                    isCurrent ? 'border-indigo-400 shadow-md' : 'border-transparent'
+                    isCurrent ? 'border-blue-400 shadow-md' : 'border-transparent'
                   )}
                 >
                   <div className={clsx('px-5 pt-5 pb-4', meta.header)}>
@@ -917,7 +917,7 @@ export default function CustomerBilling() {
                         )}
                       </button>
                     ) : isCurrent ? (
-                      <div className="w-full py-2 text-center text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-lg border border-indigo-200">
+                      <div className="w-full py-2 text-center text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200">
                         Current Plan
                       </div>
                     ) : (canUpgrade || canDowngrade) ? (

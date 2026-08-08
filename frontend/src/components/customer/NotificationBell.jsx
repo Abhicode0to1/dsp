@@ -243,7 +243,7 @@ export default function CustomerNotificationBell() {
     ticket_assigned: <UserCheck className="w-4 h-4 text-green-600" />,
     ticket_closed:   <CheckCircle className="w-4 h-4 text-gray-500" />,
     ticket_status:   <RotateCcw className="w-4 h-4 text-amber-500" />,
-    chat_accepted:   <Headphones className="w-4 h-4 text-indigo-500" />,
+    chat_accepted:   <Headphones className="w-4 h-4 text-blue-500" />,
     usage_reset:        <Zap className="w-4 h-4 text-emerald-500" />,
     overrides_changed:  <Zap className="w-4 h-4 text-amber-500" />,
   };

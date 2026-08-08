@@ -165,8 +165,8 @@ export default function CustomerNewTicket() {
         {step === 'template' && (
           <div className="card p-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-                <LayoutTemplate className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <LayoutTemplate className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-800">What do you need help with?</h1>
@@ -177,29 +177,29 @@ export default function CustomerNewTicket() {
             <div className="space-y-2 mb-4">
               {templatesLoading ? (
                 <div className="flex items-center gap-2 text-sm text-gray-400 py-4">
-                  <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
                   Loading templates…
                 </div>
               ) : templates.length === 0 ? null : templates.map(tpl => (
                 <button
                   key={tpl.id}
                   onClick={() => applyTemplate(tpl)}
-                  className="w-full text-left flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors group"
+                  className="w-full text-left flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-colors group"
                 >
                   <div>
-                    <p className="text-sm font-semibold text-gray-800 group-hover:text-indigo-700">{tpl.name}</p>
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-700">{tpl.name}</p>
                     {tpl.request_type && (
                       <span className="text-xs text-gray-400">{tpl.request_type}</span>
                     )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
                 </button>
               ))}
             </div>
 
             <button
               onClick={() => setStep('form')}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-indigo-300 hover:bg-gray-50 transition-colors text-sm text-gray-600 hover:text-indigo-600"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-blue-300 hover:bg-gray-50 transition-colors text-sm text-gray-600 hover:text-blue-600"
             >
               <span className="font-medium">Custom — describe my issue</span>
               <ChevronRight className="w-4 h-4" />
@@ -216,10 +216,10 @@ export default function CustomerNewTicket() {
                         setForm(f => ({ ...f, subject: t.subject, description: '', request_type: t.request_type || f.request_type }));
                         setStep('form');
                       }}
-                      className="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors group"
+                      className="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors group"
                     >
-                      <span className="text-sm text-gray-600 group-hover:text-indigo-700 truncate">{t.subject}</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-indigo-500 flex-shrink-0 ml-2" />
+                      <span className="text-sm text-gray-600 group-hover:text-blue-700 truncate">{t.subject}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 ml-2" />
                     </button>
                   ))}
                 </div>
@@ -233,8 +233,8 @@ export default function CustomerNewTicket() {
           <div className="card p-6">
             <div className="flex items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-                  <Ticket className="w-5 h-5 text-indigo-600" />
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <Ticket className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-800">Raise a Support Ticket</h1>
@@ -248,7 +248,7 @@ export default function CustomerNewTicket() {
                     Draft saved
                   </span>
                 )}
-                <button onClick={() => setStep('template')} className="text-xs text-indigo-600 hover:underline">
+                <button onClick={() => setStep('template')} className="text-xs text-blue-600 hover:underline">
                   ← Templates
                 </button>
               </div>
@@ -353,7 +353,7 @@ export default function CustomerNewTicket() {
                   onClick={() => document.getElementById('cc-input').focus()}
                 >
                   {ccEmails.map(email => (
-                    <span key={email} className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                    <span key={email} className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
                       {email}
                       <button type="button" onClick={e => { e.stopPropagation(); setCcEmails(p => p.filter(x => x !== email)); }}>
                         <X className="w-3 h-3" />
@@ -408,7 +408,7 @@ export default function CustomerNewTicket() {
                     <p className="text-sm font-semibold text-amber-800">{s.title}</p>
                     <p className="text-sm text-amber-700 mt-1">{s.solution}</p>
                     {s.link && (
-                      <a href={s.link} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline mt-1 inline-block">
+                      <a href={s.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline mt-1 inline-block">
                         Learn more →
                       </a>
                     )}

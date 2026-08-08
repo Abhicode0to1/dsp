@@ -343,7 +343,7 @@ export default function CustomReportBuilder({ existing, dateParams, onClose, onS
             <div className="border border-gray-100 rounded-lg overflow-auto max-h-72 bg-white">
               {loading ? (
                 <div className="flex items-center justify-center py-10">
-                  <div className="w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : previewRows == null ? (
                 <p className="px-4 py-8 text-center text-xs text-gray-400">Click "Run preview" to see how the report looks with current filters.</p>

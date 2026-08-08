@@ -237,7 +237,7 @@ export default function CustomerCall() {
             onClick={() => setActiveTab('call')}
             className={clsx(
               'flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors',
-              activeTab === 'call' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              activeTab === 'call' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             )}
           >
             <Phone className="w-3.5 h-3.5" /> Call
@@ -246,18 +246,18 @@ export default function CustomerCall() {
             onClick={() => setActiveTab('history')}
             className={clsx(
               'flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors',
-              activeTab === 'history' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              activeTab === 'history' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             )}
           >
             <History className="w-3.5 h-3.5" /> This Month's Calls
             {history.length > 0 && (
               <span
-                className="ml-1 bg-indigo-100 text-indigo-600 text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                className="ml-1 bg-blue-100 text-blue-600 text-xs font-semibold px-1.5 py-0.5 rounded-full"
                 title={`${history.filter(c => c.counted).length} of ${history.length} count toward your monthly quota`}
               >
                 {history.length}
                 {history.some(c => c.counted) && (
-                  <span className="text-indigo-400 font-normal">
+                  <span className="text-blue-400 font-normal">
                     {' '}· {history.filter(c => c.counted).length} counted
                   </span>
                 )}
@@ -289,11 +289,11 @@ export default function CustomerCall() {
 
         {activeTab === 'call' && !isBlocked && (<>
         {/* Privacy notice */}
-        <div className="flex items-start gap-3 bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-5">
-          <Lock className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5">
+          <Lock className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-indigo-700">Browser-based Voice Call</p>
-            <p className="text-sm text-indigo-600 mt-0.5">
+            <p className="text-sm font-semibold text-blue-700">Browser-based Voice Call</p>
+            <p className="text-sm text-blue-600 mt-0.5">
               Your microphone will be requested when you start a call. If the call drops for any reason, our agent will call you back.
             </p>
           </div>
@@ -302,15 +302,15 @@ export default function CustomerCall() {
         {/* Active chat session — redirect to Live Chat */}
         {hasActiveChat && !isRestricted && (
           <div className="card p-8 text-center mb-4">
-            <div className="w-16 h-16 bg-indigo-50 border-2 border-indigo-200 rounded-full flex items-center justify-center mx-auto mb-5">
-              <MessageCircle className="w-8 h-8 text-indigo-500" />
+            <div className="w-16 h-16 bg-blue-50 border-2 border-blue-200 rounded-full flex items-center justify-center mx-auto mb-5">
+              <MessageCircle className="w-8 h-8 text-blue-500" />
             </div>
             <h3 className="font-semibold text-gray-800 text-lg mb-2">Chat Session Active</h3>
             <p className="text-sm text-gray-500 mb-1">
               You already have an active live chat session with a support agent.
             </p>
             <p className="text-sm text-gray-500 mb-6">
-              To start a voice call, use the <span className="font-semibold text-indigo-600">Call</span> button inside your live chat.
+              To start a voice call, use the <span className="font-semibold text-blue-600">Call</span> button inside your live chat.
             </p>
             <button
               onClick={() => navigate('/customer/chat')}
@@ -347,7 +347,7 @@ export default function CustomerCall() {
               </h3>
               <p className="text-sm text-gray-500 mb-2 max-w-md mx-auto">
                 {planError ||
-                  <>Voice call support requires the <span className="font-semibold text-indigo-600">Moderate plan</span> or higher.</>}
+                  <>Voice call support requires the <span className="font-semibold text-blue-600">Moderate plan</span> or higher.</>}
               </p>
               <p className="text-xs text-gray-400 mb-6">
                 {isLimitReached
@@ -385,8 +385,8 @@ export default function CustomerCall() {
             {/* Idle */}
             {callState === 'idle' && (
               <>
-                <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                  <Phone className="w-10 h-10 text-indigo-600" />
+                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <Phone className="w-10 h-10 text-blue-600" />
                 </div>
                 <h3 className="font-semibold text-gray-700 mb-2">Request a Support Call</h3>
 
@@ -449,7 +449,7 @@ export default function CustomerCall() {
                         key={opt.value}
                         type="button"
                         onClick={() => setCallCategory(opt.value)}
-                        className={`px-3 py-1.5 rounded-lg border font-medium transition-colors ${callCategory === opt.value ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-200 hover:border-indigo-300'}`}
+                        className={`px-3 py-1.5 rounded-lg border font-medium transition-colors ${callCategory === opt.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'}`}
                       >
                         {opt.label}
                       </button>
@@ -541,7 +541,7 @@ export default function CustomerCall() {
                     Bars stay flat (level=0) while muted because the analyser
                     receives no stream then. */}
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-indigo-500" maxHeight={20} />
+                  <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-blue-500" maxHeight={20} />
                   <span className="text-xs text-gray-400">Your mic</span>
                 </div>
 

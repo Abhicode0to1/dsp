@@ -37,9 +37,9 @@ function SkillTagsEditor({ agent, onUpdated }) {
     return (
       <div className="flex flex-wrap gap-1 items-center">
         {(agent.skill_tags || []).map(t => (
-          <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">{t}</span>
+          <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">{t}</span>
         ))}
-        <button onClick={() => { setTags(agent.skill_tags || []); setEditing(true); }} className="text-[10px] text-gray-400 hover:text-indigo-600 inline-flex items-center gap-0.5">
+        <button onClick={() => { setTags(agent.skill_tags || []); setEditing(true); }} className="text-[10px] text-gray-400 hover:text-blue-600 inline-flex items-center gap-0.5">
           <Tag className="w-2.5 h-2.5" /> {agent.skill_tags?.length ? 'Edit' : '+ Tag'}
         </button>
       </div>
@@ -57,16 +57,16 @@ function SkillTagsEditor({ agent, onUpdated }) {
   ];
 
   return (
-    <div className="border border-indigo-200 rounded-lg p-1.5 bg-white space-y-1.5">
+    <div className="border border-blue-200 rounded-lg p-1.5 bg-white space-y-1.5">
       <div className="flex flex-wrap gap-1">
         {tags.map(t => (
-          <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100 inline-flex items-center gap-1">
+          <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 inline-flex items-center gap-1">
             {t}
             <button onClick={() => setTags(tags.filter(x => x !== t))}><X className="w-2.5 h-2.5" /></button>
           </span>
         ))}
       </div>
-      <div className="flex flex-wrap gap-1 pt-1 border-t border-indigo-100">
+      <div className="flex flex-wrap gap-1 pt-1 border-t border-blue-100">
         <span className="text-[9px] text-gray-500 font-semibold uppercase tracking-wide w-full mb-0.5">Routing tags (drive customer-category matching)</span>
         {ROUTING_TAGS.map(rt => {
           const active = tags.includes(rt.key);
@@ -76,7 +76,7 @@ function SkillTagsEditor({ agent, onUpdated }) {
               type="button"
               title={rt.hint}
               onClick={() => setTags(active ? tags.filter(x => x !== rt.key) : [...tags, rt.key])}
-              className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300'}`}
+              className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}`}
             >
               {active ? '✓ ' : '+ '}{rt.label}
             </button>
@@ -92,7 +92,7 @@ function SkillTagsEditor({ agent, onUpdated }) {
           className="input text-[10px] py-0.5 flex-1"
         />
         <button onClick={addTag} className="text-[10px] px-1.5 rounded bg-gray-100 hover:bg-gray-200">Add</button>
-        <button onClick={handleSave} disabled={saving} className="text-[10px] px-1.5 rounded bg-indigo-600 text-white inline-flex items-center gap-0.5">
+        <button onClick={handleSave} disabled={saving} className="text-[10px] px-1.5 rounded bg-blue-600 text-white inline-flex items-center gap-0.5">
           <Check className="w-2.5 h-2.5" /> {saving ? '…' : 'Save'}
         </button>
         <button onClick={() => setEditing(false)} className="text-[10px] px-1.5 rounded bg-gray-100 hover:bg-gray-200">Cancel</button>
@@ -388,7 +388,7 @@ export default function AdminAgents() {
 
       {loading ? (
         <div className="flex h-64 items-center justify-center">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="card overflow-hidden">
@@ -413,7 +413,7 @@ export default function AdminAgents() {
                 <tr key={agent.id} className="hover:bg-gray-50">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-700 flex-shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-700 flex-shrink-0">
                         {agent.name[0]}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -475,7 +475,7 @@ export default function AdminAgents() {
                       </button>
                       <button
                         onClick={() => setChangePwAgent(agent)}
-                        className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                        className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                         title="Change password"
                       >
                         <KeyRound className="w-3.5 h-3.5" /> Password
@@ -497,7 +497,7 @@ export default function AdminAgents() {
                             className={`text-xs border rounded-lg px-2 py-1.5 focus:outline-none ${
                               isSelf
                                 ? 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
-                                : 'border-gray-200 bg-white hover:border-gray-300 focus:border-indigo-400 cursor-pointer'
+                                : 'border-gray-200 bg-white hover:border-gray-300 focus:border-blue-400 cursor-pointer'
                             }`}
                             title={isSelf ? "You can't change your own role" : 'Change role'}
                           >

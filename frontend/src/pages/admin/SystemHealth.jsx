@@ -137,7 +137,7 @@ export default function SystemHealth() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Activity className="w-6 h-6 text-indigo-600" />
+              <Activity className="w-6 h-6 text-blue-600" />
               System Health
             </h1>
             <p className="text-sm text-gray-500 mt-1">
@@ -176,7 +176,7 @@ export default function SystemHealth() {
               onClick={() => handleTabChange(t.id)}
               className={clsx(
                 'px-3 py-2 -mb-px border-b-2 font-medium transition-colors inline-flex items-center gap-2',
-                tab === t.id ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'
+                tab === t.id ? 'border-blue-500 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'
               )}
             >
               {t.label}
@@ -266,7 +266,7 @@ export default function SystemHealth() {
           )}>
             <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
               <h3 className="font-semibold text-gray-700 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-indigo-500" /> Background workers
+                <Cpu className="w-4 h-4 text-blue-500" /> Background workers
               </h3>
               <span className="text-xs text-gray-500">
                 {workers.items.filter(w => w.last_status === 'ok').length} of {workers.items.length} healthy
@@ -382,7 +382,7 @@ export default function SystemHealth() {
           <div className="bg-white border border-gray-200 rounded-xl p-4 mb-5">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-700 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-indigo-500" /> Payment Failures (last 7 days)
+                <CreditCard className="w-4 h-4 text-blue-500" /> Payment Failures (last 7 days)
               </h3>
               <div className="flex gap-2 text-xs">
                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -408,7 +408,7 @@ export default function SystemHealth() {
                     <div className="min-w-0 flex-1">
                       <div className="font-medium text-gray-700 truncate">
                         {r.customer_name || r.customer_email}
-                        <span className="ml-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700">{r.target_plan}</span>
+                        <span className="ml-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">{r.target_plan}</span>
                         {r.status === 'cancelled' && <span className="ml-1 text-[10px] uppercase px-1.5 py-0.5 rounded bg-amber-50 text-amber-700">cancelled</span>}
                       </div>
                       <p className="text-[11px] text-gray-500 truncate">{r.error_description || r.error_code || 'No reason recorded'}</p>
@@ -426,7 +426,7 @@ export default function SystemHealth() {
         {/* Loading */}
         {loading && (
           <div className="card p-12 flex flex-col items-center text-gray-400">
-            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3" />
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3" />
             <p className="text-sm">Auditing all customers…</p>
           </div>
         )}
@@ -487,7 +487,7 @@ export default function SystemHealth() {
                   <tr key={i} className="border-b border-gray-50 hover:bg-amber-50/30">
                     <td className="px-4 py-3 font-medium text-gray-800">{d.email}</td>
                     <td className="px-4 py-3">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium capitalize">{d.plan}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium capitalize">{d.plan}</span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${d.channel === 'call' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
@@ -503,7 +503,7 @@ export default function SystemHealth() {
                       <button
                         onClick={() => handleReset(d)}
                         disabled={resetting === d.email}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium inline-flex items-center gap-1.5 disabled:opacity-50"
+                        className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium inline-flex items-center gap-1.5 disabled:opacity-50"
                         title="Mark all current chats/calls as not-counted from now on. The customer's history still shows them."
                       >
                         {resetting === d.email
@@ -555,7 +555,7 @@ export default function SystemHealth() {
                         <p className="text-xs text-gray-400">{w.email}</p>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium capitalize">{w.plan || '—'}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium capitalize">{w.plan || '—'}</span>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">{w.short_cuts_this_month}</span>
@@ -604,7 +604,7 @@ export default function SystemHealth() {
           <div id="inbound-mail" className="card p-0 overflow-hidden mb-5">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center gap-2 mb-1">
-                <Mail className="w-4 h-4 text-indigo-600" />
+                <Mail className="w-4 h-4 text-blue-600" />
                 <h3 className="font-semibold text-gray-700">Inbound Mail (last 30 days)</h3>
                 <button onClick={() => reloadInbound(inboundFilter)} className="ml-auto p-1 text-gray-400 hover:text-gray-700" title="Refresh">
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -629,7 +629,7 @@ export default function SystemHealth() {
                   const count = b.k ? (inboundLog.counts?.[b.k] || 0) : (inboundLog.counts?.total || 0);
                   return (
                     <button key={b.k} onClick={() => reloadInbound(b.k)}
-                      className={`text-xs px-2.5 py-1 rounded-full font-medium border transition-colors ${b.color} ${active ? 'ring-2 ring-indigo-400' : 'opacity-70 hover:opacity-100'}`}>
+                      className={`text-xs px-2.5 py-1 rounded-full font-medium border transition-colors ${b.color} ${active ? 'ring-2 ring-blue-400' : 'opacity-70 hover:opacity-100'}`}>
                       {b.label} <span className="ml-1 font-bold">{count}</span>
                     </button>
                   );
@@ -685,7 +685,7 @@ export default function SystemHealth() {
                       </td>
                       <td className="px-4 py-3 text-xs">
                         {row.ticket_id ? (
-                          <a href={`/admin/tickets?openTicket=${row.ticket_id}`} className="text-indigo-600 hover:underline inline-flex items-center gap-1">
+                          <a href={`/admin/tickets?openTicket=${row.ticket_id}`} className="text-blue-600 hover:underline inline-flex items-center gap-1">
                             #{row.ticket_id} <ExternalLink className="w-3 h-3" />
                           </a>
                         ) : (
@@ -698,7 +698,7 @@ export default function SystemHealth() {
                       <td className="px-4 py-3 text-right">
                         {(row.status === 'quarantined' || row.status === 'rejected') && (
                           <button onClick={() => handleAttachInbound(row)}
-                            className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-medium">
+                            className="text-xs px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 font-medium">
                             Attach to ticket
                           </button>
                         )}

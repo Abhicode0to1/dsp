@@ -33,8 +33,8 @@ export default function KnowledgeBase() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+            <BookOpen className="w-5 h-5 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">AI Knowledge Base</h1>
@@ -79,7 +79,7 @@ export default function KnowledgeBase() {
         {/* Loading state */}
         {loading && (
           <div className="card p-10 flex flex-col items-center gap-3 text-gray-500">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
             <p className="text-sm">Finding the best resources for you...</p>
           </div>
         )}
@@ -101,7 +101,7 @@ export default function KnowledgeBase() {
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-gray-800 text-sm">{article.title}</h3>
                           {article.source && (
-                            <span className="text-xs text-indigo-600 font-medium">{article.source}</span>
+                            <span className="text-xs text-blue-600 font-medium">{article.source}</span>
                           )}
                           <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">{article.solution}</p>
                         </div>
@@ -110,7 +110,7 @@ export default function KnowledgeBase() {
                             href={article.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-shrink-0 flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium border border-indigo-200 rounded-md px-2 py-1 hover:bg-indigo-50 transition-colors"
+                            className="flex-shrink-0 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium border border-blue-200 rounded-md px-2 py-1 hover:bg-blue-50 transition-colors"
                           >
                             <ExternalLink className="w-3 h-3" />
                             Open
@@ -143,10 +143,10 @@ export default function KnowledgeBase() {
                         <Youtube className="w-5 h-5 text-red-500" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800 group-hover:text-indigo-700 transition-colors line-clamp-2">{video.title}</p>
+                        <p className="text-sm font-medium text-gray-800 group-hover:text-blue-700 transition-colors line-clamp-2">{video.title}</p>
                         <p className="text-xs text-gray-400 mt-0.5 truncate">{video.query}</p>
                       </div>
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5 group-hover:text-indigo-500" />
+                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5 group-hover:text-blue-500" />
                     </a>
                   ))}
                 </div>
@@ -169,7 +169,7 @@ export default function KnowledgeBase() {
             <p className="text-sm">Search for any topic to find documentation, guides, and video tutorials.</p>
             <div className="mt-4 flex flex-wrap gap-2 justify-center">
               {['Email configuration', 'Reset password', 'API integration', 'Billing issues'].map(s => (
-                <button key={s} onClick={() => setQuery(s)} className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-700 rounded-full transition-colors">
+                <button key={s} onClick={() => setQuery(s)} className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors">
                   {s}
                 </button>
               ))}

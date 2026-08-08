@@ -74,7 +74,7 @@ export default function DateRangeFilter({ value, onChange }) {
           className={clsx(
             'text-xs px-2.5 py-1 rounded-md border transition-colors',
             presetId === p.id
-              ? 'bg-indigo-600 text-white border-indigo-600'
+              ? 'bg-blue-600 text-white border-blue-600'
               : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
           )}
         >
@@ -99,7 +99,7 @@ export default function DateRangeFilter({ value, onChange }) {
           type="button"
           onClick={applyCustom}
           disabled={!customFrom || !customTo || customFrom > customTo}
-          className="text-xs px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          className="text-xs px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
         >
           Apply
         </button>

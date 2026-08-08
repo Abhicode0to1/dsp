@@ -43,7 +43,7 @@ const STAGES = [
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline hover:text-indigo-600"
+        className="underline hover:text-blue-600"
       >
         {url}
       </a>

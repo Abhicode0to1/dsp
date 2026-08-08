@@ -1185,7 +1185,14 @@ exports.verifyUpgrade = async (req, res) => {
     let billingError = null;
     if (billingUrl && customer) {
       try {
-        const billingRes = await postJson(`${billingUrl.replace(/\/$/, '')}/api/support-upgrade`, apiKey, {
+        // billing_api_url is shared with backend/src/billing/index.js's
+        // connector, which expects it to already end in /api/v1 (relative
+        // paths like "customers/{id}/subscriptions" get joined onto it as-is).
+        // /api/support-upgrade is NOT a versioned route on Billing's side, so
+        // strip a trailing /api/v1 here rather than requiring two different
+        // shapes of the same setting to coexist.
+        const billingOrigin = billingUrl.replace(/\/$/, '').replace(/\/api\/v1$/, '');
+        const billingRes = await postJson(`${billingOrigin}/api/support-upgrade`, apiKey, {
           billing_customer_id: customer.billing_customer_id || null,
           email: customer.email,
           plan: targetPlan,
@@ -1196,6 +1203,23 @@ exports.verifyUpgrade = async (req, res) => {
         });
         console.log('[Upgrade] Billing app notified successfully:', JSON.stringify(billingRes));
         billingSynced = true;
+
+        // Persist the billing_customer_id if we didn't already have one —
+        // Billing may have just created a new customer record and returned
+        // its id. Without saving this, every other feature that keys off
+        // customers.billing_customer_id (getCustomerSubscriptions,
+        // getCustomerInvoices, getCustomerQuotes) stays broken for this
+        // customer even though the upgrade itself succeeded.
+        if (!customer.billing_customer_id && billingRes && billingRes.billing_customer_id) {
+          try {
+            await pool.query(
+              'UPDATE customers SET billing_customer_id = ?, billing_synced_at = NOW() WHERE id = ?',
+              [billingRes.billing_customer_id, customerId]
+            );
+          } catch (saveErr) {
+            console.error('[Upgrade] Failed to save billing_customer_id:', saveErr.message);
+          }
+        }
       } catch (e) {
         billingError = e.message || String(e);
         console.error('[Upgrade] Billing app notification failed (plan updated in DSP):', billingError);

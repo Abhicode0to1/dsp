@@ -636,7 +636,7 @@ export default function CustomerChat() {
           <button
             onClick={() => setActiveTab('chat')}
             className={clsx('flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-              activeTab === 'chat' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === 'chat' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
             )}
           >
             <MessageSquare className="w-4 h-4" /> Live Chat
@@ -644,18 +644,18 @@ export default function CustomerChat() {
           <button
             onClick={() => setActiveTab('history')}
             className={clsx('flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
-              activeTab === 'history' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === 'history' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
             )}
           >
             <History className="w-4 h-4" /> This Month's Chats
             {chatHistory.length > 0 && (
               <span
-                className="ml-1 bg-indigo-100 text-indigo-600 text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                className="ml-1 bg-blue-100 text-blue-600 text-xs font-semibold px-1.5 py-0.5 rounded-full"
                 title={`${chatHistory.filter(c => c.counted).length} of ${chatHistory.length} count toward your monthly quota`}
               >
                 {chatHistory.length}
                 {chatHistory.some(c => c.counted) && (
-                  <span className="text-indigo-400 font-normal">
+                  <span className="text-blue-400 font-normal">
                     {' '}· {chatHistory.filter(c => c.counted).length} counted
                   </span>
                 )}
@@ -692,7 +692,7 @@ export default function CustomerChat() {
               <>
                 <p className="text-sm text-gray-500 mb-1">
                   Live chat is available on the{' '}
-                  <span className="font-semibold text-indigo-600">Basic plan</span> and above.
+                  <span className="font-semibold text-blue-600">Basic plan</span> and above.
                 </p>
                 <p className="text-sm text-gray-500 mb-6">
                   Upgrade your plan to start a live conversation with our support agents.
@@ -732,8 +732,8 @@ export default function CustomerChat() {
         {/* Idle */}
         {status === 'idle' && (
           <div className="card p-8 text-center">
-            <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-7 h-7 text-indigo-600" />
+            <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-7 h-7 text-blue-600" />
             </div>
             <h3 className="font-semibold text-gray-700 mb-2">Start a Live Chat</h3>
 
@@ -776,7 +776,7 @@ export default function CustomerChat() {
                       key={opt.value}
                       type="button"
                       onClick={() => setChatCategory(opt.value)}
-                      className={`px-3 py-1.5 rounded-lg border font-medium transition-colors ${chatCategory === opt.value ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-200 hover:border-indigo-300'}`}
+                      className={`px-3 py-1.5 rounded-lg border font-medium transition-colors ${chatCategory === opt.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'}`}
                     >
                       {opt.label}
                     </button>
@@ -930,8 +930,8 @@ export default function CustomerChat() {
             {/* Header */}
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center relative">
-                  <Headphones className="w-4 h-4 text-indigo-600" />
+                <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center relative">
+                  <Headphones className="w-4 h-4 text-blue-600" />
                   {status === 'active' && (
                     <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
                   )}
@@ -1055,8 +1055,8 @@ export default function CustomerChat() {
                 const isImage = m.file_type?.startsWith('image/');
                 return (
                   <div key={m.id} className={clsx('flex gap-2 msg-animate', isMine ? 'flex-row-reverse' : 'flex-row')}>
-                    <div className={clsx('w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs', isMine ? 'bg-indigo-100' : 'bg-gray-200')}>
-                      {isMine ? <User className="w-3.5 h-3.5 text-indigo-600" /> : <Headphones className="w-3.5 h-3.5 text-gray-600" />}
+                    <div className={clsx('w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs', isMine ? 'bg-blue-100' : 'bg-gray-200')}>
+                      {isMine ? <User className="w-3.5 h-3.5 text-blue-600" /> : <Headphones className="w-3.5 h-3.5 text-gray-600" />}
                     </div>
                     <div className={clsx('max-w-xs flex flex-col', isMine ? 'items-end' : 'items-start')}>
                       {m.file_url ? (
@@ -1065,12 +1065,12 @@ export default function CustomerChat() {
                             <img src={m.file_url} alt={m.file_name} className="max-w-[200px] rounded-xl border border-gray-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity" />
                           </a>
                         ) : (
-                          <a href={m.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-xl text-xs text-indigo-600 hover:bg-gray-200 border border-gray-200">
+                          <a href={m.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-xl text-xs text-blue-600 hover:bg-gray-200 border border-gray-200">
                             <Paperclip className="w-3.5 h-3.5" /> {m.file_name || 'Attachment'}
                           </a>
                         )
                       ) : (
-                        <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isMine ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none')}>
+                        <div className={clsx('px-3 py-2 rounded-xl text-sm whitespace-pre-wrap break-words', isMine ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none')}>
                           {renderMarkdown(m.message)}
                         </div>
                       )}
@@ -1107,12 +1107,12 @@ export default function CustomerChat() {
             {status === 'active' && (
               <div className="border-t border-gray-100 p-3 flex-shrink-0 bg-white">
                 {pendingAttachment && (
-                  <div className="flex items-center gap-2 px-2 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg mb-2">
+                  <div className="flex items-center gap-2 px-2 py-1.5 bg-blue-50 border border-blue-100 rounded-lg mb-2">
                     {pendingAttachment.file.type.startsWith('image/') ? (
                       <img src={pendingAttachment.dataUrl} className="w-10 h-10 object-cover rounded flex-shrink-0" alt="" />
                     ) : (
-                      <div className="w-10 h-10 bg-indigo-100 rounded flex items-center justify-center flex-shrink-0">
-                        <Paperclip className="w-4 h-4 text-indigo-600" />
+                      <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center flex-shrink-0">
+                        <Paperclip className="w-4 h-4 text-blue-600" />
                       </div>
                     )}
                     <span className="flex-1 text-xs text-gray-600 truncate">{pendingAttachment.file.name}</span>
@@ -1134,7 +1134,7 @@ export default function CustomerChat() {
                       onChange={e => handleTyping(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(e); } }}
                     />
-                    <button data-testid="CustomerChat-AttachButton" type="button" onClick={() => fileRef.current?.click()} className={clsx('transition-colors flex-shrink-0', pendingAttachment ? 'text-indigo-600' : 'text-gray-400 hover:text-indigo-600')}>
+                    <button data-testid="CustomerChat-AttachButton" type="button" onClick={() => fileRef.current?.click()} className={clsx('transition-colors flex-shrink-0', pendingAttachment ? 'text-blue-600' : 'text-gray-400 hover:text-blue-600')}>
                       <Paperclip className="w-4 h-4" />
                     </button>
                     <input ref={fileRef} type="file" accept="image/*,.pdf,.doc,.docx,.txt" className="hidden" onChange={e => {
@@ -1169,7 +1169,7 @@ export default function CustomerChat() {
                   <button onClick={startNewChat} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 font-medium">
                     <X className="w-3.5 h-3.5" /> Close
                   </button>
-                  <button onClick={startNewChat} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium">
+                  <button onClick={startNewChat} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium">
                     <MessageSquare className="w-3.5 h-3.5" /> New Chat
                   </button>
                 </div>
@@ -1199,7 +1199,7 @@ export default function CustomerChat() {
 
             {historyLoading ? (
               <div className="flex items-center justify-center h-48">
-                <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : chatHistory.length === 0 ? (
               <div className="card p-12 flex flex-col items-center text-gray-400">
@@ -1278,7 +1278,7 @@ export default function CustomerChat() {
                             {c.status === 'closed' && !c.rating && (
                               <button
                                 onClick={() => setHistoryRatingId(c.id)}
-                                className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold"
+                                className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
                               >
                                 Rate session →
                               </button>

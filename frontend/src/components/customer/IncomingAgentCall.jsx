@@ -387,23 +387,23 @@ export default function IncomingAgentCall() {
     <div
       ref={drag.ref}
       {...drag.handleProps}
-      className="fixed bottom-6 right-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-indigo-400 w-80 overflow-hidden"
+      className="fixed bottom-6 right-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-blue-400 w-80 overflow-hidden"
       title="Drag to move"
     >
       {state === 'invited' && (
         <div className="p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-              <Headphones className="w-6 h-6 text-indigo-600" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <Headphones className="w-6 h-6 text-blue-600" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-400 font-medium">Incoming support call</p>
               <p className="text-base font-bold text-gray-800 truncate">{invite.agentName}</p>
-              <p className="text-xs text-indigo-600 animate-pulse">Calling you now…</p>
+              <p className="text-xs text-blue-600 animate-pulse">Calling you now…</p>
             </div>
           </div>
           {invite.ticketSubject && (
-            <div className="mb-3 px-3 py-2 bg-indigo-50 rounded-lg border border-indigo-100 text-xs text-indigo-700">
+            <div className="mb-3 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100 text-xs text-blue-700">
               <span className="font-semibold">Re: #{invite.ticketId}</span> · {invite.ticketSubject}
             </div>
           )}
@@ -458,7 +458,7 @@ export default function IncomingAgentCall() {
           </div>
           {/* Customer's own mic activity strip above the controls. */}
           <div className="flex items-center justify-center gap-2 mb-3">
-            <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-indigo-500" maxHeight={14} minHeight={3} barWidth={2} />
+            <AudioWaveBars level={isMuted ? 0 : micLevel} bars={6} color="bg-blue-500" maxHeight={14} minHeight={3} barWidth={2} />
             <span className="text-[10px] text-gray-400">Your mic</span>
           </div>
           <div className="flex gap-2">

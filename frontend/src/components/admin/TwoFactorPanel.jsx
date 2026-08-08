@@ -130,9 +130,9 @@ export default function TwoFactorPanel() {
   if (setupState) {
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupState.otpauth_uri)}`;
     return (
-      <div className="bg-indigo-50/40 border border-indigo-200 rounded-lg p-4">
+      <div className="bg-blue-50/40 border border-blue-200 rounded-lg p-4">
         <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <Shield className="w-4 h-4 text-indigo-600" /> Set up two-factor authentication
+          <Shield className="w-4 h-4 text-blue-600" /> Set up two-factor authentication
         </h3>
         <ol className="text-xs text-gray-700 space-y-2 mb-4 list-decimal ml-5">
           <li>Install an authenticator app on your phone (Google Authenticator, Authy, 1Password, Microsoft Authenticator — any will work).</li>
@@ -145,7 +145,7 @@ export default function TwoFactorPanel() {
             <p className="text-xs text-gray-500 mb-1">Can't scan? Type this secret into your app:</p>
             <div className="flex items-center gap-2 mb-3">
               <code className="font-mono text-xs bg-gray-100 px-2 py-1 rounded break-all flex-1">{setupState.secret}</code>
-              <button onClick={copySecret} className="text-gray-500 hover:text-indigo-600" title="Copy secret">
+              <button onClick={copySecret} className="text-gray-500 hover:text-blue-600" title="Copy secret">
                 {copiedSecret ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
               </button>
             </div>

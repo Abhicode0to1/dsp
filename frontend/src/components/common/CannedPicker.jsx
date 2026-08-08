@@ -97,7 +97,7 @@ export default function CannedPicker({ onSelect, context }) {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors"
       >
         <Zap className="w-4 h-4" />
         Canned
@@ -112,7 +112,7 @@ export default function CannedPicker({ onSelect, context }) {
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input
                 type="text"
-                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Search responses…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -124,7 +124,7 @@ export default function CannedPicker({ onSelect, context }) {
               onClick={() => setCreating(c => !c)}
               className={clsx(
                 'flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors',
-                creating ? 'bg-gray-100 text-gray-600' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
+                creating ? 'bg-gray-100 text-gray-600' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
               )}
             >
               {creating ? <><X className="w-3 h-3" /> Cancel</> : <><Plus className="w-3 h-3" /> New</>}
@@ -133,10 +133,10 @@ export default function CannedPicker({ onSelect, context }) {
 
           {/* Create form */}
           {creating && (
-            <form onSubmit={handleCreate} className="p-3 border-b border-gray-100 bg-indigo-50/30 space-y-2">
+            <form onSubmit={handleCreate} className="p-3 border-b border-gray-100 bg-blue-50/30 space-y-2">
               <input
                 type="text"
-                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="Title (e.g. GW — DNS propagation note)"
                 value={newTitle}
                 onChange={e => setNewTitle(e.target.value)}
@@ -144,7 +144,7 @@ export default function CannedPicker({ onSelect, context }) {
                 required
               />
               <textarea
-                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white resize-none"
+                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-none"
                 placeholder="Body — use {{customer_name}}, {{ticket_id}}, {{domain}}, {{gw_edition}}, {{agent_name}}"
                 value={newBody}
                 onChange={e => setNewBody(e.target.value)}
@@ -165,7 +165,7 @@ export default function CannedPicker({ onSelect, context }) {
                 <button
                   type="submit"
                   disabled={saving || !newTitle.trim() || !newBody.trim()}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-40"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-40"
                 >
                   {saving ? 'Saving…' : 'Save'}
                 </button>
@@ -200,16 +200,16 @@ export default function CannedPicker({ onSelect, context }) {
                 <div
                   key={`${r.kind || 'legacy'}_${r.id}`}
                   onClick={handlePick}
-                  className="group w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer"
+                  className="group w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer"
                 >
                   <div className="flex items-center justify-between mb-0.5 gap-2">
                     <p className="text-sm font-medium text-gray-800 truncate flex-1">{r.title}</p>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {r.shortcut && (
-                        <span className="text-[10px] font-mono bg-indigo-50 text-indigo-700 px-1 py-0.5 rounded">/{r.shortcut}</span>
+                        <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-1 py-0.5 rounded">/{r.shortcut}</span>
                       )}
                       {isTeam ? (
-                        <span className="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full font-medium inline-flex items-center gap-0.5"
+                        <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-medium inline-flex items-center gap-0.5"
                               title="Curated by admin in Templates → Chat Snippets">
                           <Users className="w-2.5 h-2.5" /> Team
                         </span>

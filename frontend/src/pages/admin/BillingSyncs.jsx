@@ -94,7 +94,7 @@ export default function BillingSyncsPanel() {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-3 py-1.5 text-xs font-medium ${filter === f.id ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`px-3 py-1.5 text-xs font-medium ${filter === f.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               {f.label}
             </button>
@@ -103,7 +103,7 @@ export default function BillingSyncsPanel() {
 
         {items == null ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : !items.length ? (
           <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
@@ -121,7 +121,7 @@ export default function BillingSyncsPanel() {
                         {r.customer_name || r.customer_email}
                       </h3>
                       <span className="text-xs text-gray-500">{r.customer_email}</span>
-                      <span className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold">{r.plan}</span>
+                      <span className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold">{r.plan}</span>
                       {r.synced_at && <span className="badge bg-emerald-100 text-emerald-700 text-xs">Synced</span>}
                       {r.dismissed_at && <span className="badge bg-gray-200 text-gray-700 text-xs">Dismissed</span>}
                       {!r.synced_at && !r.dismissed_at && r.attempts >= 5 && (

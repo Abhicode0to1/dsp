@@ -220,7 +220,7 @@ function LockedUsageBar({ label, icon: Icon, featureLabel }) {
         <button
           data-testid={`Dashboard-UpgradeButton-${slug}`}
           onClick={e => { e.stopPropagation(); navigate('/customer/billing'); }}
-          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg transition-colors"
+          className="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg transition-colors"
         >
           Upgrade →
         </button>
@@ -270,7 +270,7 @@ export default function CustomerDashboard() {
   if (loading) return (
     <Layout>
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
       </div>
     </Layout>
   );
@@ -282,7 +282,7 @@ export default function CustomerDashboard() {
         <p className="text-sm font-medium text-gray-600">Failed to load dashboard</p>
         <button
           onClick={() => window.location.reload()}
-          className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold underline"
+          className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline"
         >
           Retry
         </button>
@@ -426,10 +426,10 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Get Support hero */}
-      <div className="card p-5 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-indigo-200" style={{ background: 'linear-gradient(to right, #eef2ff, #fff)' }}>
+      <div className="card p-5 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-blue-200" style={{ background: 'linear-gradient(to right, #eef2ff, #fff)' }}>
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <MessageCircle className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <MessageCircle className="w-6 h-6 text-blue-600" />
           </div>
           <div className="min-w-0">
             <p className="font-semibold text-gray-800">Need help? Talk to our assistant</p>
@@ -454,7 +454,7 @@ export default function CustomerDashboard() {
           </div>
           <div className="flex flex-wrap gap-2">
             {data.products.map((p) => (
-              <span key={p} className="badge bg-indigo-50 text-indigo-700">{p}</span>
+              <span key={p} className="badge bg-blue-50 text-blue-700">{p}</span>
             ))}
           </div>
         </div>

@@ -199,13 +199,13 @@ export default function NotificationBell() {
                 <div>New chat from <strong>{customer?.customer_name || 'Customer'}</strong></div>
                 {cat && (
                   <div className="mt-0.5">
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium capitalize">{cat}</span>
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-medium capitalize">{cat}</span>
                   </div>
                 )}
               </div>
               <button
                 onClick={() => { toast.dismiss(t.id); navigate('/agent/chats'); }}
-                className="text-xs px-2.5 py-1 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors flex-shrink-0"
+                className="text-xs px-2.5 py-1 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
               >
                 Go to Chats
               </button>
@@ -226,13 +226,13 @@ export default function NotificationBell() {
         toast(
           (t) => (
             <div className="flex items-center gap-3">
-              <Headphones className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+              <Headphones className="w-4 h-4 text-blue-500 flex-shrink-0" />
               <span className="text-sm flex-1">
                 Chat assigned to you from <strong>{customer?.customer_name || 'Customer'}</strong>
               </span>
               <button
                 onClick={() => { toast.dismiss(t.id); navigate('/agent/chats'); }}
-                className="text-xs px-2.5 py-1 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors flex-shrink-0"
+                className="text-xs px-2.5 py-1 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
               >
                 Go to Chats
               </button>
@@ -480,7 +480,7 @@ export default function NotificationBell() {
     ticket_reply:    <MessageSquare className="w-4 h-4 text-blue-500" />,
     ticket_assigned: <UserCheck className="w-4 h-4 text-green-500" />,
     chat_request:    <Headphones className="w-4 h-4 text-amber-500" />,
-    chat_assigned:   <Zap className="w-4 h-4 text-indigo-500" />,
+    chat_assigned:   <Zap className="w-4 h-4 text-blue-500" />,
     incoming_call:   <Phone className="w-4 h-4 text-green-600" />,
     sla_warning:     <AlertTriangle className="w-4 h-4 text-amber-500" />,
     sla_breach:      <AlertCircle className="w-4 h-4 text-red-600" />,

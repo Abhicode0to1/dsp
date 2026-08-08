@@ -199,7 +199,7 @@ function PlanCard({ plan, onSave }) {
         <button
           onClick={handleSave}
           disabled={saving || !dirty}
-          className={clsx('w-full flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium text-sm transition-colors', dirty ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-100 text-gray-400')}
+          className={clsx('w-full flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium text-sm transition-colors', dirty ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-100 text-gray-400')}
         >
           {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {saving ? 'Saving…' : dirty ? 'Save changes' : 'Saved'}
@@ -218,7 +218,7 @@ function ToggleRow({ icon: Icon, label, hint, checked, onChange, disabled, disab
         disabled={disabled}
         className={clsx(
           'w-9 h-5 rounded-full flex items-center transition-colors flex-shrink-0 mt-0.5',
-          checked ? 'bg-indigo-600' : 'bg-gray-300',
+          checked ? 'bg-blue-600' : 'bg-gray-300',
           disabled && 'cursor-not-allowed'
         )}
       >

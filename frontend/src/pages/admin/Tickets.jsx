@@ -216,8 +216,8 @@ export default function AdminTickets() {
 
       {/* Bulk actions bar */}
       {checkedIds.size > 0 && (
-        <div className="card p-3 mb-4 bg-indigo-50 border-indigo-200 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-semibold text-indigo-700">{checkedIds.size} selected</span>
+        <div className="card p-3 mb-4 bg-blue-50 border-blue-200 flex flex-wrap items-center gap-3">
+          <span className="text-sm font-semibold text-blue-700">{checkedIds.size} selected</span>
           <button onClick={handleBulkClose} disabled={bulkLoading} className="btn-secondary text-sm py-1.5">
             Close All
           </button>
@@ -247,9 +247,9 @@ export default function AdminTickets() {
               <tr>
                 <th className="w-1 p-0" />
                 <th className="px-4 py-3 w-10">
-                  <button onClick={toggleAll} className="text-gray-400 hover:text-indigo-600">
+                  <button onClick={toggleAll} className="text-gray-400 hover:text-blue-600">
                     {checkedIds.size === tickets.length && tickets.length > 0
-                      ? <CheckSquare className="w-4 h-4 text-indigo-600" />
+                      ? <CheckSquare className="w-4 h-4 text-blue-600" />
                       : <Square className="w-4 h-4" />}
                   </button>
                 </th>
@@ -271,12 +271,12 @@ export default function AdminTickets() {
                 const priorityBg = { urgent: 'bg-red-600', high: 'bg-orange-400', medium: 'bg-amber-400', normal: 'bg-blue-300', low: 'bg-gray-300' };
                 return (
                   <tr key={t.id}
-                    className={`hover:bg-gray-50 transition-colors ${selected?.id === t.id ? 'bg-indigo-50' : t.status !== 'closed' && (Date.now() - new Date(t.created_at).getTime()) > 72 * 3600000 ? 'bg-red-50/40' : t.status !== 'closed' && (Date.now() - new Date(t.created_at).getTime()) > 24 * 3600000 ? 'bg-amber-50/40' : ''}`}
+                    className={`hover:bg-gray-50 transition-colors ${selected?.id === t.id ? 'bg-blue-50' : t.status !== 'closed' && (Date.now() - new Date(t.created_at).getTime()) > 72 * 3600000 ? 'bg-red-50/40' : t.status !== 'closed' && (Date.now() - new Date(t.created_at).getTime()) > 24 * 3600000 ? 'bg-amber-50/40' : ''}`}
                   >
                     <td className={`p-0 w-1 ${priorityBg[t.priority] || 'bg-gray-200'}`} />
                     <td className="px-4 py-3" onClick={e => { e.stopPropagation(); toggleCheck(t.id); }}>
                       {checkedIds.has(t.id)
-                        ? <CheckSquare className="w-4 h-4 text-indigo-600 cursor-pointer" />
+                        ? <CheckSquare className="w-4 h-4 text-blue-600 cursor-pointer" />
                         : <Square className="w-4 h-4 text-gray-300 cursor-pointer hover:text-gray-500" />}
                     </td>
                     <td className="px-4 py-3 text-gray-400 font-mono text-xs cursor-pointer" onClick={() => openDetail(t)}>#{t.id}</td>
@@ -317,7 +317,7 @@ export default function AdminTickets() {
 
             {detailLoading ? (
               <div className="flex h-48 items-center justify-center">
-                <div className="w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : detail ? (
               <div className="p-5 space-y-4">
@@ -373,7 +373,7 @@ export default function AdminTickets() {
                       type="button"
                       onClick={() => setActiveTab('messages')}
                       className={clsx('px-3 py-2 text-xs font-semibold border-b-2 flex items-center gap-1.5 -mb-px',
-                        activeTab === 'messages' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700')}
+                        activeTab === 'messages' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700')}
                     >
                       <MessageSquare className="w-3 h-3" /> Messages ({detailMsgs.length})
                     </button>
@@ -396,7 +396,7 @@ export default function AdminTickets() {
                       {detailMsgs.map(msg => (
                         <div key={msg.id} className={`flex ${msg.sender_role !== 'customer' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
-                            msg.sender_role !== 'customer' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-800'
+                            msg.sender_role !== 'customer' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'
                           }`}>
                             <p className="text-xs opacity-70 mb-0.5 font-medium">{msg.sender_name}</p>
                             <p className="whitespace-pre-wrap break-words">{msg.message}</p>

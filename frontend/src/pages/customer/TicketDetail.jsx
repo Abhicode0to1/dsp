@@ -308,7 +308,7 @@ export default function CustomerTicketDetail() {
     return (Date.now() - new Date(closedAt).getTime()) < 24 * 3600000;
   })();
 
-  if (loading) return <Layout><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
+  if (loading) return <Layout><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
   if (!ticket) return null;
 
   return (
@@ -360,7 +360,7 @@ export default function CustomerTicketDetail() {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="text-gray-400 hover:text-indigo-600 transition-colors"
+                  className="text-gray-400 hover:text-blue-600 transition-colors"
                   title="Copy ticket link"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -411,10 +411,10 @@ export default function CustomerTicketDetail() {
                           onClick={() => setLightboxSrc(url)}
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          <button onClick={() => setLightboxSrc(url)} className="p-1.5 bg-white rounded-lg text-gray-700 hover:text-indigo-600" title="View">
+                          <button onClick={() => setLightboxSrc(url)} className="p-1.5 bg-white rounded-lg text-gray-700 hover:text-blue-600" title="View">
                             <ZoomIn className="w-3.5 h-3.5" />
                           </button>
-                          <a href={url} download className="p-1.5 bg-white rounded-lg text-gray-700 hover:text-indigo-600" title="Download">
+                          <a href={url} download className="p-1.5 bg-white rounded-lg text-gray-700 hover:text-blue-600" title="Download">
                             <Download className="w-3.5 h-3.5" />
                           </a>
                           {(user.role !== 'customer' || att.uploaded_by === user.id) && (
@@ -429,7 +429,7 @@ export default function CustomerTicketDetail() {
                       <>
                         <Paperclip className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                         <span className="text-xs text-gray-700 truncate max-w-[140px]">{att.original_name}</span>
-                        <a href={url} download className="text-indigo-500 hover:text-indigo-700">
+                        <a href={url} download className="text-blue-500 hover:text-blue-700">
                           <Download className="w-3.5 h-3.5" />
                         </a>
                         {(user.role !== 'customer' || att.uploaded_by === user.id) ? (
@@ -472,13 +472,13 @@ export default function CustomerTicketDetail() {
               const isMine = m.sender_id === user.id;
               return (
                 <div key={m.id} className={clsx('flex gap-3', isMine ? 'flex-row-reverse' : 'flex-row')}>
-                  <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold', isMine ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700')}>
+                  <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold', isMine ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700')}>
                     {isMine ? <User className="w-4 h-4" /> : <Headphones className="w-4 h-4" />}
                   </div>
                   <div className={clsx('max-w-sm', isMine ? 'items-end' : 'items-start', 'flex flex-col')}>
                     <div className={clsx(
                       'px-4 py-2.5 rounded-2xl text-sm whitespace-pre-wrap break-words',
-                      isMine ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-gray-100 text-gray-800 rounded-tl-sm',
+                      isMine ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-gray-100 text-gray-800 rounded-tl-sm',
                       m._optimistic && 'opacity-60'
                     )}>
                       {renderMarkdown(m.message)}
@@ -522,7 +522,7 @@ export default function CustomerTicketDetail() {
               onClick={() => ccInputRef.current?.focus()}
             >
               {ccEmails.map(email => (
-                <span key={email} className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                <span key={email} className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
                   {email}
                   <button type="button" onClick={(e) => { e.stopPropagation(); removeCc(email); }}>
                     <X className="w-3 h-3" />
@@ -551,7 +551,7 @@ export default function CustomerTicketDetail() {
             {pendingFiles.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {pendingFiles.map((f, i) => (
-                  <div key={i} className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 rounded-lg px-2 py-1 text-xs text-indigo-700">
+                  <div key={i} className="flex items-center gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-2 py-1 text-xs text-blue-700">
                     <Paperclip className="w-3 h-3" />
                     <span className="truncate max-w-[120px]">{f.name}</span>
                     <button type="button" onClick={() => setPendingFiles(p => p.filter((_, j) => j !== i))}>
@@ -575,7 +575,7 @@ export default function CustomerTicketDetail() {
               <div className="flex items-center gap-2">
                 <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" multiple />
                 <button data-testid="TicketDetail-AttachButton" type="button" onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                  className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors">
                   <Paperclip className="w-4 h-4" /> Attach
                 </button>
               </div>
@@ -595,12 +595,12 @@ export default function CustomerTicketDetail() {
                 This ticket is closed.{' '}
                 <button onClick={() => setShowCsat(true)} className="text-amber-600 hover:underline font-medium">Rate your experience</button>
                 {' '}or{' '}
-                <button onClick={() => navigate('/customer/tickets/new')} className="text-indigo-600 hover:underline font-medium">open a new ticket</button>.
+                <button onClick={() => navigate('/customer/tickets/new')} className="text-blue-600 hover:underline font-medium">open a new ticket</button>.
               </p>
               {canReopen ? (
                 <button
                   onClick={handleReopen}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Reopen Ticket
                 </button>

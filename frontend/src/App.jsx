@@ -38,6 +38,7 @@ import CustomerBilling from './pages/customer/Billing';
 import CustomerChatHistory from './pages/customer/ChatHistory';
 import CustomerProfile from './pages/customer/Profile';
 import SetupPassword from './pages/SetupPassword';
+import SsoLanding from './pages/SsoLanding';
 import AgentDashboard from './pages/agent/Dashboard';
 import AgentTickets from './pages/agent/Tickets';
 import AgentChats from './pages/agent/Chats';
@@ -116,7 +117,7 @@ function PersistentOverlays() {
 
 function RequireAuth({ children, roles }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex h-screen items-center justify-center"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex h-screen items-center justify-center"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return <Navigate to="/login" replace />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/login" replace />;
   return children;
@@ -129,6 +130,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={user ? <Navigate to={`/${user.role}`} replace /> : <LoginPage />} />
       <Route path="/setup-password/:token" element={<SetupPassword />} />
+      <Route path="/sso" element={<SsoLanding />} />
 
       {/* Customer */}
       <Route path="/customer" element={<RequireAuth roles={['customer']}><CustomerDashboard /></RequireAuth>} />

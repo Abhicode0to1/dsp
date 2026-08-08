@@ -79,7 +79,7 @@ export default function SnippetPicker({ onInsert, forceFilter = null }) {
         title="Insert a chat snippet"
         className={clsx(
           'transition-colors',
-          open ? 'text-indigo-600' : 'text-gray-400 hover:text-indigo-600'
+          open ? 'text-blue-600' : 'text-gray-400 hover:text-blue-600'
         )}
       >
         <Zap className="w-4 h-4" />
@@ -112,12 +112,12 @@ export default function SnippetPicker({ onInsert, forceFilter = null }) {
                   key={s.id}
                   type="button"
                   onClick={() => handlePick(s)}
-                  className="w-full text-left px-3 py-2 hover:bg-indigo-50 border-b border-gray-50 last:border-b-0 transition-colors"
+                  className="w-full text-left px-3 py-2 hover:bg-blue-50 border-b border-gray-50 last:border-b-0 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <span className="text-sm font-semibold text-gray-800 truncate">{s.name}</span>
                     {s.shortcut && (
-                      <span className="text-[10px] font-mono bg-indigo-50 text-indigo-700 px-1 py-0.5 rounded">/{s.shortcut}</span>
+                      <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-1 py-0.5 rounded">/{s.shortcut}</span>
                     )}
                     {s.category && (
                       <span className="text-[10px] text-gray-500">· {s.category}</span>

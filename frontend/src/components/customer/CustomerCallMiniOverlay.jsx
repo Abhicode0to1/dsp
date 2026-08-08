@@ -33,7 +33,7 @@ export default function CustomerCallMiniOverlay() {
     <div
       ref={drag.ref}
       {...drag.handleProps}
-      className="fixed bottom-6 right-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-indigo-400 w-72 overflow-hidden"
+      className="fixed bottom-6 right-6 z-[60] bg-white rounded-2xl shadow-2xl border-2 border-blue-400 w-72 overflow-hidden"
       title="Drag to move"
     >
       <div className="p-4">
@@ -68,7 +68,7 @@ export default function CustomerCallMiniOverlay() {
           <button
             onClick={() => navigate('/customer/call')}
             title="Open the full call screen"
-            className="flex items-center justify-center gap-1 py-2 px-3 rounded-lg border bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 text-sm transition-colors"
+            className="flex items-center justify-center gap-1 py-2 px-3 rounded-lg border bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 text-sm transition-colors"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>

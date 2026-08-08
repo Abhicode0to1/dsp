@@ -365,7 +365,7 @@ function EditModal({ customer, plans, onClose, onSave }) {
               <span className="text-gray-400 font-normal"> ({customer.email})</span>
             </p>
             {isSynced && (
-              <p className="text-xs text-indigo-600 flex items-center gap-1 mt-1">
+              <p className="text-xs text-blue-600 flex items-center gap-1 mt-1">
                 <Link className="w-3 h-3" /> Billing ID: {customer.billing_customer_id}
               </p>
             )}
@@ -420,9 +420,9 @@ function EditModal({ customer, plans, onClose, onSave }) {
             <p className="text-xs text-gray-400 mt-1">Sent to your billing app to link this payment to the plan change.</p>
           </div>
           {selectedPlan && selectedPlan.name !== 'free' && (
-            <div className="bg-indigo-50 rounded-lg p-3 text-sm">
-              <p className="text-indigo-700 font-medium">Calculated Plan Price</p>
-              <p className="text-indigo-600 mt-0.5">
+            <div className="bg-blue-50 rounded-lg p-3 text-sm">
+              <p className="text-blue-700 font-medium">Calculated Plan Price</p>
+              <p className="text-blue-600 mt-0.5">
                 max(₹{(parseFloat(form.invoiceSubtotal) || 0).toLocaleString()} × {(selectedPlan.percentage * 100).toFixed(0)}%, ₹{Number(selectedPlan.minimum_price).toLocaleString()})
                 = <strong>₹{finalPrice.toLocaleString('en-IN')}</strong>
               </p>
@@ -542,7 +542,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
 
   if (!data) return (
     <div className="card p-8 flex items-center justify-center">
-      <div className="w-7 h-7 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -565,14 +565,14 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
         <div className="flex items-center gap-2">
           <p className="text-base font-semibold text-gray-800">{c.name}</p>
           {isSynced && (
-            <span className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded-full font-medium">
+            <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full font-medium">
               <Link className="w-2.5 h-2.5" /> Billing
             </span>
           )}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => onEdit(c)} className="btn-primary text-xs py-1">Edit</button>
-          <button onClick={() => setShowChangePw(true)} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 transition-colors" title="Change password">
+          <button onClick={() => setShowChangePw(true)} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 transition-colors" title="Change password">
             <KeyRound className="w-3.5 h-3.5" /> Password
           </button>
           <button onClick={() => setShowOnboardModal(true)} disabled={startingOnboard} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 transition-colors disabled:opacity-50" title="Open an onboarding ticket + assign an agent">
@@ -618,9 +618,9 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
       <div className="px-4 py-2.5 border-b border-gray-100 flex items-center gap-1.5 flex-wrap">
         <span className="inline-flex items-center gap-1 text-xs text-gray-400 font-medium mr-0.5"><Tag className="w-3.5 h-3.5" /> Tags</span>
         {tags.map(t => (
-          <span key={t} className="inline-flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 pl-2 pr-1 py-0.5 rounded-full">
+          <span key={t} className="inline-flex items-center gap-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 pl-2 pr-1 py-0.5 rounded-full">
             <button onClick={() => onTagClick?.(t)} className="hover:underline" title={`Filter by "${t}"`}>{t}</button>
-            <button onClick={() => removeTag(t)} className="text-indigo-400 hover:text-red-600" title="Remove tag"><X className="w-3 h-3" /></button>
+            <button onClick={() => removeTag(t)} className="text-blue-400 hover:text-red-600" title="Remove tag"><X className="w-3 h-3" /></button>
           </span>
         ))}
         <input
@@ -629,7 +629,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
           onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
           onBlur={addTag}
           placeholder={tags.length ? 'Add tag…' : 'Add a tag (e.g. VIP)…'}
-          className="text-xs px-2 py-1 rounded-full border border-dashed border-gray-300 focus:border-indigo-400 focus:outline-none w-32"
+          className="text-xs px-2 py-1 rounded-full border border-dashed border-gray-300 focus:border-blue-400 focus:outline-none w-32"
         />
       </div>
 
@@ -644,7 +644,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-3 py-2.5 -mb-px border-b-2 font-medium transition-colors ${tab === t.id ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            className={`px-3 py-2.5 -mb-px border-b-2 font-medium transition-colors ${tab === t.id ? 'border-blue-500 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
           >
             {t.label}
           </button>
@@ -658,7 +658,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
             <div className="lg:col-span-3 space-y-5">
               {/* Customer info card — avatar + email + plan + status + overrides badge */}
               <div className="flex items-start gap-3 pb-4 border-b border-gray-100">
-                <div className="w-14 h-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                   {initial}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -732,7 +732,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
                     {c.products?.length > 0 && (
                       <tr>
                         <td className="text-gray-500 py-1.5 align-top">Products</td>
-                        <td><div className="flex flex-wrap gap-1.5">{c.products.map(p => <span key={p} className="badge bg-indigo-50 text-indigo-700">{p}</span>)}</div></td>
+                        <td><div className="flex flex-wrap gap-1.5">{c.products.map(p => <span key={p} className="badge bg-blue-50 text-blue-700">{p}</span>)}</div></td>
                       </tr>
                     )}
                     {!isSynced && (!c.products || c.products.length === 0) && (
@@ -813,7 +813,7 @@ function CustomerDetail({ customerId, plans, onEdit, onDelete, onClose, onTagCli
                 <RouterLink
                   key={t.id}
                   to={`/admin/tickets?openTicket=${t.id}`}
-                  className="flex items-center justify-between text-xs bg-gray-50 hover:bg-indigo-50 hover:text-indigo-700 rounded px-2.5 py-2 transition-colors no-underline text-gray-700"
+                  className="flex items-center justify-between text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded px-2.5 py-2 transition-colors no-underline text-gray-700"
                   title="Open the full conversation on the Tickets page (Ctrl/⌘+click for new tab)"
                 >
                   <span className="truncate max-w-md">#{t.id} {t.subject}</span>
@@ -1206,7 +1206,7 @@ function ManualCustomerModal({ onClose, onCreated }) {
       <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white">
           <div className="flex items-center gap-3">
-            <UserCheck className="w-5 h-5 text-indigo-500" />
+            <UserCheck className="w-5 h-5 text-blue-500" />
             <h2 className="text-lg font-bold text-gray-800">Add Customer</h2>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
@@ -1275,7 +1275,7 @@ function ManualCustomerModal({ onClose, onCreated }) {
           <div className={`p-3 rounded-xl border ${needsOnboarding ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={needsOnboarding} onChange={e => setNeedsOnboarding(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
               <div className="flex-1 text-sm">
                 <p className="font-semibold text-gray-800">Open an onboarding ticket for this customer</p>
                 <p className="text-xs text-gray-600 mt-0.5">Check this for new customers who need email setup (Google Workspace / M365 / Zoho). An onboarding ticket will be auto-opened and assigned to an agent.</p>
@@ -1295,7 +1295,7 @@ function ManualCustomerModal({ onClose, onCreated }) {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={sendEmail} onChange={e => setSendEmail(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
               <span className="text-sm text-gray-700">Send welcome email <span className="text-xs text-gray-500">(setup link if no password, otherwise login info)</span></span>
             </label>
           </div>
@@ -1383,7 +1383,7 @@ function ImportCustomerModal({ onClose, onImported }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-indigo-500" />
+            <UserPlus className="w-5 h-5 text-blue-500" />
             <h2 className="text-lg font-bold text-gray-800">Import Customer</h2>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4" /></button>
@@ -1428,8 +1428,8 @@ function ImportCustomerModal({ onClose, onImported }) {
 
           {found && (
             <>
-              <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-semibold text-indigo-700 uppercase tracking-wide mb-2">Found in billing app</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+                <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Found in billing app</p>
                 <div className="grid grid-cols-2 gap-y-1.5 text-sm">
                   <div><span className="text-gray-500">Name </span><span className="font-medium text-gray-800">{found.name}</span></div>
                   <div><span className="text-gray-500">Email </span><span className="font-medium text-gray-800">{found.email}</span></div>
@@ -1437,8 +1437,8 @@ function ImportCustomerModal({ onClose, onImported }) {
                   <div><span className="text-gray-500">Billing ID </span><span className="font-medium text-gray-800 font-mono">{found.billing_customer_id || '—'}</span></div>
                 </div>
                 {found.subscriptions?.length > 0 && (
-                  <div className="pt-2 mt-2 border-t border-indigo-100">
-                    <p className="text-xs font-semibold text-indigo-700 uppercase tracking-wide mb-1">Products ({found.subscriptions.length})</p>
+                  <div className="pt-2 mt-2 border-t border-blue-100">
+                    <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Products ({found.subscriptions.length})</p>
                     <div className="space-y-1">
                       {found.subscriptions.slice(0, 4).map((s, i) => (
                         <div key={i} className="text-xs text-gray-600 flex justify-between gap-2">
@@ -1463,7 +1463,7 @@ function ImportCustomerModal({ onClose, onImported }) {
                     type="checkbox"
                     checked={needsOnboarding}
                     onChange={e => setNeedsOnboarding(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                   <div className="flex-1 text-sm">
                     <p className="font-semibold text-gray-800">This customer needs onboarding setup</p>
@@ -1751,7 +1751,7 @@ export default function AdminCustomers() {
         <div className={`card overflow-hidden ${selectedId ? 'hidden lg:block lg:col-span-1' : ''}`}>
           {loading ? (
             <div className="flex items-center justify-center h-48">
-              <div className="w-7 h-7 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-7 h-7 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : customers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-48 text-gray-400">
@@ -1761,11 +1761,11 @@ export default function AdminCustomers() {
             <>
               {/* Sticky bulk-action bar — replaces the column header when 1+ rows are selected */}
               {selectedIds.size > 0 && (
-                <div className="bg-indigo-50 border-b border-indigo-200 px-4 py-2.5 flex items-center gap-2 flex-wrap sticky top-0 z-10">
-                  <span className="text-sm font-medium text-indigo-700">
+                <div className="bg-blue-50 border-b border-blue-200 px-4 py-2.5 flex items-center gap-2 flex-wrap sticky top-0 z-10">
+                  <span className="text-sm font-medium text-blue-700">
                     {selectedIds.size} selected
                   </span>
-                  <span className="text-xs text-indigo-400">·</span>
+                  <span className="text-xs text-blue-400">·</span>
                   <button
                     onClick={() => runBulkAction('reset-usage', {}, `Reset monthly usage counters for ${selectedIds.size} customer${selectedIds.size === 1 ? '' : 's'}?`)}
                     disabled={bulkBusy}
@@ -1777,7 +1777,7 @@ export default function AdminCustomers() {
                   <button
                     onClick={() => runBulkAction('resend-welcome', {}, `Re-send the welcome (password setup) email to ${selectedIds.size} customer${selectedIds.size === 1 ? '' : 's'}?`)}
                     disabled={bulkBusy}
-                    className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-200 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 transition-colors disabled:opacity-50"
                     title="Mint a new 24h setup link and email it"
                   >
                     <Mail className="w-3.5 h-3.5" /> Resend Welcome
@@ -1845,7 +1845,7 @@ export default function AdminCustomers() {
                     return (
                       <tr
                         key={c.id}
-                        className={`cursor-pointer transition-colors ${selectedId === c.id ? 'bg-indigo-50' : isChecked ? 'bg-indigo-50/40' : 'hover:bg-gray-50'}`}
+                        className={`cursor-pointer transition-colors ${selectedId === c.id ? 'bg-blue-50' : isChecked ? 'bg-blue-50/40' : 'hover:bg-gray-50'}`}
                         onClick={() => setSelectedId(c.id)}
                       >
                         <td className="px-4 py-3 align-top" onClick={e => e.stopPropagation()}>
@@ -1863,7 +1863,7 @@ export default function AdminCustomers() {
                           <div className="flex items-center gap-1.5">
                             <p className="text-sm font-medium text-gray-800 truncate">{c.name}</p>
                             {synced && !selectedId && (
-                              <span className="inline-flex items-center gap-0.5 text-[10px] bg-indigo-50 text-indigo-600 border border-indigo-200 px-1.5 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-0.5 text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded-full">
                                 <Link className="w-2.5 h-2.5" /> Billing
                               </span>
                             )}
@@ -2181,7 +2181,7 @@ function BulkImportModal({ plans, onClose, onImported }) {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <FileUp className="w-5 h-5 text-indigo-500" />
+            <FileUp className="w-5 h-5 text-blue-500" />
             Bulk Import Customers
           </h2>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-700"><X className="w-5 h-5" /></button>
@@ -2193,13 +2193,13 @@ function BulkImportModal({ plans, onClose, onImported }) {
               <p className="text-sm text-gray-600">
                 Upload a CSV with columns: <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">name</code>, <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">email</code>, <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">plan</code> (optional — free/basic/moderate/premium), <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">domain</code> (optional). Up to 500 rows per import.
               </p>
-              <button onClick={downloadTemplate} className="text-xs text-indigo-600 hover:underline">
+              <button onClick={downloadTemplate} className="text-xs text-blue-600 hover:underline">
                 Download a template CSV
               </button>
 
               <div>
                 <label className="block">
-                  <div className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${rows.length ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-indigo-400 hover:bg-gray-50'}`}>
+                  <div className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${rows.length ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'}`}>
                     <FileUp className="w-8 h-8 mx-auto text-gray-400 mb-2" />
                     {fileName ? (
                       <>
@@ -2469,14 +2469,14 @@ function ActivityTab({ customerId }) {
   // map renders as the underscored action verbatim — fine for new actions
   // until someone gets around to adding a label.
   const LABELS = {
-    password_changed:           { label: 'Password changed by admin',                 icon: KeyRound,   color: 'text-indigo-600' },
+    password_changed:           { label: 'Password changed by admin',                 icon: KeyRound,   color: 'text-blue-600' },
     password_changed_self:      { label: 'Password changed by customer (password)',   icon: KeyRound,   color: 'text-emerald-600' },
     password_changed_self_otp:  { label: 'Password changed by customer (email OTP)',  icon: KeyRound,   color: 'text-emerald-600' },
     usage_reset:                { label: 'Usage counters reset',                      icon: RotateCcw,  color: 'text-amber-600'  },
     usage_reset_bulk:           { label: 'Usage reset (bulk action)',                 icon: RotateCcw,  color: 'text-amber-600'  },
     profile_updated:            { label: 'Profile updated',                           icon: UserCheck,  color: 'text-gray-600'   },
     plan_changed_bulk:          { label: 'Plan changed (bulk)',                       icon: CreditCard, color: 'text-purple-600' },
-    welcome_email_resent:       { label: 'Welcome email re-sent',                     icon: Mail,       color: 'text-indigo-600' },
+    welcome_email_resent:       { label: 'Welcome email re-sent',                     icon: Mail,       color: 'text-blue-600' },
   };
 
   if (error) {
@@ -2484,7 +2484,7 @@ function ActivityTab({ customerId }) {
   }
   if (logs == null) {
     return <div className="flex items-center justify-center py-8">
-      <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
     </div>;
   }
   if (!logs.length) {
@@ -2547,7 +2547,7 @@ function PlanHistoryTab({ customerId }) {
     signup:        { label: 'Signed up',         color: 'bg-blue-100 text-blue-700 border-blue-200' },
     upgrade:       { label: 'Upgraded',          color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
     downgrade:     { label: 'Downgraded',        color: 'bg-amber-100 text-amber-700 border-amber-200' },
-    renewal:       { label: 'Renewed',           color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
+    renewal:       { label: 'Renewed',           color: 'bg-blue-100 text-blue-700 border-blue-200' },
     manual_admin:  { label: 'Admin change',      color: 'bg-purple-100 text-purple-700 border-purple-200' },
     expiry_lapse:  { label: 'Lapsed to Free',    color: 'bg-gray-200 text-gray-700 border-gray-300' },
   };
@@ -2555,7 +2555,7 @@ function PlanHistoryTab({ customerId }) {
   if (error) return <div className="text-sm text-red-500 text-center py-8">{error}</div>;
   if (rows == null) {
     return <div className="flex items-center justify-center py-8">
-      <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
     </div>;
   }
   if (!rows.length) {
@@ -2576,7 +2576,7 @@ function PlanHistoryTab({ customerId }) {
                   <span className={`badge text-xs border ${meta.color}`}>{meta.label}</span>
                   <span className="text-sm text-gray-700">
                     {r.from_plan_name ? <><strong className="capitalize">{r.from_plan_name}</strong> → </> : null}
-                    <strong className="capitalize text-indigo-700">{r.to_plan_name || '—'}</strong>
+                    <strong className="capitalize text-blue-700">{r.to_plan_name || '—'}</strong>
                   </span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">

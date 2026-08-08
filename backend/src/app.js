@@ -40,6 +40,7 @@ const syncRoutes        = require('./routes/sync');
 const feedbackRoutes    = require('./routes/feedback');
 const pushRoutes        = require('./routes/push');
 const turnRoutes        = require('./routes/turn');
+const integrationRoutes = require('./routes/integrations');
 
 const app = express();
 
@@ -181,6 +182,7 @@ app.use('/api/sync',       syncRoutes);
 app.use('/api/feedback',   feedbackRoutes);
 app.use('/api/push',       pushRoutes);
 app.use('/api/turn',       turnRoutes);
+app.use('/api/integrations', integrationRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err.stack);

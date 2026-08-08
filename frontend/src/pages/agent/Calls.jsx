@@ -177,7 +177,7 @@ export default function AgentCalls() {
         <div className="flex items-center justify-between mb-5">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Phone className="w-6 h-6 text-indigo-600" />
+              <Phone className="w-6 h-6 text-blue-600" />
               Calls
             </h1>
             <p className="text-sm text-gray-500 mt-1">
@@ -235,8 +235,8 @@ export default function AgentCalls() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           <div className="card p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center">
-                <Phone className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                <Phone className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500">Calls today</p>
@@ -271,7 +271,7 @@ export default function AgentCalls() {
         {/* Call a customer */}
         <div className="card p-5 mb-5">
           <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-            <PhoneOutgoing className="w-4 h-4 text-indigo-600" /> Call a customer
+            <PhoneOutgoing className="w-4 h-4 text-blue-600" /> Call a customer
           </h3>
           <div ref={wrapRef} className="relative">
             <div className="relative">
@@ -284,7 +284,7 @@ export default function AgentCalls() {
                 onFocus={() => results.length && setShowResults(true)}
                 className="input pl-9 w-full"
               />
-              {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />}
+              {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />}
             </div>
             {showResults && results.length > 0 && (
               <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
@@ -292,13 +292,13 @@ export default function AgentCalls() {
                   <button
                     key={c.id}
                     onClick={() => handleCall(c)}
-                    className="w-full text-left px-4 py-2.5 hover:bg-indigo-50 border-b border-gray-50 last:border-b-0 flex items-center justify-between gap-3"
+                    className="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b border-gray-50 last:border-b-0 flex items-center justify-between gap-3"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-800 truncate">{c.name || c.user_name}</p>
                       <p className="text-xs text-gray-500 truncate">{c.email} · {c.domain || '—'}</p>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-indigo-600 text-white flex-shrink-0 inline-flex items-center gap-1">
+                    <span className="text-xs px-2 py-1 rounded-full bg-blue-600 text-white flex-shrink-0 inline-flex items-center gap-1">
                       <Phone className="w-3 h-3" /> Call
                     </span>
                   </button>
@@ -323,7 +323,7 @@ export default function AgentCalls() {
           </div>
           {loading ? (
             <div className="p-12 flex justify-center">
-              <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : data.calls.length === 0 ? (
             <div className="p-12 text-center text-gray-400">
@@ -357,7 +357,7 @@ export default function AgentCalls() {
                       </td>
                       <td className="px-4 py-3">
                         {c.initiated_by === 'agent'
-                          ? <span className="text-xs inline-flex items-center gap-1 text-indigo-600"><PhoneOutgoing className="w-3.5 h-3.5" /> Outbound</span>
+                          ? <span className="text-xs inline-flex items-center gap-1 text-blue-600"><PhoneOutgoing className="w-3.5 h-3.5" /> Outbound</span>
                           : <span className="text-xs inline-flex items-center gap-1 text-gray-600"><PhoneIncoming className="w-3.5 h-3.5" /> Inbound</span>}
                       </td>
                       <td className="px-4 py-3">
@@ -384,7 +384,7 @@ export default function AgentCalls() {
                         <button
                           onClick={() => handleRedial(c)}
                           disabled={!c.customer_id}
-                          className="text-xs px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium inline-flex items-center gap-1.5 disabled:opacity-40"
+                          className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium inline-flex items-center gap-1.5 disabled:opacity-40"
                           title={c.customer_id ? 'Call this customer again' : 'No customer linked'}
                         >
                           <Phone className="w-3 h-3" /> Redial

@@ -135,7 +135,7 @@ function ReportCard({ title, children, icon: Icon }) {
   return (
     <div className="card p-5">
       <div className="flex items-center gap-2 mb-4">
-        <Icon className="w-4 h-4 text-indigo-500" />
+        <Icon className="w-4 h-4 text-blue-500" />
         <h3 className="text-sm font-semibold text-gray-700">{title}</h3>
       </div>
       {children}
@@ -143,7 +143,7 @@ function ReportCard({ title, children, icon: Icon }) {
   );
 }
 
-function SimpleBar({ label, value, max, color = 'bg-indigo-500', onClick }) {
+function SimpleBar({ label, value, max, color = 'bg-blue-500', onClick }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   // Disable click + cursor when value is 0 — nothing to drill into.
   const clickable = !!onClick && value > 0;
@@ -188,7 +188,7 @@ function SummaryRow({ label, value, color = 'text-gray-800', onClick }) {
 // at the top of the Tickets tab.
 function KpiCard({ icon: Icon, label, value, sub, tone = 'indigo' }) {
   const tones = {
-    indigo: 'bg-indigo-50 text-indigo-600',
+    indigo: 'bg-blue-50 text-blue-600',
     green:  'bg-emerald-50 text-emerald-600',
     amber:  'bg-amber-50 text-amber-600',
     purple: 'bg-purple-50 text-purple-600',
@@ -382,7 +382,7 @@ export default function AdminReports() {
     { id: 'custom',  label: 'Custom Reports',  icon: Sparkles   },
   ];
 
-  if (loading) return <Layout><div className="flex h-64 items-center justify-center"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
+  if (loading) return <Layout><div className="flex h-64 items-center justify-center"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
 
   // Derived (post-backfill) views — keep the JSX clean by computing once.
   const statusMap   = Object.fromEntries((tickets?.byStatus   || []).map(s => [s.status,   Number(s.count)]));
@@ -554,7 +554,7 @@ export default function AdminReports() {
                       label={label}
                       value={Number(a.ticket_count)}
                       max={Math.max(...tickets.byAgent.map(x => Number(x.ticket_count)), 1)}
-                      color={isUnassigned ? 'bg-gray-300' : 'bg-indigo-500'}
+                      color={isUnassigned ? 'bg-gray-300' : 'bg-blue-500'}
                       onClick={() => openTickets(
                         isUnassigned ? 'Closed tickets — unassigned' : `${a.agent_name} — closed tickets`,
                         isUnassigned ? { status: 'closed', no_agent: 'true' } : { agent_id: a.id, status: 'closed' },
@@ -581,7 +581,7 @@ export default function AdminReports() {
                       <>
                         <span className="text-xs font-bold text-gray-600">{m.count}</span>
                         <div className="w-full bg-gray-100 rounded-t-md overflow-hidden flex items-end" style={{ height: '70px' }}>
-                          <div className={`w-full rounded-t-md transition-all ${m.count > 0 ? 'bg-indigo-500' : 'bg-gray-200'}`} style={{ height: `${pct}%` }} />
+                          <div className={`w-full rounded-t-md transition-all ${m.count > 0 ? 'bg-blue-500' : 'bg-gray-200'}`} style={{ height: `${pct}%` }} />
                         </div>
                         <span className="text-[10px] text-gray-400 truncate w-full text-center">{prettyMonth(m.month)}</span>
                       </>
@@ -742,7 +742,7 @@ export default function AdminReports() {
                   {[
                     { kind: 'signup',       label: 'Signups',         tone: 'text-blue-700 bg-blue-50 border-blue-100' },
                     { kind: 'upgrade',      label: 'Upgrades',        tone: 'text-emerald-700 bg-emerald-50 border-emerald-100' },
-                    { kind: 'renewal',      label: 'Renewals',        tone: 'text-indigo-700 bg-indigo-50 border-indigo-100' },
+                    { kind: 'renewal',      label: 'Renewals',        tone: 'text-blue-700 bg-blue-50 border-blue-100' },
                     { kind: 'downgrade',    label: 'Downgrades',      tone: 'text-amber-700 bg-amber-50 border-amber-100' },
                     { kind: 'expiry_lapse', label: 'Lapsed to Free',  tone: 'text-gray-700 bg-gray-50 border-gray-200' },
                     { kind: 'manual_admin', label: 'Admin changes',   tone: 'text-purple-700 bg-purple-50 border-purple-100' },
@@ -892,7 +892,7 @@ export default function AdminReports() {
                   className="flex items-center justify-between text-sm w-full hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   <span className="text-gray-600">{prettyMonth(u.month_year)}</span>
-                  <span className="font-bold text-indigo-600">{u.total_tickets} tickets</span>
+                  <span className="font-bold text-blue-600">{u.total_tickets} tickets</span>
                 </button>
               ))}
             </div>
@@ -957,8 +957,8 @@ export default function AdminReports() {
                       >
                         <td className="py-2 font-medium text-gray-700">{c.name}</td>
                         <td className="py-2 text-gray-500">{c.domain}</td>
-                        <td className="py-2"><span className="badge bg-indigo-50 text-indigo-700 capitalize">{c.plan_name}</span></td>
-                        <td className="py-2 text-right font-bold text-indigo-600">{c.tickets_this_month}</td>
+                        <td className="py-2"><span className="badge bg-blue-50 text-blue-700 capitalize">{c.plan_name}</span></td>
+                        <td className="py-2 text-right font-bold text-blue-600">{c.tickets_this_month}</td>
                       </tr>
                     ))}
                   </tbody>

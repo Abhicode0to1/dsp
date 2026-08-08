@@ -38,7 +38,7 @@ const readVisibleWidgets = () => {
 // ── Reusable bits ───────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, sub, delta, deltaLabel, color = 'indigo', onClick, title }) {
   const colors = {
-    indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600' },
+    indigo: { bg: 'bg-blue-50', text: 'text-blue-600' },
     green:  { bg: 'bg-green-50',  text: 'text-green-600'  },
     amber:  { bg: 'bg-amber-50',  text: 'text-amber-600'  },
     blue:   { bg: 'bg-blue-50',   text: 'text-blue-600'   },
@@ -106,7 +106,7 @@ function TodaySnapshotWidget({ today }) {
     { label: 'Revenue collected',value: `₹${Number(today.revenue || 0).toLocaleString('en-IN')}`, icon: TrendingUp, tone: 'green' },
   ];
   const tones = {
-    indigo: 'bg-indigo-50  text-indigo-700  border-indigo-100',
+    indigo: 'bg-blue-50  text-blue-700  border-blue-100',
     green:  'bg-emerald-50 text-emerald-700 border-emerald-100',
     amber:  'bg-amber-50   text-amber-700   border-amber-100',
     blue:   'bg-blue-50    text-blue-700    border-blue-100',
@@ -147,7 +147,7 @@ function SlaQueueWidget({ slaQueue, navigate }) {
         <button
           type="button"
           onClick={() => navigate('/admin/tickets')}
-          className="rounded-lg border border-gray-200 p-3 text-left hover:border-indigo-300 transition-colors"
+          className="rounded-lg border border-gray-200 p-3 text-left hover:border-blue-300 transition-colors"
           title="Click to open Tickets page"
         >
           <p className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">Open tickets</p>
@@ -178,7 +178,7 @@ function SlaQueueWidget({ slaQueue, navigate }) {
           onClick={() => navigate('/admin/chats')}
           className={clsx(
             'rounded-lg border p-3 text-left transition-colors',
-            waitingChats > 0 ? 'border-amber-300 bg-amber-50 hover:border-amber-400' : 'border-gray-200 hover:border-indigo-300'
+            waitingChats > 0 ? 'border-amber-300 bg-amber-50 hover:border-amber-400' : 'border-gray-200 hover:border-blue-300'
           )}
           title="Click to open Chats page"
         >
@@ -254,7 +254,7 @@ function CustomizeModal({ visibleWidgets, onToggle, onResetDefaults, onClose }) 
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-5" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-bold text-gray-800 inline-flex items-center gap-2">
-            <SettingsIcon className="w-5 h-5 text-indigo-500" /> Customize dashboard
+            <SettingsIcon className="w-5 h-5 text-blue-500" /> Customize dashboard
           </h2>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-700"><X className="w-4 h-4" /></button>
         </div>
@@ -266,7 +266,7 @@ function CustomizeModal({ visibleWidgets, onToggle, onResetDefaults, onClose }) 
             <label key={w.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
               <input
                 type="checkbox"
-                className="w-4 h-4 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 accent-blue-600 cursor-pointer"
                 checked={visibleWidgets.has(w.id)}
                 onChange={() => onToggle(w.id)}
               />
@@ -275,7 +275,7 @@ function CustomizeModal({ visibleWidgets, onToggle, onResetDefaults, onClose }) 
           ))}
         </div>
         <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-100">
-          <button onClick={onResetDefaults} className="text-xs text-indigo-600 hover:underline">
+          <button onClick={onResetDefaults} className="text-xs text-blue-600 hover:underline">
             Reset to defaults
           </button>
           <button onClick={onClose} className="btn-primary text-sm">Done</button>
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
     try { localStorage.setItem(VISIBLE_STORAGE_KEY, JSON.stringify([...defaults])); } catch {}
   };
 
-  if (loading) return <Layout><div className="flex h-64 items-center justify-center"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
+  if (loading) return <Layout><div className="flex h-64 items-center justify-center"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div></Layout>;
   if (!data) return null;
 
   const planColors = { free: 'bg-gray-200', basic: 'bg-blue-400', moderate: 'bg-purple-400', premium: 'bg-amber-400' };
@@ -461,7 +461,7 @@ export default function AdminDashboard() {
           )}>
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-700">Recent Customers</h2>
-              <button onClick={() => navigate('/admin/customers')} className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+              <button onClick={() => navigate('/admin/customers')} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
                 View all <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                   title={`Open ${c.name}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-700">
+                    <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-700">
                       {c.name[0]}
                     </div>
                     <div>

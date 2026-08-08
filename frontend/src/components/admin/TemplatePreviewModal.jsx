@@ -68,7 +68,7 @@ export default function TemplatePreviewModal({
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <Eye className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+            <Eye className="w-5 h-5 text-blue-600 flex-shrink-0" />
             <h2 className="text-lg font-bold text-gray-800 truncate">{title || 'Preview'}</h2>
           </div>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-700 flex-shrink-0">
@@ -86,14 +86,14 @@ export default function TemplatePreviewModal({
             <button
               onClick={() => setView('rendered')}
               className={clsx('px-2.5 py-1 text-xs font-medium inline-flex items-center gap-1',
-                view === 'rendered' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
+                view === 'rendered' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
             >
               <Type className="w-3 h-3" /> Rendered
             </button>
             <button
               onClick={() => setView('raw')}
               className={clsx('px-2.5 py-1 text-xs font-medium inline-flex items-center gap-1',
-                view === 'raw' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
+                view === 'raw' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50')}
             >
               <Code className="w-3 h-3" /> Raw
             </button>

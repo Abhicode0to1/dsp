@@ -7,10 +7,10 @@ import {
   LayoutDashboard, Ticket, MessageSquare, Phone, Users,
   BarChart2, LogOut, Headphones, UserCog,
   ClipboardList, ChevronDown, ChevronLeft, ChevronRight, Settings, Star, LayoutTemplate, CreditCard, UserCircle,
-  PhoneCall, Activity, Bug, Mail, SlidersHorizontal, ExternalLink, AlertTriangle, X,
+  PhoneCall, Activity, Bug, Mail, SlidersHorizontal, ExternalLink, AlertTriangle, X, ArrowLeft,
 } from 'lucide-react';
 import clsx from 'clsx';
-import { CloudOnly, LogoMark } from './Logo';
+import { CloudOnly, LogoFull } from './Logo';
 
 const navsByRole = {
   customer: [
@@ -402,7 +402,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }) {
             'flex items-center rounded-lg text-sm font-medium transition-colors relative',
             isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5',
             isActive
-              ? 'bg-indigo-600 text-white'
+              ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-gray-800 hover:text-white'
           )
         }
@@ -452,29 +452,21 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }) {
       'lg:static lg:z-auto lg:translate-x-0 lg:shadow-none lg:flex-shrink-0 lg:pb-0 lg:transition-all',
       collapsed ? 'lg:w-16' : 'lg:w-60'
     )}>
-      {/* Logo + collapse toggle */}
-      <div className={clsx('border-b border-gray-800 flex items-center pt-safe lg:pt-5', collapsed ? 'px-3 py-5 justify-center' : 'px-5 py-5 justify-between')}>
+      {/* Logo + collapse toggle — white band at the top of the dark sidebar.
+          The logo's text is baked into the image (not currentColor), so it
+          needs a light background rather than an inset chip. */}
+      <div className={clsx('bg-white border-b border-gray-200 flex items-center pt-safe lg:pt-5', collapsed ? 'px-3 py-5 justify-center' : 'px-5 py-5 justify-between')}>
         <div className="flex items-center gap-2 min-w-0">
           {collapsed ? (
-            // Collapsed sidebar: just the cloud icon, brand-blue fill.
-            <CloudOnly className="w-7 h-5 flex-shrink-0" />
+            <CloudOnly className="w-6 h-6 flex-shrink-0" />
           ) : (
-            // Expanded sidebar: cloud + separator + stacked "ANUTECH / DIGITAL"
-            // wordmark. White text via currentColor inheritance.
-            <div className="text-white min-w-0 flex items-center gap-2">
-              <LogoMark className="h-9 text-white flex-shrink-0" />
-              <div className="min-w-0">
-                <div className="text-xs font-extrabold text-white tracking-widest leading-tight">ANUTECH</div>
-                <div className="text-xs font-extrabold text-white tracking-widest leading-tight">DIGITAL</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">Panel v1.0</div>
-              </div>
-            </div>
+            <LogoFull className="h-8 w-auto min-w-0" />
           )}
         </div>
         {/* Mobile: close the drawer. Desktop: collapse to icon rail. */}
         <button
           onClick={onMobileClose}
-          className="lg:hidden text-gray-400 hover:text-white transition-colors flex-shrink-0 ml-2 p-1 -mr-1"
+          className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors flex-shrink-0 ml-2 p-1 -mr-1"
           title="Close menu"
           aria-label="Close menu"
         >
@@ -483,7 +475,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }) {
         {!collapsed && (
           <button
             onClick={toggleCollapse}
-            className="hidden lg:block text-gray-500 hover:text-white transition-colors flex-shrink-0 ml-2"
+            className="hidden lg:block text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 ml-2"
             title="Collapse sidebar"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -506,14 +498,14 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }) {
       <div className={clsx('border-b border-gray-800', collapsed ? 'px-3 py-3 flex justify-center' : 'px-4 py-4')}>
         {collapsed ? (
           <div
-            className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold uppercase cursor-default"
+            className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold uppercase cursor-default"
             title={user?.name}
           >
             {user?.name?.[0] || '?'}
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold uppercase flex-shrink-0">
+            <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold uppercase flex-shrink-0">
               {user?.name?.[0] || '?'}
             </div>
             <div className="min-w-0">
@@ -615,6 +607,25 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }) {
               <ExternalLink className="w-3 h-3 flex-shrink-0 opacity-60" />
             </>
           )}
+        </a>
+      )}
+
+      {/* "Back to Customer Panel" — Phase 1 integration. Customers arrive here
+          via an auto-login handoff from the Customer Panel (usually opened in
+          a new tab), so this is just a plain link back — their Customer Panel
+          session cookie is untouched, no re-auth needed. */}
+      {user?.role === 'customer' && (
+        <a
+          href={import.meta.env.VITE_CUSTOMER_PANEL_URL || '/'}
+          title="Back to Customer Panel"
+          data-testid="Sidebar-BackToCustomerPanel"
+          className={clsx(
+            'border-b border-gray-800 flex items-center transition-colors text-gray-400 hover:text-white hover:bg-gray-800/50',
+            collapsed ? 'px-3 py-3 justify-center' : 'gap-2.5 px-4 py-2.5 text-xs font-medium'
+          )}
+        >
+          <ArrowLeft className="w-4 h-4 flex-shrink-0" />
+          {!collapsed && <span className="flex-1">Back to Customer Panel</span>}
         </a>
       )}
 

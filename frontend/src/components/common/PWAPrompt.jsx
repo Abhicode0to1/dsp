@@ -35,11 +35,11 @@ export default function PWAPrompt() {
   return (
     <div className="fixed bottom-4 z-[70] left-4 right-24 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-[calc(100%-2rem)] max-w-sm">
       <div className="flex items-center gap-3 rounded-xl bg-gray-900 text-white shadow-2xl px-4 py-3">
-        <RefreshCw className="w-4 h-4 flex-shrink-0 text-indigo-300" />
+        <RefreshCw className="w-4 h-4 flex-shrink-0 text-blue-300" />
         <p className="text-sm flex-1">A new version is available.</p>
         <button
           onClick={() => updateServiceWorker(true)}
-          className="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-sm font-semibold bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-lg transition-colors"
         >
           Reload
         </button>

@@ -173,7 +173,7 @@ export default function AdminFeedback() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilters(f => ({ ...f, status: '', page: 1 }))}
-            className={`text-xs px-3 py-1.5 rounded-full border ${!filters.status ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
+            className={`text-xs px-3 py-1.5 rounded-full border ${!filters.status ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
           >
             All <span className="opacity-75">· {statusCounts.total}</span>
           </button>
@@ -181,7 +181,7 @@ export default function AdminFeedback() {
             <button
               key={c.value}
               onClick={() => setFilters(f => ({ ...f, status: c.value === f.status ? '' : c.value, page: 1 }))}
-              className={`text-xs px-3 py-1.5 rounded-full border ${filters.status === c.value ? 'bg-indigo-600 text-white border-indigo-600' : `${c.color} hover:opacity-90`}`}
+              className={`text-xs px-3 py-1.5 rounded-full border ${filters.status === c.value ? 'bg-blue-600 text-white border-blue-600' : `${c.color} hover:opacity-90`}`}
             >
               {c.label} <span className="opacity-75">· {c.count}</span>
             </button>
@@ -240,7 +240,7 @@ export default function AdminFeedback() {
                 className={clsx(
                   'px-2.5 py-1 rounded-lg border text-xs font-medium',
                   activePreset === p.id
-                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                    ? 'border-blue-300 bg-blue-50 text-blue-700'
                     : 'border-gray-200 hover:border-gray-300 text-gray-600'
                 )}
               >
@@ -279,8 +279,8 @@ export default function AdminFeedback() {
 
         {/* Bulk action bar — appears when at least one row is selected */}
         {selectedIds.size > 0 && (
-          <div className="card p-3 bg-indigo-50 border-indigo-200 flex items-center justify-between flex-wrap gap-2">
-            <span className="text-sm text-indigo-800 font-medium">
+          <div className="card p-3 bg-blue-50 border-blue-200 flex items-center justify-between flex-wrap gap-2">
+            <span className="text-sm text-blue-800 font-medium">
               {selectedIds.size} report{selectedIds.size === 1 ? '' : 's'} selected
             </span>
             <div className="flex items-center gap-2 flex-wrap">
@@ -290,7 +290,7 @@ export default function AdminFeedback() {
                   key={s}
                   onClick={() => handleBulkStatus(s)}
                   disabled={bulkBusy}
-                  className="text-xs px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:border-indigo-300 capitalize disabled:opacity-40"
+                  className="text-xs px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:border-blue-300 capitalize disabled:opacity-40"
                 >
                   {s}
                 </button>
@@ -340,7 +340,7 @@ export default function AdminFeedback() {
               const atts = !r.attachments ? [] : Array.isArray(r.attachments) ? r.attachments : (() => { try { return JSON.parse(r.attachments); } catch { return []; } })();
               const isChecked = selectedIds.has(r.id);
               return (
-                <div key={r.id} className={clsx('card p-4', isChecked && 'ring-2 ring-indigo-300 ring-offset-1')}>
+                <div key={r.id} className={clsx('card p-4', isChecked && 'ring-2 ring-blue-300 ring-offset-1')}>
                   <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
@@ -377,7 +377,7 @@ export default function AdminFeedback() {
                       {r.page_url && (
                         <div>
                           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Page</p>
-                          <a href={r.page_url} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline flex items-center gap-1 break-all">
+                          <a href={r.page_url} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline flex items-center gap-1 break-all">
                             <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" /> {r.page_url}
                           </a>
                         </div>
@@ -397,7 +397,7 @@ export default function AdminFeedback() {
                               const isImage = a.mime?.startsWith('image/');
                               const isVideo = a.mime?.startsWith('video/');
                               return (
-                                <a key={i} href={a.path} target="_blank" rel="noreferrer" className="block border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-300 transition-colors">
+                                <a key={i} href={a.path} target="_blank" rel="noreferrer" className="block border border-gray-200 rounded-lg overflow-hidden hover:border-blue-300 transition-colors">
                                   {isImage ? (
                                     <img src={a.path} alt={a.name} className="w-full h-32 object-cover" />
                                   ) : isVideo ? (
@@ -499,7 +499,7 @@ function EditableTitleDesc({ report, saving, onSave }) {
           <p className="text-sm font-semibold text-gray-800">{report.title}</p>
           <button
             onClick={() => setEditing(true)}
-            className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 flex-shrink-0"
+            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 flex-shrink-0"
           >
             <Pencil className="w-3.5 h-3.5" /> Edit
           </button>
@@ -566,7 +566,7 @@ function FeedbackActions({ report, saving, onSave }) {
         onChange={e => setNotes(e.target.value)}
         rows={2}
         placeholder="Add a note for yourself (e.g. repro steps confirmed, severity, who to assign)…"
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none mb-2"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none mb-2"
       />
       <div className="flex flex-wrap gap-2">
         {STATUS_OPTIONS.map(s => (
@@ -583,7 +583,7 @@ function FeedbackActions({ report, saving, onSave }) {
           <button
             disabled={saving}
             onClick={() => onSave({ admin_notes: notes })}
-            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 font-medium hover:opacity-90"
+            className="text-xs px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 font-medium hover:opacity-90"
           >
             {saving ? 'Saving…' : 'Save note'}
           </button>

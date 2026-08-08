@@ -167,7 +167,7 @@ export default function CommandPalette() {
                     key={p.path}
                     onClick={() => navigateTo({ ...p, key: `p-${p.path}` })}
                     onMouseEnter={() => setActiveIdx(idx)}
-                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50')}
+                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50')}
                   >
                     <p.icon className="w-4 h-4 flex-shrink-0" />
                     <span>{p.label}</span>
@@ -187,7 +187,7 @@ export default function CommandPalette() {
                     key={t.id}
                     onClick={() => navigateTo({ type: 'ticket', ticket: t })}
                     onMouseEnter={() => setActiveIdx(idx)}
-                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50')}
+                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50')}
                   >
                     <Hash className="w-4 h-4 flex-shrink-0 text-gray-400" />
                     <div className="flex-1 min-w-0">
@@ -210,7 +210,7 @@ export default function CommandPalette() {
                     key={c.id}
                     onClick={() => navigateTo({ type: 'customer', customer: c })}
                     onMouseEnter={() => setActiveIdx(idx)}
-                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50')}
+                    className={clsx('w-full text-left px-4 py-2 flex items-center gap-3 text-sm', isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50')}
                   >
                     <User className="w-4 h-4 flex-shrink-0 text-gray-400" />
                     <div className="flex-1 min-w-0">

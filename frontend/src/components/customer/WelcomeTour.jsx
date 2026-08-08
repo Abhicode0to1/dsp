@@ -51,8 +51,8 @@ export default function WelcomeTour() {
             Your account is ready. Let's take 30 seconds to show you around — you can skip any time.
           </p>
           {onboardingTicket && (
-            <div className="mt-4 bg-indigo-50 border border-indigo-100 rounded-lg p-3">
-              <p className="text-xs text-indigo-700 font-semibold uppercase tracking-wider">Already in progress</p>
+            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
+              <p className="text-xs text-blue-700 font-semibold uppercase tracking-wider">Already in progress</p>
               <p className="text-sm font-semibold text-gray-800 mt-1">Onboarding ticket #{onboardingTicket.id}</p>
               <p className="text-xs text-gray-600 mt-0.5">
                 {onboardingTicket.agent_name
@@ -183,7 +183,7 @@ export default function WelcomeTour() {
             {steps.map((_, i) => (
               <span
                 key={i}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${i === step ? 'bg-indigo-600 w-4' : 'bg-gray-300'}`}
+                className={`w-1.5 h-1.5 rounded-full transition-all ${i === step ? 'bg-blue-600 w-4' : 'bg-gray-300'}`}
               />
             ))}
           </div>

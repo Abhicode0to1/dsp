@@ -19,6 +19,28 @@ const { getSetting } = require('./settings');
 const { logPlanChange } = require('./planHistory');
 const { sendPlanLapsedToFreeEmail, sendPlanLapsedAdminDigestEmail } = require('./emailUtils');
 const { heartbeat } = require('./heartbeat');
+const billing = require('../billing');
+
+// Best-effort notify Billing that this customer lapsed to Free, so its
+// subscriptions table doesn't keep a stale paid plan/renewal_date around
+// forever. Mirrors the notify call in customerController.js's verifyUpgrade,
+// but for the no-payment Free case. Never throws — a failure here must not
+// stop the local lapse (DSP's own plan change already succeeded).
+async function notifyBillingOfLapse({ billingCustomerId, email }) {
+  try {
+    const cfg = await billing.getConfig();
+    if (!cfg.baseUrl) return;
+    const origin = cfg.baseUrl.replace(/\/api\/v1\/?$/, '');
+    await billing._requestJson(
+      'POST',
+      billing._joinUrl(origin, '/api/support-upgrade'),
+      { ...billing._authHeaders(cfg), 'Content-Type': 'application/json' },
+      { billing_customer_id: billingCustomerId || null, email, plan: 'free' }
+    );
+  } catch (e) {
+    console.error('[expiryWorker] billing lapse-notify failed for', email, ':', e.message);
+  }
+}
 
 // 24h between scheduled ticks; admin Run-Now would be more frequent but the
 // dashboard "is the worker alive" check uses this as the overdue threshold.
@@ -59,7 +81,7 @@ async function tickOnce() {
 
     // All customers with a past expiry on a non-Free plan
     const [expired] = await pool.query(
-      `SELECT c.id, c.plan_id, c.plan_expiry, u.email, u.name AS user_name, p.name AS plan_name
+      `SELECT c.id, c.plan_id, c.plan_expiry, c.billing_customer_id, u.email, u.name AS user_name, p.name AS plan_name
        FROM customers c
        JOIN users u ON u.id = c.user_id
        LEFT JOIN plans p ON p.id = c.plan_id
@@ -98,6 +120,9 @@ async function tickOnce() {
           customerName: cust.user_name || 'there',
           planLabel,
         }).catch(err => console.error('[expiryWorker] customer email', cust.email, err.message));
+        // This is a background job, not an HTTP handler — safe to await
+        // rather than fire-and-forget. notifyBillingOfLapse never throws.
+        await notifyBillingOfLapse({ billingCustomerId: cust.billing_customer_id, email: cust.email });
         lapsedRows.push({ ...cust, planLabel });
       } catch (e) {
         console.error(`[expiryWorker] failed to lapse customer ${cust.id}:`, e.message);

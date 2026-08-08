@@ -2,6 +2,7 @@ const router = require('express').Router();
 const rateLimit = require('express-rate-limit');
 const { login, logout, getMe, changePassword, requestChangePasswordOtp, checkSetupToken, setupPassword } = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
+const { loginViaCustomerPortalSso } = require('../integrations/customerPortalSso');
 
 // Rate-limit ONLY brute-forceable endpoints (login, password change). Don't apply
 // to /me — that's a token-check that fires on every page load + socket reconnect,
@@ -93,6 +94,33 @@ router.put('/change-password', authenticate, passwordChangeLimiter, changePasswo
 router.post('/change-password/request-otp', authenticate, passwordChangeOtpLimiter, requestChangePasswordOtp);
 router.get('/setup-password/:token', setupLimiter, checkSetupToken);
 router.post('/setup-password',       setupLimiter, setupPassword);
+
+// ── Customer Panel SSO (Phase 1 integration) ────────────────────────────────
+// Public (the signed token IS the auth) but tightly rate-limited like login.
+const ssoLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { error: 'Too many attempts, try again in 15 minutes' },
+});
+router.post('/sso', ssoLimiter, async (req, res) => {
+  const token = req.body?.token;
+  if (!token) return res.status(400).json({ error: 'Missing token' });
+
+  try {
+    const result = await loginViaCustomerPortalSso(token, req.app.get('io'));
+    if (!result.ok) {
+      const messages = {
+        account_deactivated: 'This account has been deactivated. Contact support.',
+        totp_required: 'Two-factor authentication is enabled on this account — please log in directly.',
+      };
+      return res.status(409).json({ error: messages[result.reason] || 'Unable to sign in', reason: result.reason });
+    }
+    return res.json({ token: result.token, user: result.user });
+  } catch (err) {
+    console.error('[SSO] customer-portal handoff failed:', err.message);
+    return res.status(401).json({ error: 'Invalid or expired sign-in link' });
+  }
+});
 
 // ── 2FA ───────────────────────────────────────────────────────────────────
 const twoFactor = require('../controllers/twoFactorController');

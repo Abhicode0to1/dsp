@@ -79,8 +79,8 @@ export default function InstallPrompt() {
   return (
     <div className="fixed bottom-4 z-[70] left-4 right-24 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-[calc(100%-2rem)] max-w-sm">
       <div className="flex items-center gap-3 rounded-xl bg-white border border-gray-200 shadow-2xl px-4 py-3">
-        <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-          <Download className="w-4 h-4 text-indigo-600" />
+        <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+          <Download className="w-4 h-4 text-blue-600" />
         </div>
         {deferredPrompt ? (
           <>
@@ -90,7 +90,7 @@ export default function InstallPrompt() {
             </div>
             <button
               onClick={install}
-              className="text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition-colors flex-shrink-0"
+              className="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors flex-shrink-0"
             >
               Install
             </button>
@@ -100,7 +100,7 @@ export default function InstallPrompt() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-800">Install Anutech DSP</p>
             <p className="text-xs text-gray-500 inline-flex items-center gap-1 flex-wrap">
-              Tap <Share className="w-3.5 h-3.5 inline text-indigo-600" /> then “Add to Home Screen”.
+              Tap <Share className="w-3.5 h-3.5 inline text-blue-600" /> then “Add to Home Screen”.
             </p>
           </div>
         )}

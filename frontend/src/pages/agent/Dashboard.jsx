@@ -14,7 +14,7 @@ import useGlobalRefresh from '../../hooks/useGlobalRefresh';
 
 function StatCard({ icon: Icon, label, value, color = 'indigo', onClick }) {
   const colors = {
-    indigo: 'bg-indigo-50 text-indigo-600',
+    indigo: 'bg-blue-50 text-blue-600',
     green:  'bg-green-50 text-green-600',
     amber:  'bg-amber-50 text-amber-600',
     blue:   'bg-blue-50 text-blue-600',
@@ -24,7 +24,7 @@ function StatCard({ icon: Icon, label, value, color = 'indigo', onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-5 text-left w-full hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer"
+      className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-5 text-left w-full hover:shadow-md hover:border-blue-200 transition-all cursor-pointer"
     >
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 ${colors[color]}`}>
         <Icon className="w-7 h-7" />
@@ -122,7 +122,7 @@ export default function AgentDashboard() {
 
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="space-y-5">
@@ -173,7 +173,7 @@ export default function AgentDashboard() {
             <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                  <ArrowRight className="w-4 h-4 text-indigo-500" /> Next Action
+                  <ArrowRight className="w-4 h-4 text-blue-500" /> Next Action
                 </h3>
                 <p className="text-xs text-gray-400">What needs your attention now</p>
               </div>
@@ -186,9 +186,9 @@ export default function AgentDashboard() {
                 <button
                   type="button"
                   onClick={() => navigate(`/agent/tickets?openTicket=${nextAction.id}`)}
-                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition-colors flex items-center gap-3"
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/40 transition-colors flex items-center gap-3"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
                     <Ticket className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -227,7 +227,7 @@ export default function AgentDashboard() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">Ringing you</span>
                       {nextAction.category && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium capitalize">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium capitalize">
                           {nextAction.category}
                         </span>
                       )}
@@ -290,7 +290,7 @@ export default function AgentDashboard() {
                 </>
               )}
             </div>
-            <div className="lg:col-span-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl text-white p-5 flex items-center justify-between">
+            <div className="lg:col-span-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl text-white p-5 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-semibold opacity-90 mb-1">Want a full breakdown?</h3>
                 <p className="text-xs opacity-80 max-w-md">
